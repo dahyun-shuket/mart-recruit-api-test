@@ -1,0 +1,133 @@
+#!/usr/bin/env node
+
+/**
+ * Module dependencies.
+ */
+
+ var app = require('../app');
+ var debug = require('debug')('mart-recruit:server');
+ 
+ const https = require('https');
+ const http = require('http');
+ const fs = require('fs');
+
+  const options = {
+    // key: fs.readFileSync('../app/config/keys/agent2-key.pem'),
+    // cert: fs.readFileSync('../app/config/keys/agent2-cert.cert')
+  };
+
+ /**
+  * Get port from environment and store in Express.
+  */
+ 
+ var port = normalizePort(process.env.PORT || '3000');
+ var portHTTP = normalizePort(process.env.PORT || '4431');
+ 
+ app.set('port', port);
+ app.set('porthttps', portHTTP);
+ let isDisableKeepAlive = false;
+ 
+ /**
+  * Create HTTP server.
+  */
+  
+ var server = http.createServer(app);
+ var serverHTTPS = https.createServer(options, app);
+ 
+ /**
+  * Listen on provided port, on all network interfaces.
+  * HTTP SERVER
+  */
+ 
+server.listen(port, function() {
+    process.send('ready');
+    console.log(`http application is listening on port ${port}...`);
+});
+
+server.on('error', onError);
+server.on('listening', onListening);
+
+serverHTTPS.listen(portHTTP, function() {
+  process.send('ready');
+  console.log(`https application is listening on port ${portHTTP}...`);
+});
+
+serverHTTPS.on('error', onError);
+serverHTTPS.on('listening', onListeningHTTPS);
+
+
+process.on('SIGINT', function () {
+  isDisableKeepAlive = true;
+  app.close(function () {
+    console.log('server closed');
+    process.exit(0);
+  })
+})
+ 
+ /**
+  * Normalize a port into a number, string, or false.
+  */
+ 
+ function normalizePort(val) {
+   var port = parseInt(val, 10);
+ 
+   if (isNaN(port)) {
+     // named pipe
+     return val;
+   }
+ 
+   if (port >= 0) {
+     // port number
+     return port;
+   }
+ 
+   return false;
+ }
+ 
+ /**
+  * Event listener for HTTP server "error" event.
+  */
+ 
+ function onError(error) {
+   if (error.syscall !== 'listen') {
+     throw error;
+   }
+ 
+   var bind = typeof port === 'string'
+     ? 'Pipe ' + port
+     : 'Port ' + port;
+ 
+   // handle specific listen errors with friendly messages
+   switch (error.code) {
+     case 'EACCES':
+       console.error(bind + ' requires elevated privileges');
+       process.exit(1);
+       break;
+     case 'EADDRINUSE':
+       console.error(bind + ' is already in use');
+       process.exit(1);
+       break;
+     default:
+       throw error;
+   }
+ }
+ 
+ /**
+  * Event listener for HTTP server "listening" event.
+  */
+ 
+ function onListening() {
+   var addr = server.address();
+   var bind = typeof addr === 'string'
+     ? 'pipe ' + addr
+     : 'port ' + addr.port;
+   debug('Listening on ' + bind);
+ }
+ 
+ function onListeningHTTPS() {
+  var addr = serverHTTPS.address();
+  var bind = typeof addr === 'string'
+    ? 'pipe ' + addr
+    : 'port ' + addr.port;
+  debug('HTTPS Listening on ' + bind);
+}
