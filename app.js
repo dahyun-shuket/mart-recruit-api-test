@@ -26,6 +26,8 @@ app.use('/', express.static(path.join(__dirname, '/')));
 
 app.use('/api/users', require('./routes/user_router'));
 app.use('/api/jobkind', require('./routes/jobKind'));
+app.use('/api/workingType', require('./routes/workingType'));
+app.use('/api/workingRegion', require('./routes/workingRegion'));
 
 app.use(
   morgan('combined', 

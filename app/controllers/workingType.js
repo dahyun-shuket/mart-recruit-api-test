@@ -1,10 +1,10 @@
-const jobKindService = require('../services/jobKind.js');
+const workingTypeService = require('../services/workingType.js');
 
 module.exports = {
     async create(req, res, next) {
-        const jobKindName = req.query.jobKind;
+        const workingTypeName = req.query.workingType;
 
-        await jobKindService.create(jobKindName);
+        await workingTypeService.create(workingTypeName);
 
         res.status(200).json({
             result: 'success'
@@ -12,10 +12,10 @@ module.exports = {
     },
 
     async update(req, res, next) {
-        const jobKindSeq = req.query.seq;
-        const jobKindName = req.query.jobKind;
+        const workingTypeSeq = req.query.seq;
+        const workingTypeName = req.query.workingType;
 
-        await jobKindService.update(jobKindSeq, jobKindName);
+        await workingTypeService.update(workingTypeSeq, workingTypeName);
 
         res.status(200).json({
             result: 'success'
@@ -23,9 +23,9 @@ module.exports = {
     },
 
     async remove(req, res, next) {
-        const jobKindSeq = req.query.seq;
+        const workingTypeSeq = req.query.seq;
 
-        const result = await jobKindService.remove(jobKindSeq);
+        const result = await workingTypeService.remove(workingTypeSeq);
 
         res.status(200).json({
             result: 'success',
@@ -34,7 +34,7 @@ module.exports = {
     },
 
     async list(req, res, next) {
-        const list = await jobKindService.list();
+        const list = await workingTypeService.list();
 
         res.status(200).json({
             result: 'success',

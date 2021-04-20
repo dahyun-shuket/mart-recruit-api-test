@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { create, update, remove, list } = require('../app/controllers/jobKind.js');
+const { create, update, remove, list } = require('../app/controllers/workingType.js');
 
 router.get('/create', create);
 

@@ -5,7 +5,7 @@ module.exports = class jobKindModel {
     static async create(jobKind) {
         try 
         {
-            const [rows, fields] = await pool.query(`INSERT INTO JOBKIND (JOBKIND) VALUES (?)`, [jobKind]);
+            const [rows, fields] = await pool.query(`INSERT INTO JOBKIND (NAME) VALUES (?)`, [jobKind]);
             return rows.insertId;
         } catch (error) {
             logger.writeLog('error', `models/jobKindModel.create: ${error}`);           
@@ -15,7 +15,7 @@ module.exports = class jobKindModel {
     static async update(seq, jobKind) {
         try 
         {
-            await pool.query(`UPDATE JOBKIND SET JOBKIND=? WHERE SEQ=?`, [jobKind, seq]);
+            await pool.query(`UPDATE JOBKIND SET NAME=? WHERE SEQ=?`, [jobKind, seq]);
             return seq;
         } catch (error) {
             logger.writeLog('error', `models/jobKindModel.update: ${error}`);           
@@ -39,7 +39,7 @@ module.exports = class jobKindModel {
             return seq;
         } catch (error) {
             //에러면 0 리턴
-            logger.writeLog('error', `models/jobKindModel.delete: ${error}`);           
+            logger.writeLog('error', `models/jobKindModel.remove: ${error}`);           
             return 0;
         }
     }
@@ -47,7 +47,7 @@ module.exports = class jobKindModel {
         try 
         {
             //순번에 따라서 리스팅
-            const [rows, fields] = await pool.query(`SELECT SEQ, JOBKIND FROM JOBKIND ORDER BY SEQ`);
+            const [rows, fields] = await pool.query(`SELECT SEQ, NAME FROM JOBKIND ORDER BY SEQ`);
             if (rows.length > 0) 
                 return rows;
             else {
@@ -56,6 +56,7 @@ module.exports = class jobKindModel {
             }                
         } catch (error) {
             logger.writeLog('error', `models/jobKindModel.list: ${error}`);           
+            return null;
         }
     }
 };
