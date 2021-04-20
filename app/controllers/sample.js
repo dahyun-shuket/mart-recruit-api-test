@@ -1,5 +1,5 @@
 const numeral = require('numeral');
-const sampleService = require('../services/sample.js');
+const sampleService = require('../services/jobkind.js');
 
 module.exports = {
     async sample(req, res, next) {
