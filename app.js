@@ -8,8 +8,6 @@ var cookieParser = require('cookie-parser');
 const morgan = require('morgan');
 const logger = require('./app/config/logger');
 
-let indexRouter = require('./routes/user_router');
-
 var app = express();
 
 // view engine setup
@@ -26,9 +24,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/assets', express.static(path.join(__dirname, '/assets/')));
 app.use('/', express.static(path.join(__dirname, '/')));
 
-// app.use('/sample', require('./routes/sample'));
-app.use('/api/users', indexRouter);
-
+app.use('/api/users', require('./routes/user_router'));
+app.use('/api/jobkind', require('./routes/jobKind'));
+app.use('/api/workingType', require('./routes/workingType'));
+app.use('/api/workingRegion', require('./routes/workingRegion'));
 
 app.use(
   morgan('combined', 
