@@ -17,13 +17,13 @@ module.exports = {
             console.log(createUser);
 
             // return
-            res.status(200).json({
+            res.json({
                 result: "success",
                 data: createUser
             });
             // res.redirect("http://localhost:8081/login");
         } catch (error) {
-            return res.status(500).json({
+            return res.json({
                 result: "fail",
                 data: "Database connect error"
             });
@@ -75,8 +75,8 @@ module.exports = {
         const getUsers = await getUser();
         console.log("getUser 들어옴");
         return res.json({
-            sucess: "success",
-            resultData: getUsers
+            result: "success",
+            data: getUsers
         });
     },
     async getUserByUserID(req, res) {
@@ -84,7 +84,7 @@ module.exports = {
         const getUserByUserSEQOne = await getUserByUserID(seq);
 
         return res.json({
-            sucess: "success",
+            result: "success",
             data: getUserByUserSEQOne
         });
     },
@@ -95,7 +95,7 @@ module.exports = {
         let updateUser = await update(body);
         console.log(updateUser);
         return res.json({
-            success : "success",
+            result : "success",
             data: updateUser
         })
     },
