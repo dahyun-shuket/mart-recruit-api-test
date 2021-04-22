@@ -1,7 +1,14 @@
+<<<<<<< .merge_file_a09464
+=======
+# jwt Token
+secretkey.js
+
+>>>>>>> .merge_file_a01276
 # Logs
 logs
 *.log
 npm-debug.log*
+<<<<<<< .merge_file_a09464
 yarn-debug.log*
 yarn-error.log*
 lerna-debug.log*
@@ -102,3 +109,13 @@ dist
 
 # TernJS port file
 .tern-port
+=======
+
+# node_modules
+node_modules/
+
+# db
+database.js
+database_dev.js
+
+>>>>>>> .merge_file_a01276

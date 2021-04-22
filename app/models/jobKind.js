@@ -5,7 +5,11 @@ module.exports = class jobKindModel {
     static async create(jobKind) {
         try 
         {
+<<<<<<< .merge_file_a17912
             const [rows, fields] = await pool.query(`INSERT INTO JOBKIND (JOBKIND) VALUES (?)`, [jobKind]);
+=======
+            const [rows, fields] = await pool.query(`INSERT INTO JOBKIND (NAME) VALUES (?)`, [jobKind]);
+>>>>>>> .merge_file_a15784
             return rows.insertId;
         } catch (error) {
             logger.writeLog('error', `models/jobKindModel.create: ${error}`);           
@@ -15,7 +19,11 @@ module.exports = class jobKindModel {
     static async update(seq, jobKind) {
         try 
         {
+<<<<<<< .merge_file_a17912
             await pool.query(`UPDATE JOBKIND SET JOBKIND=? WHERE SEQ=?`, [jobKind, seq]);
+=======
+            await pool.query(`UPDATE JOBKIND SET NAME=? WHERE SEQ=?`, [jobKind, seq]);
+>>>>>>> .merge_file_a15784
             return seq;
         } catch (error) {
             logger.writeLog('error', `models/jobKindModel.update: ${error}`);           
@@ -39,7 +47,11 @@ module.exports = class jobKindModel {
             return seq;
         } catch (error) {
             //에러면 0 리턴
+<<<<<<< .merge_file_a17912
             logger.writeLog('error', `models/jobKindModel.delete: ${error}`);           
+=======
+            logger.writeLog('error', `models/jobKindModel.remove: ${error}`);           
+>>>>>>> .merge_file_a15784
             return 0;
         }
     }
@@ -47,7 +59,11 @@ module.exports = class jobKindModel {
         try 
         {
             //순번에 따라서 리스팅
+<<<<<<< .merge_file_a17912
             const [rows, fields] = await pool.query(`SELECT SEQ, JOBKIND FROM JOBKIND ORDER BY SEQ`);
+=======
+            const [rows, fields] = await pool.query(`SELECT SEQ, NAME FROM JOBKIND ORDER BY SEQ`);
+>>>>>>> .merge_file_a15784
             if (rows.length > 0) 
                 return rows;
             else {
@@ -56,6 +72,10 @@ module.exports = class jobKindModel {
             }                
         } catch (error) {
             logger.writeLog('error', `models/jobKindModel.list: ${error}`);           
+<<<<<<< .merge_file_a17912
+=======
+            return null;
+>>>>>>> .merge_file_a15784
         }
     }
 };

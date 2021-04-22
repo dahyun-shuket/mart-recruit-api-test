@@ -11,7 +11,7 @@ const logger = require('./app/config/logger');
 var app = express();
 
 // view engine setup
-app.set('views', path.join(__dirname, 'app/views'));
+app.set('views', path.join(__dirname, 'app/view'));
 app.set('view engine', 'ejs');
 
 // app.use(logger('dev'));
@@ -26,6 +26,7 @@ app.use('/', express.static(path.join(__dirname, '/')));
 
 app.use('/api/users', require('./routes/user_router'));
 app.use('/api/jobkind', require('./routes/jobKind'));
+app.use('/api/notice', require('./routes/notice'));
 
 app.use(
   morgan('combined', 

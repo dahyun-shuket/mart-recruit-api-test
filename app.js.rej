@@ -1,0 +1,9 @@
+diff a/app.js b/app.js	(rejected hunks)
+@@ -26,7 +26,6 @@
+ 
+ app.use('/api/users', require('./routes/user_router'));
+ app.use('/api/jobkind', require('./routes/jobKind'));
+-app.use('/api/notice', require('./routes/notice'));
+ 
+ app.use(
+   morgan('combined', 
