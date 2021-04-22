@@ -1,4 +1,4 @@
-const { login, getUser, create, getUserByUserID, update } = require("../services/users");
+const { login, getUser, create, getUserByUserID, update, deleteId, checkId } = require("../services/users");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const secretKey = require("../config/secretKey").secretKey;
@@ -97,6 +97,25 @@ module.exports = {
         return res.json({
             result : "success",
             data: updateUser
+        })
+    },
+    async deleteUser(req, res) {
+        const body = req.body;
+        let deleteUser = await deleteId(body);
+        console.log(deleteUser);
+        return res.json({
+            result : "success",
+            data: deleteUser
+        })
+    },
+    
+    async checkid(req, res) {
+        const body = req.body;
+        let checkidUser = await checkId(body);
+        console.log(checkidUser);
+        return res.json({
+            result : "success",
+            data: checkidUser
         })
     },
 };

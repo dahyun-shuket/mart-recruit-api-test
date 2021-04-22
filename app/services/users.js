@@ -42,4 +42,25 @@ module.exports = class userService {
             }
     })
     };
+    static async deleteId(body){
+        return new Promise(function (resolve, reject) {
+            try {
+                let userDelete = userModel.userDelete(body);        
+                resolve(userDelete);
+            } catch (error) {
+                reject(error);
+            }
+    })
+    };
+    static async checkId(body){
+        return new Promise(function (resolve, reject) {
+            try {
+                let checkId = userModel.userCheckId(body);        
+                resolve(checkId);
+            } catch (error) {
+                reject(error);
+            }
+    })
+    };
+    
 };
