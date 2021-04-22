@@ -2,18 +2,18 @@ const logger = require('../config/logger.js');
 const pool = (process.env.NODE_ENV == "production") ? require("../config/database") : require("../config/database_dev");
 
 module.exports = class jobOpeningModel {
-    static async create(martSeq, subject, HRONname, HROContact, jobKind_Seq, carrer_Seq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-        workingType_Seq, probationTerm, workShift, worshiftTime, workRegion_Seq, gender, age, startDate, endDate, hiringStep, requireDocs) {
+    static async create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+        workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
         try 
         {
             const [rows, fields] = await pool.query(`INSERT INTO JOBOPENING (
-                MART_SEQ, SUBJECT, HRONAME, HROCONTACT, JOBKIND_SEQ, CARRER_SEQ, EXPYEAR, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
-                WORKINGTYPE_SEQ, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, WORKREGION_SEQ, GENDER, AGE, STARTDATE, ENDATE, HIRINGSTEP, REQUIREDOCS, ACTIVE, CREATED, MODIFIED
+                MART_SEQ, SUBJECT, HRONAME, HROCONTACT, JOBKIND_SEQ, CARRIER_SEQ, EXPYEAR, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
+                WORKINGTYPE_SEQS, WORKINGTYPE_NAMESS, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, WORKREGION_SEQ, GENDER, AGE, STARTDATE, ENDATE, HIRINGSTEP, REQUIREDOCS, ACTIVE, CREATED, MODIFIED
                 ) VALUES 
-                ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
+                ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
                 [
-                    martSeq, subject, HRONname, HROContact, jobKind_Seq, carrer_Seq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-                    workingType_Seq, probationTerm, workShift, worshiftTime, workRegion_Seq, gender, age, startDate, endDate, hiringStep, requireDocs
+                    martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+                    workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs
                 ]);
             return rows.insertId;
         } catch (error) {
@@ -21,18 +21,18 @@ module.exports = class jobOpeningModel {
             return null;
         }
     }
-    static async update(seq, subject, HRONname, HROContact, jobKind_Seq, carrer_Seq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-        workingType_Seq, probationTerm, workShift, worshiftTime, workRegion_Seq, gender, age, startDate, endDate, hiringStep, requireDocs) {
+    static async update(seq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+        workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
         try 
         {
             await pool.query(`UPDATE JOBOPENING SET 
-                    SUBJECT=?, HRONAME=?, HROCONTACT=?, JOBKIND_SEQ=?, CARRER_SEQ=?, EXPYEAR=?, CHARGE=?, JOBRANK=?, PREFERENTIAL=?, EDUCATION=?, SALARYTYPE=?, SALARY=?,
-                    WORKINGTYPE_SEQ=?, PROBATIONTERM=?, WORKSHIFT=?, WORKSHIFTTIME=?, WORKREGION_SEQ=?, GENDER=?, AGE=?, STARTDATE=?, ENDATE=?, HIRINGSTEP=?, REQUIREDOCS=?, MODIFIED=CURRENT_TIMESTAMP()
+                    SUBJECT=?, HRONAME=?, HROCONTACT=?, JOBKIND_SEQ=?, CARRIER_SEQ=?, EXPYEAR=?, CHARGE=?, JOBRANK=?, PREFERENTIAL=?, EDUCATION=?, SALARYTYPE=?, SALARY=?,
+                    WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, PROBATIONTERM=?, WORKSHIFT=?, WORKSHIFTTIME=?, WORKREGION_SEQ=?, GENDER=?, AGE=?, STARTDATE=?, ENDATE=?, HIRINGSTEP=?, REQUIREDOCS=?, MODIFIED=CURRENT_TIMESTAMP()
                 WHERE 
                     SEQ=?`, 
                 [
-                    subject, HRONname, HROContact, jobKind_Seq, carrer_Seq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-                    workingType_Seq, probationTerm, workShift, worshiftTime, workRegion_Seq, gender, age, startDate, endDate, hiringStep, requireDocs, 
+                    subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+                    workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs, 
                     seq
                 ]);
             return seq;
@@ -63,8 +63,8 @@ module.exports = class jobOpeningModel {
                     HROCONTACT, 
                     JOBKIND_SEQ,
                     JOBKIND_NAME,
-                    CARRER_SEQ, 
-                    CR.NAME AS CARRER_NAME, 
+                    CARRIER_SEQ, 
+                    CR.NAME AS CARRIER_NAME, 
                     EXPYEAR, 
                     CHARGE, 
                     JOBRANK, 
@@ -72,7 +72,8 @@ module.exports = class jobOpeningModel {
                     EDUCATION, 
                     SALARYTYPE, 
                     SALARY,
-                    WORKINGTYPE_SEQ, 
+                    WORKINGTYPE_SEQS, 
+                    WORKINGTYPE_NAMES, 
                     WT.NAME AS WORKINGTYPE_NAME,
                     PROBATIONTERM, 
                     WORKSHIFT, 
@@ -90,7 +91,7 @@ module.exports = class jobOpeningModel {
                     MODIFIED
                 FROM 
                     MART_RECRUIT.JOBOPENING JO
-                    INNER JOIN MART_RECRUIT.CARRER CR ON CR.SEQ = JO.CARRER_SEQ
+                    INNER JOIN MART_RECRUIT.CARRIER CR ON CR.SEQ = JO.CARRIER_SEQ
                     INNER JOIN MART_RECRUIT.WORKINGTYPE WT ON WT.SEQ = JO.WORKINGTYPE_SEQ
                     INNER JOIN (
                         SELECT JOBOPENING_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
@@ -124,8 +125,10 @@ module.exports = class jobOpeningModel {
             const sql = `
                 SELECT
                     JO.*,
-                    JOR.*,
-                    JOK.*
+                    JOK.JOBKIND_SEQ,
+                    JOK.JOBKIND_NAME,
+                    JOR.WORKREGION_SEQ,
+                    JOR.WORKREGION_NAME
                 FROM (
                     SELECT 
                         DISTINCT
@@ -134,7 +137,7 @@ module.exports = class jobOpeningModel {
                         SUBJECT, 
                         HRONAME, 
                         HROCONTACT, 
-                        CARRER_SEQ, 
+                        CARRIER_SEQ, 
                         CR.NAME AS CARRER_NAME, 
                         EXPYEAR, 
                         CHARGE, 
@@ -143,7 +146,8 @@ module.exports = class jobOpeningModel {
                         EDUCATION, 
                         SALARYTYPE, 
                         SALARY,
-                        WORKINGTYPE_SEQ, 
+                        WORKINGTYPE_SEQS, 
+                        WORKINGTYPE_NAMES, 
                         WT.NAME AS WORKINGTYPE_NAME,
                         PROBATIONTERM, 
                         WORKSHIFT, 
@@ -159,7 +163,7 @@ module.exports = class jobOpeningModel {
                         MODIFIED
                     FROM 
                         MART_RECRUIT.JOBOPENING JO
-                        INNER JOIN MART_RECRUIT.CARRER CR ON CR.SEQ = JO.CARRER_SEQ
+                        INNER JOIN MART_RECRUIT.CARRIER CR ON CR.SEQ = JO.CARRIER_SEQ
                         INNER JOIN MART_RECRUIT.WORKINGTYPE WT ON WT.SEQ = JO.WORKINGTYPE_SEQ
                         INNER JOIN JOBOPENING_REGION JOR ON JOR.JOBOPENING_SEQ = JO.SEQ
                         INNER JOIN JOBOPENING_JOBKIND JOK ON JOK.JOBOPENING_SEQ = JO.SEQ

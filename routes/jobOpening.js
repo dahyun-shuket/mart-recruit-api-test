@@ -3,9 +3,9 @@ var router = express.Router();
 
 const { create, update, remove, get, list, updateJobKind, updateWorkingRegion } = require('../app/controllers/jobOpening.js');
 
-router.get('/create', create);
+router.post('/create', create);
 
-router.get('/update', update);
+router.post('/update', update);
 
 router.get('/remove', remove);
 

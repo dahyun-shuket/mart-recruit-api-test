@@ -2,12 +2,12 @@ const logger = require('../config/logger.js');
 var jobOpeningModel = require("../models/jobOpening");
 
 module.exports = class jobOpeningService {
-    static create(martSeq, subject, HRONname, HROContact, jobKind_Seq, carrer_Seq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-        workingType_Seq, probationTerm, workShift, worshiftTime, workRegion_Seq, gender, age, startDate, endDate, hiringStep, requireDocs) {
+    static create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+        workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
         return new Promise(function(resolve, reject) {
             try {
-                let newId = jobOpeningModel.create(martSeq, subject, HRONname, HROContact, jobKind_Seq, carrer_Seq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-                    workingType_Seq, probationTerm, workShift, worshiftTime, workRegion_Seq, gender, age, startDate, endDate, hiringStep, requireDocs);
+                let newId = jobOpeningModel.create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+                    workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs);
     
                 resolve(newId);
             } catch (error) {
@@ -15,12 +15,12 @@ module.exports = class jobOpeningService {
             }
         })
     }
-    static update(seq, subject, HRONname, HROContact, jobKind_Seq, carrer_Seq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-        workingType_Seq, probationTerm, workShift, worshiftTime, workRegion_Seq, gender, age, startDate, endDate, hiringStep, requireDocs) {
+    static update(seq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+        workingType_Seq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = jobOpeningModel.update(seq, subject, HRONname, HROContact, jobKind_Seq, carrer_Seq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-                    workingType_Seq, probationTerm, workShift, worshiftTime, workRegion_Seq, gender, age, startDate, endDate, hiringStep, requireDocs);
+                let result = jobOpeningModel.update(seq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+                    workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs);
     
                 resolve(result);
             } catch (error) {
@@ -46,7 +46,7 @@ module.exports = class jobOpeningService {
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/jobOpeningService/remove: ${error}`);           
+                logger.writeLog('error', `services/jobOpeningService/get: ${error}`);           
             }
         })
     }
@@ -84,4 +84,5 @@ module.exports = class jobOpeningService {
             }
         })
     }
+    
 }

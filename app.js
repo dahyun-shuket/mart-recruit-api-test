@@ -29,8 +29,9 @@ app.use('/api/jobkind', require('./routes/jobKind'));
 app.use('/api/notice', require('./routes/notice'));
 app.use('/api/workingType', require('./routes/workingType'));
 app.use('/api/workingRegion', require('./routes/workingRegion'));
-app.use('/api/jobOpening', require('./routes/jobOpening'));
 app.use('/api/mart', require('./routes/mart'));
+app.use('/api/jobOpening', require('./routes/jobOpening'));
+app.use('/api/resume', require('./routes/resume'));
 
 app.use(
   morgan('combined', 
