@@ -1,4 +1,4 @@
-var userModel = require("../models/userModel");
+var userModel = require("../models/users");
 
 module.exports = class userService {
     static create(body) {

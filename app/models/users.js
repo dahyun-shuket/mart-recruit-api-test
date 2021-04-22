@@ -1,4 +1,4 @@
-const pool = require("../../app/config/database_dev");
+const pool = require("../config/database_dev");
 
 module.exports = class userModel {
     // 유저 생성

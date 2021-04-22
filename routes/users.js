@@ -1,7 +1,7 @@
 //user_router.js
 const router = require("express").Router();
-const { tokenVerify } = require("../app/auth/token_validation");
-const { create, login, getUser, getUserByUserID, updateUser } = require("../app/controllers/userController");
+const { tokenVerify } = require("../app/services/auth");
+const { create, login, getUser, getUserByUserID, updateUser } = require("../app/controllers/users");
 
 router.post("/", create);
 router.get("/", tokenVerify, getUser);

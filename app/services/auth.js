@@ -18,7 +18,7 @@ module.exports = {
                     });
                 } else {
                     req.decoded = decoded;
-                    console.log("토큰체크 완료.")
+                    console.log("토큰체크 완료.");
                     next();
                 }
             });
