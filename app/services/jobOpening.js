@@ -50,11 +50,11 @@ module.exports = class jobOpeningService {
             }
         })
     }
-    static list(martSeq, regions, jobKinds, page, rowcount) {
+    static list(martSeq, regions, jobKinds, page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {
-                var offset = (page - 1) * rowcount;
-                let result = jobOpeningModel.list(martSeq, regions, jobKinds, rowcount, offset);
+                var offset = (page - 1) * rowCount;
+                let result = jobOpeningModel.list(martSeq, regions, jobKinds, rowCount, offset);
     
                 resolve(result);
             } catch (error) {
