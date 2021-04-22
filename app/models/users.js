@@ -1,4 +1,4 @@
-const pool = require("../config/database_dev");
+const pool = (process.env.NODE_ENV == "production") ? require("../config/database") : require("../config/database_dev");
 
 module.exports = class userModel {
     // 유저 생성
