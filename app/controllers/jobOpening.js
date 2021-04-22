@@ -142,8 +142,45 @@ module.exports = {
             result: 'success',
             data: list
         });    
-    }
+    },
 
+    async updateJobKind(req, res, next) {
+        const jobOpeningSeq = req.query.seq;
+        const jobKinds = req.query.jobKinds;
+
+        const result = await jobOpeningService.updateJobKind(jobOpeningSeq, jobKinds);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: list
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
+    },
+
+    async updateWorkingRegion(req, res, next) {
+        const jobOpeningSeq = req.query.seq;
+        const workingRegions = req.query.regions;
+
+        const result = await jobOpeningService.updateWorkingRegion(jobOpeningSeq, workingRegions);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: list
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
+    }
 
 }
 

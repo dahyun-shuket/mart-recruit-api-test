@@ -62,6 +62,26 @@ module.exports = class jobOpeningService {
             }
         })
     }
+    static updateJobKind(jobOpeningSeq, jobKinds) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = jobOpeningModel.updateJobKind(jobOpeningSeq, jobKinds);
     
-
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/jobOpeningService/addJobKind: ${error}`);           
+            }
+        })
+    }
+    static updateWorkingRegion(jobOpeningSeq, workingRegions) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = jobOpeningModel.updateWorkingRegion(jobOpeningSeq, workingRegions);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/jobOpeningService/addWorkingRegion: ${error}`);           
+            }
+        })
+    }
 }

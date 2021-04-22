@@ -30,6 +30,7 @@ app.use('/api/notice', require('./routes/notice'));
 app.use('/api/workingType', require('./routes/workingType'));
 app.use('/api/workingRegion', require('./routes/workingRegion'));
 app.use('/api/jobOpening', require('./routes/jobOpening'));
+app.use('/api/mart', require('./routes/mart'));
 
 app.use(
   morgan('combined', 

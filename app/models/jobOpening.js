@@ -190,5 +190,59 @@ module.exports = class jobOpeningModel {
             return null;
         }
     }
+
+    //jobkinds 값이 문자열로 1,2 형태라고 정의
+    static async updateJobKind(jobOpeningSeq, jobKinds) {
+        const connection = await pool.getConnection(async conn => conn);
+        try 
+        {
+            await connection.beginTransaction();    // transaction
+            //먼저 싹 지운다
+            await connection.query(`DELETE FROM JOBOPENING_JOBKIND WHERE JOBOPENING_SEQ=?`, [jobOpeningSeq]);
+            //새 레코드를 추가한다
+            await connection.query(`
+                INSERT INTO JOBOPENING_JOBKIND (JOBOPENING_SEQ, JOBKIND_SEQ, JOBKIND_NAME)
+                SELECT ${jobOpeningSeq}, SEQ, NAME FROM JOBKIND WHERE SEQ IN (${jobKinds})`);
+
+            await connection.commit(); // commit
+            connection.release();
+            logger.writeLog('info', `models/jobOpeningModel.addJobKind: ${jobOpeningSeq} 공고에 ${jobKinds} 직종이 연결되었습니다.`);           
+
+            return jobOpeningSeq;
+        } catch (error) {
+            await connection.rollback();    // rollback
+            connection.release();
+
+            logger.writeLog('error', `models/jobOpeningModel.addJobKind: ${error}`);           
+            return null;
+        }
+    }
+    
+    //workingRegions 값이 문자열로 1,2 형태라고 정의
+    static async updateWorkingRegion(jobOpeningSeq, workingRegions) {
+        const connection = await pool.getConnection(async conn => conn);
+        try 
+        {
+            await connection.beginTransaction();    // transaction
+            //먼저 싹 지운다
+            await connection.query(`DELETE FROM JOBOPENING_REGION WHERE JOBOPENING_SEQ=?`, [jobOpeningSeq]);
+            //새 레코드를 추가한다
+            await connection.query(`
+                INSERT INTO JOBOPENING_REGION (JOBOPENING_SEQ, WORKREGION_SEQ, WORKREGION_NAME)
+                SELECT ${jobOpeningSeq}, SEQ, NAME FROM WORKREGION WHERE SEQ IN (${workingRegions})`);
+
+            await connection.commit(); // commit
+            connection.release();
+            logger.writeLog('info', `models/jobOpeningModel.addWorkingRegion: ${jobOpeningSeq} 공고에 ${jobKinds} 지역이 연결되었습니다.`);           
+
+            return jobOpeningSeq;
+        } catch (error) {
+            await connection.rollback();    // rollback
+            connection.release();
+
+            logger.writeLog('error', `models/jobOpeningModel.addWorkingRegion: ${error}`);           
+            return null;
+        }
+    }
 };
 
