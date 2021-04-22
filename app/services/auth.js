@@ -4,12 +4,10 @@ const secretKey = require('../config/secretKey').secretKey;
 module.exports = {
     tokenVerify: (req, res, next) => {
         // 헤더에서 가져온 토큰
-
         let token = req.get("Authorization");
         console.log(token)
 
         if (token) {
-            // token = token.slice(7);
             jwt.verify(token, secretKey, (err, decoded) => {
                 if (err) {
                     return res.json({

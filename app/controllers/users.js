@@ -3,8 +3,6 @@ const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const secretKey = require("../config/secretKey").secretKey;
 const options = require("../config/secretKey").options;
-// const got = require('got');
-// const createTokenService = require('../services/getToken.js');
 
 module.exports = {
     async create(req, res, next) {
@@ -15,13 +13,11 @@ module.exports = {
             body.password = hashSync(body.password, salt);
             let createUser = await create(body);
             console.log(createUser);
-
-            // return
+            
             res.json({
                 result: "success",
                 data: createUser
             });
-            // res.redirect("http://localhost:8081/login");
         } catch (error) {
             return res.json({
                 result: "fail",
@@ -30,7 +26,6 @@ module.exports = {
         }
     },
     async login(req, res, next) {
-        // try {
             const body = req.body;
             console.log(body)
             let bodyst = JSON.stringify(body);
@@ -50,7 +45,6 @@ module.exports = {
             if (result) {
                 // 토큰 생성
                 results.password = undefined;
-                // let tokken = await createTokenService.getToken({ result: results });
                 let accessToken = sign({ result: results }, secretKey, options);
                 console.log("Access Token ? ? : " + accessToken);
                 console.log("result ? ? ? ? :  " + result)
@@ -59,17 +53,12 @@ module.exports = {
                     data: results,
                     token: accessToken
                 });
-                // res.cookie("user", accessToken, { httpOnly: true, maxAge: 24 * 60 * 60 * 1000 });
-                // res.redirect("http://localhost:8081/user");
             } else {
                 return res.json({
                     result: "fail",
                     data: "Invalid ID or Password",
                 });
             }
-        // } catch (error) {
-        //     console.log("로그인 컨트롤러 에러 ! ! ! ");
-        // }
     },
     async getUser(req, res) {
         const getUsers = await getUser();

@@ -5,33 +5,11 @@ module.exports = class userModel {
     static async create(data) {
         console.log("유저생성 모델 들어옴");
         try {
-            // console.log(data);
             const [rows, fileds] = await pool.query(`insert into USERS(LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [data.user_id, data.password, data.user_type, data.active]);
-            // console.log("rows ? ? ? " + rows);
-            // console.log("rows[0] ? ? ?" + rows[0]);
+            console.log("rows ? ? ? " + rows);
             return rows;
         } catch (error) {
             console.log("createUser model Error ! : " + error);
-        }
-    }
-    // 유저 조회
-    static async getUser() {
-        try {
-            console.log("유저조회 모델 들어옴");
-            const [rows, fields] = await pool.query(`select * from USERS`, []);
-            return rows;
-        } catch (error) {
-            console.log("login model Error ! : " + error);
-        }
-    }
-    // 유저 한명 조회
-    static async getUserByUserID(seq) {
-        console.log("유저한명조회 모델 들어옴");
-        try {
-            const [rows, fields] = await pool.query(`select * from USERS WHERE SEQ`, [seq]);
-            return rows[0];
-        } catch (error) {
-            console.log("login model Error ! : " + error);
         }
     }
     // 유저 로그인
@@ -87,6 +65,62 @@ module.exports = class userModel {
             // return rows;
         } catch (error) {
             console.log("userUpdate model Error ! : " + error);
+        }
+    }
+    // 유저 전체 조회
+    static async getUser() {
+        try {
+            console.log("유저조회 모델 들어옴");
+            const [rows, fields] = await pool.query(`select * from USERS`, []);
+            return rows;
+        } catch (error) {
+            console.log("login model Error ! : " + error);
+        }
+    }
+    // 유저 한명 조회
+    static async getUserByUserID(seq) {
+        console.log("유저한명조회 모델 들어옴");
+        try {
+            const [rows, fields] = await pool.query(`select * from USERS WHERE SEQ`, [seq]);
+            return rows[0];
+        } catch (error) {
+            console.log("login model Error ! : " + error);
+        }
+    }
+    // 마트업체 조회
+    static async getMartList(data) {
+        console.log("마트업체 조회 쿼리");
+        try {
+            const [rows, fields] = await pool.query(`select * from USERS where USER_TYPE = M`, []);
+            console.log("rows ? ? ? " + rows);
+
+            return rows;
+        } catch (error) {
+            console.log("getMartList model Error ! : " + error);
+        }
+    }
+    // 구직자 조회
+    static async getUserList(data) {
+        console.log("구직자 조회 쿼리");
+        try {
+            const [rows, fields] = await pool.query(`select * from USERS where USER_TYPE = U`, []);
+            console.log("rows ? ? ? " + rows);
+
+            return rows;
+        } catch (error) {
+            console.log("getUserList model Error ! : " + error);
+        }
+    }
+    // 관리자 조회
+    static async getAdminList(data) {
+        console.log("관리자 조회 쿼리");
+        try {
+            const [rows, fields] = await pool.query(`select * from USERS where USER_TYPE = A`, []);
+            console.log("rows ? ? ? " + rows);
+
+            return rows;
+        } catch (error) {
+            console.log("getAdminList model Error ! : " + error);
         }
     }
 };
