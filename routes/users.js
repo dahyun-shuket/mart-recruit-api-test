@@ -1,10 +1,11 @@
 //user_router.js
 const router = require("express").Router();
 const { tokenVerify } = require("../app/services/auth");
-const { create, login, getUser, getUserByUserID, updateUser, deleteUser, checkid} = require("../app/controllers/users");
+const { create, login, getUser, getUserByUserID, updateUser, deleteUser, checkid, paging} = require("../app/controllers/users");
 
 router.post("/", create);
-router.get("/", tokenVerify, getUser);
+router.get("/",  getUser);
+router.get("/:currentPage",  paging);
 router.post("/login", login);
 router.get("/:id", tokenVerify, getUserByUserID);
 router.patch("/update", tokenVerify, updateUser);

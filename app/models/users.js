@@ -55,7 +55,7 @@ module.exports = class userModel {
             checkUserId.tf = false; // 이 아이디를 사용가능 한가요??
 
             if (rows[0] === undefined) {
-                //중복되는게 없으면 (없으니까 못가져왓겠지)
+                //중복되는게 없으면
                 checkUserId.tf = true; //없음 사용가능
                 return checkUserId; //다시 클라이언트로 보낸다 checkid 객체를
             } else {
@@ -87,6 +87,34 @@ module.exports = class userModel {
             console.log("login model Error ! : " + error);
         }
     }
+        // 페이징
+        static async paging(currentPage, rowPerPage, beginRow) {
+            console.log("페이징 쿼리");
+            try {
+                
+                const [rows, fields] = await pool.query(`select * from USERS ORDER BY SEQ DESC LIMIT ?,?`,[beginRow,rowPerPage]);
+                console.log("rows ? ? ? " + rows);
+    
+                return rows;
+            } catch (error) {
+                console.log("getAdminList model Error ! : " + error);
+            }
+        }
+        
+        // 전체 페이지 갯수
+        static async userCount() {
+            console.log("전체 회원수 쿼리");
+            try {
+                const [rows, fields] = await pool.query('SELECT COUNT(*) AS cnt FROM USERS',[]);
+                console.log("rows ? ? ? " + rows);
+    
+                return rows;
+            } catch (error) {
+                console.log("userCount model Error ! : " + error);
+            }
+        }
+        
+        
     // 마트업체 조회
     static async getMartList(data) {
         console.log("마트업체 조회 쿼리");

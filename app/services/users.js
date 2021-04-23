@@ -17,7 +17,6 @@ module.exports = class userService {
     };
 
     static async login(user_id) {
-        console.log("로그인 서비스 들어옴");
         let login = await userModel.login(user_id);
         return login;
     };
@@ -35,7 +34,7 @@ module.exports = class userService {
     static async update(body){
         return new Promise(function (resolve, reject) {
             try {
-                let update = userModel.userUpdate(body);        
+                let update = userModel.userUpdate(body);
                 resolve(update);
             } catch (error) {
                 reject(error);
@@ -62,5 +61,10 @@ module.exports = class userService {
             }
     })
     };
+    static async paging(currentPage, rowPerPage, beginRow){
+        let paging = await userModel.paging(currentPage, rowPerPage, beginRow);
+        return paging;
+    };
+    
     
 };
