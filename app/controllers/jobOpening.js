@@ -130,14 +130,18 @@ module.exports = {
     // http://localhost:3000/api/jobOpening/list?martSeq=1&regions=1,2
     // http://localhost:3000/api/jobOpening/list?martSeq=1&jobkinds=1,5
     // http://localhost:3000/api/jobOpening/list?regions=1,2&jobkinds=1,5
+    // 지역, 직종으로만 나열
     async list(req, res, next) {
         const martSeq = req.query.martSeq;
         const regions = req.query.regions;
         const jobkinds = req.query.jobkinds;
+        const userSeq = req.query.userSeq;
+        var userOwn = req.query.userOwn;
 
+        if (userSeq) { if (userOwn == undefined) userOwn = 'N'};
         const page = (req.query.page) ? req.query.page : 1;
 
-        const list = await jobOpeningService.list(martSeq, regions, jobkinds, page, rowCount);
+        const list = await jobOpeningService.list(martSeq, userSeq, userOwn, regions, jobkinds, page, rowCount);
 
         res.status(200).json({
             result: 'success',

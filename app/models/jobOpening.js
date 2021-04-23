@@ -77,7 +77,6 @@ module.exports = class jobOpeningModel {
                     SALARY,
                     WORKINGTYPE_SEQS, 
                     WORKINGTYPE_NAMES, 
-                    WT.NAME AS WORKINGTYPE_NAME,
                     PROBATIONTERM, 
                     WORKSHIFT, 
                     WORKSHIFTTIME, 
@@ -95,7 +94,6 @@ module.exports = class jobOpeningModel {
                 FROM 
                     MART_RECRUIT.JOBOPENING JO
                     INNER JOIN MART_RECRUIT.CARRIER CR ON CR.SEQ = JO.CARRIER_SEQ
-                    INNER JOIN MART_RECRUIT.WORKINGTYPE WT ON WT.SEQ = JO.WORKINGTYPE_SEQ
                     INNER JOIN (
                         SELECT JOBOPENING_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
                         FROM JOBOPENING_JOBKIND GROUP BY JOBOPENING_SEQ
@@ -118,11 +116,16 @@ module.exports = class jobOpeningModel {
         }
     }
 
-    //구인 공고 목록
-    //martSeq, regions, jobKinds 값이 하나도 없거나 서로 조합되어도 검색에 적용
-    //regions 값이 문자열로 1,2,6 형태라고 정의
-    //jobkinds 값이 문자열로 1,2 형태라고 정의
-    static async list(martSeq, regions, jobKinds, limit, offset) {
+    // 구인 공고 목록
+    // martSeq, userSeq, userOwn, regions, jobKinds 값이 하나도 없거나 서로 조합되어도 검색에 적용    
+    // regions 값이 문자열로 1,2,6 형태라고 정의
+    // jobkinds 값이 문자열로 1,2 형태라고 정의
+    // martSeq 있으면 해당 마트의 구인 공고 리스트
+    // userSeq 있고 userOwn=Y면 해당 유저의 지원 리스트
+    // userSeq 있고 userOwn=N면 공고 목록에 해당 유저가 지원한 여부가 APPLY로 리턴
+    // userSeq 없으면 지원자가 있으면 APPLY가 Y
+    // userSeq가 없으면 userOwn은 무조건 N 이어야 한다
+    static async list(martSeq, userSeq, userOwn, regions, jobKinds, limit, offset) {
         try 
         {
             //쿼리
@@ -132,7 +135,9 @@ module.exports = class jobOpeningModel {
                     JOK.JOBKIND_SEQ,
                     JOK.JOBKIND_NAME,
                     JOR.WORKREGION_SEQ,
-                    JOR.WORKREGION_NAME
+                    JOR.WORKREGION_NAME,
+                    IF(JORE.USER_SEQ IS NULL, 'N', 'Y') AS APPLY ,
+                    IFNULL(JOREC.COUNT, 0) AS APPLYCOUNT
                 FROM (
                     SELECT 
                         DISTINCT
@@ -142,7 +147,7 @@ module.exports = class jobOpeningModel {
                         HRONAME, 
                         HROCONTACT, 
                         CARRIER_SEQ, 
-                        CR.NAME AS CARRER_NAME, 
+                        CR.NAME AS CARRIER_NAME, 
                         EXPYEAR, 
                         CHARGE, 
                         JOBRANK, 
@@ -152,7 +157,6 @@ module.exports = class jobOpeningModel {
                         SALARY,
                         WORKINGTYPE_SEQS, 
                         WORKINGTYPE_NAMES, 
-                        WT.NAME AS WORKINGTYPE_NAME,
                         PROBATIONTERM, 
                         WORKSHIFT, 
                         WORKSHIFTTIME, 
@@ -168,7 +172,6 @@ module.exports = class jobOpeningModel {
                     FROM 
                         MART_RECRUIT.JOBOPENING JO
                         INNER JOIN MART_RECRUIT.CARRIER CR ON CR.SEQ = JO.CARRIER_SEQ
-                        INNER JOIN MART_RECRUIT.WORKINGTYPE WT ON WT.SEQ = JO.WORKINGTYPE_SEQ
                         INNER JOIN JOBOPENING_REGION JOR ON JOR.JOBOPENING_SEQ = JO.SEQ
                         INNER JOIN JOBOPENING_JOBKIND JOK ON JOK.JOBOPENING_SEQ = JO.SEQ
                     WHERE
@@ -185,7 +188,19 @@ module.exports = class jobOpeningModel {
                         SELECT JOBOPENING_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
                         FROM JOBOPENING_JOBKIND GROUP BY JOBOPENING_SEQ
                     ) JOK ON JOK.JOBOPENING_SEQ = JO.SEQ  
+                    ${(userSeq && userOwn == 'Y') ? 'INNER' : 'LEFT'} JOIN (
+                        SELECT JOBOPENING_SEQ, GROUP_CONCAT(USER_SEQ SEPARATOR ',') AS USER_SEQ, COUNT(SEQ) AS COUNT
+                        FROM JOBOPENING_RESUME 
+                        ${(userSeq) ? 'WHERE USER_SEQ = ' + userSeq : ''}
+                        GROUP BY JOBOPENING_SEQ
+                    ) JORE ON JORE.JOBOPENING_SEQ = JO.SEQ  
+                    LEFT JOIN (
+                        SELECT JOBOPENING_SEQ, COUNT(SEQ) AS COUNT FROM JOBOPENING_RESUME GROUP BY JOBOPENING_SEQ
+                    ) JOREC ON JOREC.JOBOPENING_SEQ = JO.SEQ                      
+                ORDER BY
+                    CREATED DESC, SEQ DESC
                 LIMIT ? OFFSET ?`;
+                // console.log(sql);
             const [rows, fields] = await pool.query(sql, [limit, offset]);
             if (rows.length > 0) 
                 return rows;
