@@ -65,11 +65,23 @@ module.exports = class resumeService {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;
-                let result = resumeModel.list(userSeq, regions, jobKinds, waitCertificate, rowCount, offset);
+                let result = resumeModel.list(userSeq, regions, jobKinds, waitCertificate, NULL, rowCount, offset);
     
                 resolve(result);
             } catch (error) {
                 logger.writeLog('error', `services/resumeService/list: ${error}`);           
+            }
+        })
+    }
+    static listForJobOpening(jobOpeningSeq, page, rowCount) {
+        return new Promise(function(resolve, reject) {
+            try {
+                var offset = (page - 1) * rowCount;
+                let result = resumeModel.list(NULL, NULL, NULL, 'N', jobOpeningSeq, rowCount, offset);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/listForJobOpening: ${error}`);           
             }
         })
     }

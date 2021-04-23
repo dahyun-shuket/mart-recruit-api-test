@@ -1,4 +1,5 @@
 const jobOpeningService = require('../services/jobOpening.js');
+const resumeService = require('../services/resume.js');
 const rowCount = 20;
 
 module.exports = {
@@ -137,6 +138,18 @@ module.exports = {
         const page = (req.query.page) ? req.query.page : 1;
 
         const list = await jobOpeningService.list(martSeq, regions, jobkinds, page, rowCount);
+
+        res.status(200).json({
+            result: 'success',
+            data: list
+        });    
+    },
+
+    async listResume(req, res, next) {
+        const jobOpeningSeq = req.query.jobOpeningSeq;
+        const page = (req.query.page) ? req.query.page : 1;
+
+        const list = await resumeService.listForJobOpening(jobOpeningSeq, page, rowCount);
 
         res.status(200).json({
             result: 'success',

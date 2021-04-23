@@ -80,7 +80,7 @@ module.exports = class resumeModel {
                     ADDRESSEXTRA, 
                     EDUCATION, 
                     EDUCATIONSCHOOL, 
-                    CARRER_SEQ, 
+                    CARRIER_SEQ, 
                     C.NAME AS CARRER_NAME,
                     TECHNICAL, 
                     LICENSE, 
@@ -102,7 +102,7 @@ module.exports = class resumeModel {
                     WORKREGION_NAME
                 FROM
                     RESUME R
-                    INNER JOIN CARRER C ON C.SEQ = R.CARRER_SEQ
+                    INNER JOIN CARRIER C ON C.SEQ = R.CARRIER_SEQ
                     INNER JOIN (
                         SELECT RESUME_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
                         FROM RESUME_JOBKIND GROUP BY RESUME_SEQ
@@ -128,7 +128,7 @@ module.exports = class resumeModel {
     //martSeq, regions, jobKinds 값이 하나도 없거나 서로 조합되어도 검색에 적용
     //regions 값이 문자열로 1,2,6 형태라고 정의
     //jobkinds 값이 문자열로 1,2 형태라고 정의
-    static async list(userSeq, regions, jobKinds, waitCertificate, limit, offset) {
+    static async list(userSeq, regions, jobKinds, waitCertificate, jobOPeningSeq, applyOnly, limit, offset) {
         try 
         {
             //쿼리
@@ -154,7 +154,7 @@ module.exports = class resumeModel {
                         ADDRESSEXTRA, 
                         EDUCATION, 
                         EDUCATIONSCHOOL, 
-                        CARRER_SEQ, 
+                        CARRIER_SEQ, 
                         C.NAME AS CARRER_NAME,
                         TECHNICAL, 
                         LICENSE, 
@@ -172,21 +172,22 @@ module.exports = class resumeModel {
                         MODIFIED
                     FROM 
                         RESUME R
-                        INNER JOIN CARRER C ON C.SEQ = R.CARRER_SEQ
-                        INNER JOIN RESUME_REGION RR ON RR.RESUME_SEQ = R.SEQ
-                        INNER JOIN RESUME_JOBKIND RK ON RK.RESUME_SEQ = R.SEQ
+                        INNER JOIN CARRIER C ON C.SEQ = R.CARRIER_SEQ
+                        LEFT JOIN RESUME_REGION RR ON RR.RESUME_SEQ = R.SEQ
+                        LEFT JOIN RESUME_JOBKIND RK ON RK.RESUME_SEQ = R.SEQ
                     WHERE
                         1 = 1 
-                        ${(waitCertificate = 'Y') ? `CERTIFICATE != 'Y' AND NOT CAREERCERTIFICATE IS NULL` : ''}
+                        ${(jobOPeningSeq) ? 'AND R.SEQ IN (SELECT RESUME_SEQ FROM JOBOPENING_RESUME WHERE JOBOPENING_SEQ = ' + jobOPeningSeq + ')' : ''}
+                        ${(waitCertificate == 'Y') ? `AND CERTIFICATE != 'Y' AND NOT CAREERCERTIFICATE IS NULL` : ''}
                         ${(userSeq) ? 'AND R.USER_SEQ=' + userSeq :''}
                         ${(regions) ? 'AND RR.WORKREGION_SEQ IN (' + regions + ')':''}
                         ${(jobKinds) ? 'AND RK.JOBKIND_SEQ IN (' + jobKinds + ')':''}
                     ) R
-                    INNER JOIN (
+                    LEFT JOIN (
                         SELECT RESUME_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
                         FROM RESUME_JOBKIND GROUP BY RESUME_SEQ
                     ) RK ON RK.RESUME_SEQ = R.SEQ   
-                    INNER JOIN (
+                    LEFT JOIN (
                         SELECT RESUME_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
                         FROM RESUME_REGION GROUP BY RESUME_SEQ
                     ) RR ON RR.RESUME_SEQ = R.SEQ  
