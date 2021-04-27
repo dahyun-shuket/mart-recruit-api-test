@@ -46,11 +46,22 @@ module.exports = class martService {
             }
         })
     }
-    static list(page, rowCount) {
+    static totalCount(searchName) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = martModel.totalCount(searchName);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/martService/totalCount: ${error}`);           
+            }
+        })
+    }
+    static list(searchName, page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;
-                let result = martModel.list(rowcount, offset);
+                let result = martModel.list(searchName, rowCount, offset);
     
                 resolve(result);
             } catch (error) {

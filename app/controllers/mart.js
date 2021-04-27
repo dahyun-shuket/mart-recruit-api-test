@@ -1,5 +1,5 @@
 const martService = require('../services/mart.js');
-const rowCount = 20;
+const defaultRowCount = 20;
 
 module.exports = {
     async create(req, res, next) {
@@ -96,13 +96,18 @@ module.exports = {
     },
 
     async list(req, res, next) {
-        const page = (req.query.page) ? req.query.page : 1;
-
-        const list = await martService.list(page, rowCount);
+        const page = (req.body.page) ? req.body.page : 1;
+        const rowCount = (req.body.rowCount) ? req.body.rowCount : defaultRowCount;
+        
+        const totalCount = await martService.totalCount(req.body.name);
+        const list = await martService.list(req.body.name, page, rowCount);
 
         res.status(200).json({
             result: 'success',
-            data: list
+            data: {
+                totalCount: totalCount,
+                list: list
+            }
         });    
     }
 

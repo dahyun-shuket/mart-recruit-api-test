@@ -65,19 +65,34 @@ module.exports = class martModel {
             return null;
         }
     }
-    static async list(limit, offset) {
+    static async totalCount(name) {
         try 
         {
             //순번에 따라서 리스팅
-            const [rows, fields] = await pool.query(`SELECT 
+            var query = `SELECT COUNT(SEQ) AS TOTALCOUNT FROM MART WHERE ACTIVE='Y' ${(name && name != '') ? 'AND NAME LIKE \'%' + name + '%\'' : ''} `;
+            const [rows, fields] = await pool.query(query);
+
+            return rows[0].TOTALCOUNT;
+        } catch (error) {
+            logger.writeLog('error', `models/martModel.totalCount: ${error}`);           
+            return 0;
+        }
+    }
+    static async list(name, limit, offset) {
+        try 
+        {
+            //순번에 따라서 리스팅
+            var query = `SELECT 
                     SEQ, USER_SEQ, NAME, LOGOFILE, REGNO, POSTCODE, ADDRESS, ADDRESSEXTRA, CONTACT, HRONAME, HROCONTACT, HRORANK, ACTIVE, CREATED, MODIFIED
                 FROM 
                     MART 
                 WHERE 
                     ACTIVE='Y'
+                    ${(name && name != '') ? 'AND NAME LIKE \'%' + name + '%\'' : ''}  
                 ORDER BY 
                     NAME
-                LIMIT ?, ?`, [limit, offset]);
+                LIMIT ? OFFSET ?`;
+            const [rows, fields] = await pool.query(query, [limit, offset]);
             if (rows.length > 0) 
                 return rows;
             else {

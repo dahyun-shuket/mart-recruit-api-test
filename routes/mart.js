@@ -7,10 +7,10 @@ router.post('/create', create);
 
 router.post('/update', update);
 
-router.get('/remove', remove);
+router.post('/remove', remove);
 
-router.get('/get', get);
+router.post('/get', get);
 
-router.get('/list', list);
+router.post('/list', list);
 
 module.exports = router;
