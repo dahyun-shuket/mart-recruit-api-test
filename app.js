@@ -24,6 +24,7 @@ app.use(express.static(path.join(__dirname, 'public')));
 app.use('/assets', express.static(path.join(__dirname, '/assets/')));
 app.use('/', express.static(path.join(__dirname, '/')));
 
+app.use('/api/auth', require('./routes/auth'));
 app.use('/api/users', require('./routes/users'));
 app.use('/api/jobkind', require('./routes/jobKind'));
 app.use('/api/notice', require('./routes/notice'));

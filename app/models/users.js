@@ -79,9 +79,9 @@ module.exports = class userModel {
     }
     // 유저 한명 조회
     static async getUserByUserID(seq) {
-        console.log("유저한명조회 모델 들어옴");
+        console.log("유저한명조회 모델 들어옴" + seq);
         try {
-            const [rows, fields] = await pool.query(`select * from USERS WHERE SEQ`, [seq]);
+            const [rows, fields] = await pool.query(`select * from USERS WHERE SEQ=?`, [seq]);
             return rows[0];
         } catch (error) {
             console.log("login model Error ! : " + error);
