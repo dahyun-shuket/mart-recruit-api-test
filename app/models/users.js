@@ -2,10 +2,10 @@ const pool = process.env.NODE_ENV == "production" ? require("../config/database"
 
 module.exports = class userModel {
     // 유저 생성
-    static async create(data) {
+    static async create(userId, password, userType, active) {
         console.log("유저생성 모델 들어옴");
         try {
-            const [rows, fileds] = await pool.query(`insert into USERS(LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [data.user_id, data.password, data.user_type, data.active]);
+            const [rows, fileds] = await pool.query(`insert into USERS(LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [userId, password, userType, active]);
             console.log("rows ? ? ? " + rows);
             return rows;
         } catch (error) {
@@ -13,10 +13,10 @@ module.exports = class userModel {
         }
     }
     // 유저 로그인
-    static async login(user_id) {
+    static async login(userId) {
         console.log("로그인 모델 들어옴");
         try {
-            const [rows, fields] = await pool.query(`select SEQ, LOGINID, PWD from USERS where LOGINID = ?`, [user_id]);
+            const [rows, fields] = await pool.query(`select SEQ, LOGINID, PWD, USERTYPE from USERS where LOGINID = ?`, [userId]);
             console.log("rows ? ? ? " + rows);
             return rows[0];
         } catch (error) {
@@ -24,10 +24,10 @@ module.exports = class userModel {
         }
     }
     // 유저 업데이트
-    static async userUpdate(data) {
+    static async update(userId, password, userType, active, seq) {
         console.log("업데이트 모델 들어옴");
         try {
-            const [rows, fields] = await pool.query(`update users set LOGINID=?, PWD=?, USERTYPE=?, ACTIVE=? where seq = ?`, [data.user_id, data.password, data.user_type, data.active, data.seq]);
+            const [rows, fields] = await pool.query(`update users set LOGINID=?, PWD=?, USERTYPE=?, ACTIVE=? where seq = ?`, [userId, password, userType, active, seq]);
             console.log("rows ? ? ? " + rows);
             return rows;
         } catch (error) {
@@ -35,10 +35,10 @@ module.exports = class userModel {
         }
     }
     // 유저 삭제
-    static async userDelete(data) {
+    static async remove(seq) {
         console.log("유저삭제 모델 들어옴");
         try {
-            const [rows, fields] = await pool.query(`update users set ACTIVE=N where seq = ?`, [data.seq]);
+            const [rows, fields] = await pool.query(`update users set ACTIVE=N where seq = ?`, [seq]);
             console.log("rows ? ? ? " + rows);
             return rows;
         } catch (error) {
@@ -46,10 +46,10 @@ module.exports = class userModel {
         }
     }
     // 아이디 중복 체크
-    static async userCheckId(data) {
+    static async checkId(userId) {
         console.log("유저 아이디체크 모델 들어옴");
         try {
-            const [rows, fields] = await pool.query(`select LOGINID from USERS where LOGINID = ?`, [data.user_id]);
+            const [rows, fields] = await pool.query(`select LOGINID from USERS where LOGINID = ?`, [userId]);
             console.log("rows ? ? ? " + rows);
             let checkUserId = new Object();
             checkUserId.tf = false; // 이 아이디를 사용가능 한가요??
@@ -68,7 +68,7 @@ module.exports = class userModel {
         }
     }
     // 유저 전체 조회
-    static async getUser() {
+    static async list() {
         try {
             console.log("유저조회 모델 들어옴");
             const [rows, fields] = await pool.query(`select * from USERS`, []);
@@ -78,7 +78,7 @@ module.exports = class userModel {
         }
     }
     // 유저 한명 조회
-    static async getUserByUserID(seq) {
+    static async get(seq) {
         console.log("유저한명조회 모델 들어옴" + seq);
         try {
             const [rows, fields] = await pool.query(`select * from USERS WHERE SEQ=?`, [seq]);
@@ -102,13 +102,10 @@ module.exports = class userModel {
     }
         
     // 전체 페이지 갯수
-    static async userCount() {
+    static async count() {
         console.log("전체 회원수 쿼리");
         try {
             const [rows, fields] = await pool.query('SELECT COUNT(*) AS cnt FROM USERS',[]);
-            // console.log("rows ? ? ? " + rows[0]);
-            // console.log(JSON.stringify(rows));
-
             return rows[0].cnt;
         } catch (error) {
             console.log("userCount model Error ! : " + error);
