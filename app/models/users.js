@@ -79,7 +79,7 @@ module.exports = class userModel {
     }
     // 유저 한명 조회
     static async getUserByUserID(seq) {
-        console.log("유저한명조회 모델 들어옴");
+        console.log("유저한명조회 모델 들어옴" + seq);
         try {
             const [rows, fields] = await pool.query(`select * from USERS WHERE SEQ`, [seq]);
             return rows[0];
@@ -87,33 +87,33 @@ module.exports = class userModel {
             console.log("login model Error ! : " + error);
         }
     }
-        // 페이징
-        static async paging(currentPage, rowPerPage, beginRow) {
-            console.log("페이징 쿼리");
-            try {
-                
-                const [rows, fields] = await pool.query(`select * from USERS ORDER BY SEQ DESC LIMIT ?,?`,[beginRow,rowPerPage]);
-                console.log("rows ? ? ? " + rows);
     
-                return rows;
-            } catch (error) {
-                console.log("getAdminList model Error ! : " + error);
-            }
+    // 페이징
+    static async paging(beginRow, rowPerPage) {
+        console.log("API 페이징 쿼리");
+        try {
+            const [rows, fields] = await pool.query(`select * from USERS ORDER BY SEQ DESC LIMIT ?,?`,[beginRow,rowPerPage]);
+            console.log("rows ? ? ? " + rows);
+
+            return rows;
+        } catch (error) {
+            console.log("API getAdminList model Error ! : " + error);
         }
+    }
         
-        // 전체 페이지 갯수
-        static async userCount() {
-            console.log("전체 회원수 쿼리");
-            try {
-                const [rows, fields] = await pool.query('SELECT COUNT(*) AS cnt FROM USERS',[]);
-                console.log("rows ? ? ? " + rows);
-    
-                return rows;
-            } catch (error) {
-                console.log("userCount model Error ! : " + error);
-            }
+    // 전체 페이지 갯수
+    static async userCount() {
+        console.log("전체 회원수 쿼리");
+        try {
+            const [rows, fields] = await pool.query('SELECT COUNT(*) AS cnt FROM USERS',[]);
+            // console.log("rows ? ? ? " + rows[0]);
+            // console.log(JSON.stringify(rows));
+
+            return rows[0].cnt;
+        } catch (error) {
+            console.log("userCount model Error ! : " + error);
         }
-        
+    }
         
     // 마트업체 조회
     static async getMartList(data) {
