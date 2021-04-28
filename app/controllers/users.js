@@ -3,6 +3,7 @@ const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
 const secretKey = require("../config/secretKey").secretKey;
 const options = require("../config/secretKey").options;
+const defaultRowCount = 20;
 
 module.exports = {
     // 유저 생성
@@ -27,6 +28,7 @@ module.exports = {
             });
         }
     },
+    
     // 로그인
     async login(req, res, next) {
         // const body = req.body;
@@ -57,12 +59,18 @@ module.exports = {
             });
         }
     },
+
     // 유저 전체조회
-    async list(req, res) {
-        const getUsers = await userService.list();
+    async list(req,res, next){
+        const page = (req.body.page) ? req.body.page : 1;
+        const rowCount = (req.body.rowCount) ? req.body.rowCount : defaultRowCount;
+        const totalCount = await userService.count();
+        // const list = await userService.list(req.body.name, page, rowCount);
+        const list = await userService.list(page, rowCount);
         return res.json({
             result: "success",
-            data: getUsers,
+            totalCount : totalCount,
+            data: list,
         });
     },
     // 유저 한명조회
@@ -110,45 +118,5 @@ module.exports = {
             data: checkIdUser,
         });
     },
-    async paging(req, res) {
-        let rowPerPage = 10;    // 페이지당 보여줄 글목록 : 10개
-        let currentPage = 1;    // 기본 페이지값
-        let pnSize = 10;         // 페이지네이션 개수 설정.
-        
-        // 어드민페이지에서 요청한 페이지 (req.params.currentPage) 가 있다면
-        // 기본 페이지를 요청값으로 변경.
-        if(req.params.currentPage){
-            currentPage = Number(req.params.currentPage);  
-        };
-        // 다음 페이지 갈 때 건너뛸 리스트 개수.
-        let beginPage = Number((currentPage - 1) * rowPerPage);
-        let totalCount = await userService.count();
-        console.log("토탈 카운트  ? ? ? : " + totalCount);
-        let totalRow = totalCount
-        // 페이지네이션의 전체 카운트
-        let pnTotal = Math.ceil(totalRow / rowPerPage); 
-        // 토탈셋
-        let totalSet = Math.ceil(pnTotal / pnSize);
-        let curSet = Math.ceil(currentPage / pnSize) // 현재 셋트 번호
-        // 현재 페이지의 페이지네이션 시작 번호.
-        let pnStart = ((curSet - 1) * pnSize) + 1; 
-        // 현재 페이지의 페이지네이션 끝 번호.
-        let pnEnd = (pnStart + pnSize) - 1; 
-        let page = await userService.paging(beginPage, rowPerPage);
-
-        return res.json({
-            result: "success",
-            data: page,                     // 뿌려줄 데이터.(10개.)
-            pnTotal: pnTotal,               // 페이지네이션의 전체 수
-            pnEnd: pnEnd,                   // 페이지네이션 끝번호
-            pnSize: pnSize,                 // 페이지네이션 표시될 갯수
-            pageNum: currentPage,           // 현제 페이지
-            TotalNum : totalRow,            // 전체 회원 수
-            showUser: rowPerPage,           // 보여질 회원의 수 (10)
-            totalSet: totalSet,             
-            curSet : curSet,
-            pntStart : pnStart
-        });
-    }
     
 };

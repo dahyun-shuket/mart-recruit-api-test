@@ -1,3 +1,4 @@
+const logger = require("../config/logger");
 var userModel = require("../models/users");
 
 module.exports = class userService {
@@ -8,7 +9,7 @@ module.exports = class userService {
                 resolve(createUser);
             } catch (error) {
                 reject(error);
-                logger.writeLog("error", `services/createUserService/post: ${error}`);
+                logger.writeLog("error", `API - services/createUserService/post: ${error}`);
             }
         });
     };
@@ -18,10 +19,27 @@ module.exports = class userService {
         return login;
     };
 
-    static async list() {
-        let list = await userModel.list();
-        return list;
+    // static async list() {
+    //     let list = await userModel.list();
+    //     return list;
+    // };
+    // static async list(searchName, page, rowCount) {
+    static async list(page, rowCount) {
+        console.log("list")
+        return new Promise(function(resolve, reject) {
+            try {
+                var offset = (page - 1) * rowCount;
+                // let list = userModel.list(searchName, rowCount, offset);
+                let list = userModel.list(rowCount, offset);
+                // console.log(list)
+                resolve(list)
+                // return list;
+            } catch(error){
+                logger.writeLog('error', `API - services/userService/list: ${error}`)
+            }
+        })
     };
+    
 
     static async get(seq){
         let get = await userModel.get(seq);
@@ -48,10 +66,10 @@ module.exports = class userService {
             }
     })
     };
-    static async checkId(body){
+    static async checkId(userId){
         return new Promise(function (resolve, reject) {
             try {
-                let checkId = userModel.checkId(body);        
+                let checkId = userModel.checkId(userId);        
                 resolve(checkId);
             } catch (error) {
                 reject(error);
@@ -62,13 +80,14 @@ module.exports = class userService {
         let paging = await userModel.paging(rowPerPage, beginRow);
         return paging;
     };
+    
     static async count(){
         return new Promise(function (resolve, reject) {
             try {
                 let count = userModel.count();
                 resolve(count);
             } catch (error) {
-                reject(error);
+                logger.writeLog('error', `services/userService/count: ${error}`);           
             }
     })
     };
