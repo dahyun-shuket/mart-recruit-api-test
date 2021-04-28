@@ -18,10 +18,25 @@ module.exports = {
         
     },
 
+    // 공지사항 내용 자세히 보기
+    async noticeView(req, res, next) {
+        //const body = req.body;
+        //console.log(req.params.SEQ);
+        const seq = req.params.SEQ;
+        const noticeView = await noticeService.views(seq);
+
+        res.status(200).json({
+            result: 'success',
+            data: noticeView
+        });
+    },
+
     // 공지사항 글을 작성할 때
     async addNoticeCreate(req, res, next) {
-      
-        const addNoticeCreate = await noticeService.create();
+        const body = req.body;
+        console.log(body);
+        console.log("프론트에서 들어온 바디" + JSON.stringify(body));
+        const addNoticeCreate = await noticeService.create(body);
 
         res.status(200).json({
             result: 'success',
@@ -31,18 +46,18 @@ module.exports = {
     },
     // 공지사항 글을 삭제할 때
     async noticeDelete(req, res, next) {
-
-        const noticeDelete = await noticeService.delete(req.params.SEQ);
-
+        const body = req.params.SEQ;
+        const noticeDelete = await noticeService.remove(body);
+        
         res.status(200).json({
             result: 'success',
             data: noticeDelete
         })
         
     },
-
-    async noticeUpdate(req, res) {
-        let body = req.body;
+    // 공지사항 글을 수정할때
+    async noticeUpdate(req, res, next) {
+        const body = req.body;
         console.log(JSON.stringify(body));
         console.log("body ? ? ? :  " + body);
         const noticeUpdate = await noticeService.update(body);
