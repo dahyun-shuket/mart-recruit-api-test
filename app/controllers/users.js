@@ -45,7 +45,7 @@ module.exports = {
         if (result) {
             // 토큰 생성
             results.password = undefined;
-            let accessToken = sign({ result: results }, secretKey, options);
+            let accessToken = sign({ result: [results.SEQ, results.LOGINID] }, secretKey, options);
             console.log("Access Token ? ? : " + accessToken);
             return res.json({
                 result: "success",
@@ -67,6 +67,7 @@ module.exports = {
         const totalCount = await userService.count();
         // const list = await userService.list(req.body.name, page, rowCount);
         const list = await userService.list(page, rowCount);
+        // console.log(list);
         return res.json({
             result: "success",
             totalCount : totalCount,
@@ -101,6 +102,7 @@ module.exports = {
     // 유저 삭제
     async remove(req, res) {
         let seq = req.body.seq
+        console.log(seq)
         let removeUser = await userService.remove(seq);
         console.log(removeUser);
         return res.json({
