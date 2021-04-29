@@ -9,10 +9,11 @@ module.exports = {
     // 유저 생성
     async create(req, res, next) {
         try {
-            let userId = req.body.userId
+            let userId = req.body.userid
             let password = req.body.password
-            let userType = req.body.userType
+            let userType = req.body.usertype
             let active = req.body.active
+            
             let salt = genSaltSync(10);
             password = hashSync(password, salt);
             let createUser = await userService.create(userId, password, userType, active);
@@ -28,10 +29,9 @@ module.exports = {
             });
         }
     },
-    
+
     // 로그인
     async login(req, res, next) {
-        // const body = req.body;
         let userId = req.body.userId
         let password = req.body.password
         let results = await userService.login(userId);

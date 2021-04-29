@@ -17,7 +17,7 @@ module.exports = {
                     });
                 } else {
                     logger.writeLog('info', `controller/isAuthorized: 토큰체크 완료`);
-
+                    
                     res.json({
                         result: "success",
                         data: decoded.result
