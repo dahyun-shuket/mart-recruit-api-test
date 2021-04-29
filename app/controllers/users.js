@@ -49,7 +49,7 @@ module.exports = {
         if (result) {
             // 토큰 생성
             results.password = undefined;
-            let accessToken = sign({ result: results }, secretKey, options);
+            let accessToken = sign({ result: [results.SEQ,results.LOGINID] }, secretKey, options);
             // console.log("Access Token ? ? : " + accessToken);
             logger.writeLog('info', `controller/login: 로그인 성공 ${userId} / ${accessToken}`);
 
