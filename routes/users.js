@@ -5,10 +5,10 @@ const { create, login, list, get, update, remove, checkid, paging} = require("..
 
 router.post("/login", login);
 // router.get("/list",  tokenVerify, list);
-router.post("/list", list);
-router.get("list/:id", tokenVerify, get);
+router.post("/list",tokenVerify,  list);
+router.get("/list/:id", tokenVerify, get);
 router.post("/create", create);
 router.patch("/update", tokenVerify, update);
-router.patch("/delete", tokenVerify, remove);
+router.patch("/remove/:seq", tokenVerify, remove);
 router.post("/checkid", checkid);
 module.exports = router;

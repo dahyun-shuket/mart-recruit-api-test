@@ -22,7 +22,7 @@ module.exports = class userModel {
     // 유저 업데이트
     static async update(userId, password, userType, active, seq) {
         try {
-            const [rows, fields] = await pool.query(`update users set LOGINID=?, PWD=?, USERTYPE=?, ACTIVE=? where seq = ?`, [userId, password, userType, active, seq]);
+            const [rows, fields] = await pool.query(`update USERS set LOGINID=?, PWD=?, USERTYPE=?, ACTIVE=? where seq = ?`, [userId, password, userType, active, seq]);
 
             return rows;
         } catch (error) {
@@ -32,7 +32,8 @@ module.exports = class userModel {
     // 유저 삭제
     static async remove(seq) {
         try {
-            const [rows, fields] = await pool.query(`update users set ACTIVE=N where seq = ?`, [seq]);
+            const [rows, fields] = await pool.query(`UPDATE USERS set ACTIVE="N" where seq = ?`, [seq]);
+            console.log("엑티브 변경 완료");
             return rows;
         } catch (error) {
             console.log("userRemove model Error ! : " + error);

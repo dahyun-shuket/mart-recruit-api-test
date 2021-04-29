@@ -25,7 +25,6 @@ module.exports = class userService {
     // };
     // static async list(searchName, page, rowCount) {
     static async list(page, rowCount) {
-        console.log("list")
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;

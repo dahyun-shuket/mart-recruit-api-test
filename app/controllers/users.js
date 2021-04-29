@@ -1,3 +1,4 @@
+const logger = require('../config/logger.js');
 const userService = require("../services/users");
 const { genSaltSync, hashSync, compareSync } = require("bcrypt");
 const { sign } = require("jsonwebtoken");
@@ -36,26 +37,32 @@ module.exports = {
         let password = req.body.password
         let results = await userService.login(userId);
         if (!results) {
+            // 로그인이 실패했다
+            logger.writeLog('info', `controller/login: 로그인 실패 (아이디 찾을 수 없음) ${userId} / ${password}`);
             return res.json({
                 result: "fail",
                 data: "Invalid ID or Password",
             });
         }
+        // 암호화된 암호를 비교
         const result = compareSync(password, results.PWD);
         if (result) {
             // 토큰 생성
             results.password = undefined;
-            let accessToken = sign({ result: [results.SEQ, results.LOGINID] }, secretKey, options);
-            console.log("Access Token ? ? : " + accessToken);
+            let accessToken = sign({ result: results }, secretKey, options);
+            // console.log("Access Token ? ? : " + accessToken);
+            logger.writeLog('info', `controller/login: 로그인 성공 ${userId} / ${accessToken}`);
+
             return res.json({
                 result: "success",
                 data: results,
                 token: accessToken,
             });
         } else {
+            logger.writeLog('info', `controller/login: 로그인 실패 (암호 매칭 실패) ${userId} / ${password}`);
             return res.json({
                 result: "fail",
-                data: "Invalid ID or Password",
+                data: "Invalid Password",
             });
         }
     },
