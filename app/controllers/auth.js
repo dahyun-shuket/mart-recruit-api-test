@@ -1,11 +1,12 @@
 const logger = require('../config/logger.js');
 const jwt = require("jsonwebtoken");
-const secretKey = require('../config/secretKey').secretKey;
-const userService = require("../services/users");
+// const secretKey = require('../config/secretKey').secretKey;
+// const userService = require("../services/users");
 
 module.exports = {
     async isAuthorized(req, res, next) {
-        const token = req.headers['Authorization'] || req.query.token;
+        const token = req.headers['authorization'] || req.query.token;
+        const secretKey = req.body.secretKey || req.query.secretKey;
 
         if (token) {
             jwt.verify(token, secretKey, (err, decoded) => {

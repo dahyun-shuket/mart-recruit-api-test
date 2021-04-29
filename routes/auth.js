@@ -3,6 +3,6 @@ var router = express.Router();
 
 const { isAuthorized } = require('../app/controllers/auth.js');
 
-router.get('/', isAuthorized);
+router.post('/', isAuthorized);
 
 module.exports = router;
