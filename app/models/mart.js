@@ -18,15 +18,15 @@ module.exports = class martModel {
             return null;
         }
     }
-    static async update(seq, name, logoFile, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank) {
+    static async update(seq, name, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank) {
         try 
         {
             await pool.query(`UPDATE MART SET 
-                    NAME=?, LOGOFILE=?, REGNO=?, POSTCODE=?, ADDRESS=?, ADDRESSEXTRA=?, CONTACT=?, HRONAME=?, HROCONTACT=?, HRORANK=?, MODIFIED=CURRENT_TIMESTAMP()
+                    NAME=?, REGNO=?, POSTCODE=?, ADDRESS=?, ADDRESSEXTRA=?, CONTACT=?, HRONAME=?, HROCONTACT=?, HRORANK=?, MODIFIED=CURRENT_TIMESTAMP()
                 WHERE 
                     SEQ=?`, 
                 [
-                    name, logoFile, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank, seq
+                    name, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank, seq
                 ]);
             return seq;
         } catch (error) {
@@ -35,11 +35,23 @@ module.exports = class martModel {
         }
     }
     static async remove(seq) {
+        const connection = await pool.getConnection(async conn => conn);
         try 
         {
+            await connection.beginTransaction();    // transaction
+
             await pool.query(`UPDATE MART SET ACTIVE='N' WHERE SEQ=?`, [seq]);
+            await connection.query(`UPDATE MART_RECRUIT.USERS SET ACTIVE='N' WHERE SEQ = (SELECT USER_SEQ FROM MART WHERE SEQ = ?);`, [seq]);
+
+            await connection.commit(); // commit
+            connection.release();
+
+            logger.writeLog('info', `models/martModel.remove: ${seq} 마트가 불활성화되었습니다.`);           
             return seq;
         } catch (error) {
+            await connection.rollback();    // rollback
+            connection.release();
+
             //에러면 0 리턴
             logger.writeLog('error', `models/martModel.remove: ${error}`);           
             return 0;
@@ -69,7 +81,7 @@ module.exports = class martModel {
         try 
         {
             //순번에 따라서 리스팅
-            var query = `SELECT COUNT(SEQ) AS TOTALCOUNT FROM MART WHERE ACTIVE='Y' ${(name && name != '') ? 'AND NAME LIKE \'%' + name + '%\'' : ''} `;
+            const query = `SELECT COUNT(SEQ) AS TOTALCOUNT FROM MART WHERE ACTIVE='Y' ${(name && name != '') ? 'AND NAME LIKE \'%' + name + '%\'' : ''} `;
             const [rows, fields] = await pool.query(query);
 
             return rows[0].TOTALCOUNT;
@@ -82,7 +94,7 @@ module.exports = class martModel {
         try 
         {
             //순번에 따라서 리스팅
-            var query = `SELECT 
+            const query = `SELECT 
                     SEQ, USER_SEQ, NAME, LOGOFILE, REGNO, POSTCODE, ADDRESS, ADDRESSEXTRA, CONTACT, HRONAME, HROCONTACT, HRORANK, ACTIVE, CREATED, MODIFIED
                 FROM 
                     MART 
@@ -92,6 +104,7 @@ module.exports = class martModel {
                 ORDER BY 
                     NAME
                 LIMIT ? OFFSET ?`;
+                console.log(query);
             const [rows, fields] = await pool.query(query, [limit, offset]);
             if (rows.length > 0) 
                 return rows;

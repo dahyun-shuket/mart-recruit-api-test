@@ -13,10 +13,10 @@ module.exports = class martService {
             }
         })
     }
-    static update(seq, name, logoFile, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank) {
+    static update(seq, name, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = martModel.update(seq, name, logoFile, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank);
+                let result = martModel.update(seq, name, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank);
     
                 resolve(result);
             } catch (error) {
@@ -62,7 +62,6 @@ module.exports = class martService {
             try {
                 var offset = (page - 1) * rowCount;
                 let result = martModel.list(searchName, rowCount, offset);
-    
                 resolve(result);
             } catch (error) {
                 logger.writeLog('error', `services/martService/list: ${error}`);           
