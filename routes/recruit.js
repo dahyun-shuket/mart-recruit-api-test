@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { create, update, remove, get, list, updateJobKind, updateWorkingRegion } = require('../app/controllers/jobOpening.js');
+const { create, update, remove, get, list, updateJobKind, updateWorkingRegion } = require('../app/controllers/recruit.js');
 
 router.post('/create', create);
 

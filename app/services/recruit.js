@@ -1,17 +1,17 @@
 const logger = require('../config/logger.js');
-var jobOpeningModel = require("../models/jobOpening");
+var recruitModel = require("../models/recruit");
 
-module.exports = class jobOpeningService {
+module.exports = class recruitService {
     static create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
         workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
         return new Promise(function(resolve, reject) {
             try {
-                let newId = jobOpeningModel.create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+                let newId = recruitModel.create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
                     workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs);
     
                 resolve(newId);
             } catch (error) {
-                logger.writeLog('error', `services/jobOpeningService/create: ${error}`);           
+                logger.writeLog('error', `services/recruitService/create: ${error}`);           
             }
         })
     }
@@ -19,34 +19,34 @@ module.exports = class jobOpeningService {
         workingType_Seq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = jobOpeningModel.update(seq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+                let result = recruitModel.update(seq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
                     workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs);
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/jobOpeningService/update: ${error}`);           
+                logger.writeLog('error', `services/recruitService/update: ${error}`);           
             }
         })
     }
     static remove(seq) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = jobOpeningModel.remove(seq);
+                let result = recruitModel.remove(seq);
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/jobOpeningService/remove: ${error}`);           
+                logger.writeLog('error', `services/recruitService/remove: ${error}`);           
             }
         })
     }
     static get(seq) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = jobOpeningModel.get(seq);
+                let result = recruitModel.get(seq);
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/jobOpeningService/get: ${error}`);           
+                logger.writeLog('error', `services/recruitService/get: ${error}`);           
             }
         })
     }
@@ -54,33 +54,33 @@ module.exports = class jobOpeningService {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;
-                let result = jobOpeningModel.list(martSeq, userSeq, userOwn, regions, jobKinds, rowCount, offset);
+                let result = recruitModel.list(martSeq, userSeq, userOwn, regions, jobKinds, rowCount, offset);
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/jobOpeningService/list: ${error}`);           
+                logger.writeLog('error', `services/recruitService/list: ${error}`);           
             }
         })
     }
-    static updateJobKind(jobOpeningSeq, jobKinds) {
+    static updateJobKind(recruitSeq, jobKinds) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = jobOpeningModel.updateJobKind(jobOpeningSeq, jobKinds);
+                let result = recruitModel.updateJobKind(recruitSeq, jobKinds);
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/jobOpeningService/addJobKind: ${error}`);           
+                logger.writeLog('error', `services/recruitService/addJobKind: ${error}`);           
             }
         })
     }
-    static updateWorkingRegion(jobOpeningSeq, workingRegions) {
+    static updateWorkingRegion(recruitSeq, workingRegions) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = jobOpeningModel.updateWorkingRegion(jobOpeningSeq, workingRegions);
+                let result = recruitModel.updateWorkingRegion(recruitSeq, workingRegions);
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/jobOpeningService/addWorkingRegion: ${error}`);           
+                logger.writeLog('error', `services/recruitService/addWorkingRegion: ${error}`);           
             }
         })
     }

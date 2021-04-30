@@ -1,12 +1,12 @@
 const logger = require('../config/logger.js');
 const pool = (process.env.NODE_ENV == "production") ? require("../config/database") : require("../config/database_dev");
 
-module.exports = class jobOpeningModel {
+module.exports = class recruitModel {
     static async create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
         workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
         try 
         {
-            const [rows, fields] = await pool.query(`INSERT INTO JOBOPENING (
+            const [rows, fields] = await pool.query(`INSERT INTO RECRUIT (
                 MART_SEQ, SUBJECT, HRONAME, HROCONTACT, JOBKIND_SEQ, CARRIER_SEQ, EXPYEAR, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
                 WORKINGTYPE_SEQS, WORKINGTYPE_NAMESS, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, WORKREGION_SEQ, GENDER, AGE, STARTDATE, ENDATE, HIRINGSTEP, REQUIREDOCS, ACTIVE, CREATED, MODIFIED
                 ) VALUES 
@@ -17,7 +17,7 @@ module.exports = class jobOpeningModel {
                 ]);
             return rows.insertId;
         } catch (error) {
-            logger.writeLog('error', `models/jobOpeningModel.create: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.create: ${error}`);           
             return null;
         }
     }
@@ -26,7 +26,7 @@ module.exports = class jobOpeningModel {
         workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
         try 
         {
-            await pool.query(`UPDATE JOBOPENING SET 
+            await pool.query(`UPDATE RECRUIT SET 
                     SUBJECT=?, HRONAME=?, HROCONTACT=?, JOBKIND_SEQ=?, CARRIER_SEQ=?, EXPYEAR=?, CHARGE=?, JOBRANK=?, PREFERENTIAL=?, EDUCATION=?, SALARYTYPE=?, SALARY=?,
                     WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, PROBATIONTERM=?, WORKSHIFT=?, WORKSHIFTTIME=?, WORKREGION_SEQ=?, GENDER=?, AGE=?, STARTDATE=?, ENDATE=?, HIRINGSTEP=?, REQUIREDOCS=?, MODIFIED=CURRENT_TIMESTAMP()
                 WHERE 
@@ -38,7 +38,7 @@ module.exports = class jobOpeningModel {
                 ]);
             return seq;
         } catch (error) {
-            logger.writeLog('error', `models/jobOpeningModel.update: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.update: ${error}`);           
             return null;
         }
     }
@@ -46,10 +46,10 @@ module.exports = class jobOpeningModel {
     static async remove(seq) {
         try 
         {
-            await pool.query(`UPDATE JOBOPENING SET ACTIVE='N' WHERE SEQ=?`, [seq]);
+            await pool.query(`UPDATE RECRUIT SET ACTIVE='N' WHERE SEQ=?`, [seq]);
             return seq;
         } catch (error) {
-            logger.writeLog('error', `models/jobOpeningModel.remove: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.remove: ${error}`);           
             return null;
         }
     }
@@ -59,7 +59,7 @@ module.exports = class jobOpeningModel {
         {
             //순번에 따라서 리스팅
             const [rows, fields] = await pool.query(`SELECT 
-                    JO.SEQ, 
+                    RC.SEQ, 
                     MART_SEQ,     
                     SUBJECT, 
                     HRONAME, 
@@ -92,26 +92,26 @@ module.exports = class jobOpeningModel {
                     CREATED, 
                     MODIFIED
                 FROM 
-                    MART_RECRUIT.JOBOPENING JO
-                    INNER JOIN MART_RECRUIT.CARRIER CR ON CR.SEQ = JO.CARRIER_SEQ
+                    RECRUIT RC
+                    INNER JOIN CARRIER CR ON CR.SEQ = RC.CARRIER_SEQ
                     INNER JOIN (
-                        SELECT JOBOPENING_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
-                        FROM JOBOPENING_JOBKIND GROUP BY JOBOPENING_SEQ
-                    ) JOK ON JOK.JOBOPENING_SEQ = JO.SEQ                    
+                        SELECT RECRUIT_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
+                        FROM RECRUIT_JOBKIND GROUP BY RECRUIT_SEQ
+                    ) RJ ON RJ.RECRUIT_SEQ = RC.SEQ                    
                     INNER JOIN (
-                        SELECT JOBOPENING_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
-                        FROM JOBOPENING_REGION GROUP BY JOBOPENING_SEQ
-                    ) JOR ON JOR.JOBOPENING_SEQ = JO.SEQ
+                        SELECT RECRUIT_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
+                        FROM RECRUIT_REGION GROUP BY RECRUIT_SEQ
+                    ) RR ON RR.RECRUIT_SEQ = RC.SEQ
                 WHERE
-                    JO.SEQ = ?`, [seq]);
+                    RC.SEQ = ?`, [seq]);
             if (rows.length > 0) 
                 return rows[0];
             else {
-                logger.writeLog('error', `models/jobOpeningModel.get: No data found`);           
+                logger.writeLog('error', `models/recruitModel.get: No data found`);           
                 return null;
             }                
         } catch (error) {
-            logger.writeLog('error', `models/jobOpeningModel.get: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.get: ${error}`);           
             return null;
         }
     }
@@ -170,10 +170,10 @@ module.exports = class jobOpeningModel {
                         CREATED, 
                         MODIFIED
                     FROM 
-                        MART_RECRUIT.JOBOPENING JO
+                        MART_RECRUIT.RECRUIT JO
                         INNER JOIN MART_RECRUIT.CARRIER CR ON CR.SEQ = JO.CARRIER_SEQ
-                        INNER JOIN JOBOPENING_REGION JOR ON JOR.JOBOPENING_SEQ = JO.SEQ
-                        INNER JOIN JOBOPENING_JOBKIND JOK ON JOK.JOBOPENING_SEQ = JO.SEQ
+                        INNER JOIN RECRUIT_REGION JOR ON JOR.RECRUIT_SEQ = JO.SEQ
+                        INNER JOIN RECRUIT_JOBKIND JOK ON JOK.RECRUIT_SEQ = JO.SEQ
                     WHERE
                         1 = 1 
                         ${(martSeq) ? 'AND JO.MART_SEQ=' + martSeq :''}
@@ -181,22 +181,22 @@ module.exports = class jobOpeningModel {
                         ${(jobKinds) ? 'AND JOK.JOBKIND_SEQ IN (' + jobKinds + ')':''}
                     ) JO
                     INNER JOIN (
-                        SELECT JOBOPENING_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
-                        FROM JOBOPENING_REGION GROUP BY JOBOPENING_SEQ
-                    ) JOR ON JOR.JOBOPENING_SEQ = JO.SEQ
+                        SELECT RECRUIT_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
+                        FROM RECRUIT_REGION GROUP BY RECRUIT_SEQ
+                    ) JOR ON JOR.RECRUIT_SEQ = JO.SEQ
                     INNER JOIN (
-                        SELECT JOBOPENING_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
-                        FROM JOBOPENING_JOBKIND GROUP BY JOBOPENING_SEQ
-                    ) JOK ON JOK.JOBOPENING_SEQ = JO.SEQ  
+                        SELECT RECRUIT_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
+                        FROM RECRUIT_JOBKIND GROUP BY RECRUIT_SEQ
+                    ) JOK ON JOK.RECRUIT_SEQ = JO.SEQ  
                     ${(userSeq && userOwn == 'Y') ? 'INNER' : 'LEFT'} JOIN (
-                        SELECT JOBOPENING_SEQ, GROUP_CONCAT(USER_SEQ SEPARATOR ',') AS USER_SEQ, COUNT(SEQ) AS COUNT
-                        FROM JOBOPENING_RESUME 
+                        SELECT RECRUIT_SEQ, GROUP_CONCAT(USER_SEQ SEPARATOR ',') AS USER_SEQ, COUNT(SEQ) AS COUNT
+                        FROM RECRUIT_RESUME 
                         ${(userSeq) ? 'WHERE USER_SEQ = ' + userSeq : ''}
-                        GROUP BY JOBOPENING_SEQ
-                    ) JORE ON JORE.JOBOPENING_SEQ = JO.SEQ  
+                        GROUP BY RECRUIT_SEQ
+                    ) JORE ON JORE.RECRUIT_SEQ = JO.SEQ  
                     LEFT JOIN (
-                        SELECT JOBOPENING_SEQ, COUNT(SEQ) AS COUNT FROM JOBOPENING_RESUME GROUP BY JOBOPENING_SEQ
-                    ) JOREC ON JOREC.JOBOPENING_SEQ = JO.SEQ                      
+                        SELECT RECRUIT_SEQ, COUNT(SEQ) AS COUNT FROM RECRUIT_RESUME GROUP BY RECRUIT_SEQ
+                    ) JOREC ON JOREC.RECRUIT_SEQ = JO.SEQ                      
                 ORDER BY
                     CREATED DESC, SEQ DESC
                 LIMIT ? OFFSET ?`;
@@ -205,70 +205,70 @@ module.exports = class jobOpeningModel {
             if (rows.length > 0) 
                 return rows;
             else {
-                logger.writeLog('error', `models/jobOpeningModel.list: No data found`);           
+                logger.writeLog('error', `models/recruitModel.list: No data found`);           
                 return null;
             }                
         } catch (error) {
-            logger.writeLog('error', `models/jobOpeningModel.list: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.list: ${error}`);           
             return null;
         }
     }
 
     //jobkinds 값이 문자열로 1,2 형태라고 정의
-    static async updateJobKind(jobOpeningSeq, jobKinds) {
+    static async updateJobKind(recruitSeq, jobKinds) {
         const connection = await pool.getConnection(async conn => conn);
         try 
         {
             await connection.beginTransaction();    // transaction
             //먼저 싹 지운다
-            await connection.query(`DELETE FROM JOBOPENING_JOBKIND WHERE JOBOPENING_SEQ=?`, [jobOpeningSeq]);
+            await connection.query(`DELETE FROM RECRUIT_JOBKIND WHERE RECRUIT_SEQ=?`, [recruitSeq]);
             //새 레코드를 추가한다
             await connection.query(`
-                INSERT INTO JOBOPENING_JOBKIND (JOBOPENING_SEQ, JOBKIND_SEQ, JOBKIND_NAME)
-                SELECT ${jobOpeningSeq}, SEQ, NAME FROM JOBKIND WHERE SEQ IN (${jobKinds})`);
+                INSERT INTO RECRUIT_JOBKIND (RECRUIT_SEQ, JOBKIND_SEQ, JOBKIND_NAME)
+                SELECT ${recruitSeq}, SEQ, NAME FROM JOBKIND WHERE SEQ IN (${jobKinds})`);
 
             await connection.commit(); // commit
             connection.release();
-            logger.writeLog('info', `models/jobOpeningModel.addJobKind: ${jobOpeningSeq} 공고에 ${jobKinds} 직종이 연결되었습니다.`);           
+            logger.writeLog('info', `models/recruitModel.addJobKind: ${recruitSeq} 공고에 ${jobKinds} 직종이 연결되었습니다.`);           
 
-            return jobOpeningSeq;
+            return recruitSeq;
         } catch (error) {
             await connection.rollback();    // rollback
             connection.release();
 
-            logger.writeLog('error', `models/jobOpeningModel.addJobKind: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.addJobKind: ${error}`);           
             return null;
         }
     }
     
     //workingRegions 값이 문자열로 1,2 형태라고 정의
-    static async updateWorkingRegion(jobOpeningSeq, workingRegions) {
+    static async updateWorkingRegion(recruitSeq, workingRegions) {
         const connection = await pool.getConnection(async conn => conn);
         try 
         {
             await connection.beginTransaction();    // transaction
             //먼저 싹 지운다
-            await connection.query(`DELETE FROM JOBOPENING_REGION WHERE JOBOPENING_SEQ=?`, [jobOpeningSeq]);
+            await connection.query(`DELETE FROM RECRUIT_REGION WHERE RECRUIT_SEQ=?`, [recruitSeq]);
             //새 레코드를 추가한다
             await connection.query(`
-                INSERT INTO JOBOPENING_REGION (JOBOPENING_SEQ, WORKREGION_SEQ, WORKREGION_NAME)
-                SELECT ${jobOpeningSeq}, SEQ, NAME FROM WORKREGION WHERE SEQ IN (${workingRegions})`);
+                INSERT INTO RECRUIT_REGION (RECRUIT_SEQ, WORKREGION_SEQ, WORKREGION_NAME)
+                SELECT ${recruitSeq}, SEQ, NAME FROM WORKREGION WHERE SEQ IN (${workingRegions})`);
 
             await connection.commit(); // commit
             connection.release();
-            logger.writeLog('info', `models/jobOpeningModel.addWorkingRegion: ${jobOpeningSeq} 공고에 ${jobKinds} 지역이 연결되었습니다.`);           
+            logger.writeLog('info', `models/recruitModel.addWorkingRegion: ${recruitSeq} 공고에 ${jobKinds} 지역이 연결되었습니다.`);           
 
-            return jobOpeningSeq;
+            return recruitSeq;
         } catch (error) {
             await connection.rollback();    // rollback
             connection.release();
 
-            logger.writeLog('error', `models/jobOpeningModel.addWorkingRegion: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.addWorkingRegion: ${error}`);           
             return null;
         }
     }
 
-    static async listResume(jobOpeningSeq, limit, offset) {
+    static async listResume(recruitSeq, limit, offset) {
         try 
         {
             //쿼리
@@ -312,11 +312,11 @@ module.exports = class jobOpeningModel {
                         CREATED, 
                         MODIFIED
                     FROM 
-                        MART_RECRUIT.JOBOPENING JO
+                        MART_RECRUIT.RECRUIT JO
                         INNER JOIN MART_RECRUIT.CARRIER CR ON CR.SEQ = JO.CARRIER_SEQ
                         INNER JOIN MART_RECRUIT.WORKINGTYPE WT ON WT.SEQ = JO.WORKINGTYPE_SEQ
-                        INNER JOIN JOBOPENING_REGION JOR ON JOR.JOBOPENING_SEQ = JO.SEQ
-                        INNER JOIN JOBOPENING_JOBKIND JOK ON JOK.JOBOPENING_SEQ = JO.SEQ
+                        INNER JOIN RECRUIT_REGION JOR ON JOR.RECRUIT_SEQ = JO.SEQ
+                        INNER JOIN RECRUIT_JOBKIND JOK ON JOK.RECRUIT_SEQ = JO.SEQ
                     WHERE
                         1 = 1 
                         ${(martSeq) ? 'AND JO.MART_SEQ=' + martSeq :''}
@@ -324,49 +324,49 @@ module.exports = class jobOpeningModel {
                         ${(jobKinds) ? 'AND JOK.JOBKIND_SEQ IN (' + jobKinds + ')':''}
                     ) JO
                     INNER JOIN (
-                        SELECT JOBOPENING_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
-                        FROM JOBOPENING_REGION GROUP BY JOBOPENING_SEQ
-                    ) JOR ON JOR.JOBOPENING_SEQ = JO.SEQ
+                        SELECT RECRUIT_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
+                        FROM RECRUIT_REGION GROUP BY RECRUIT_SEQ
+                    ) JOR ON JOR.RECRUIT_SEQ = JO.SEQ
                     INNER JOIN (
-                        SELECT JOBOPENING_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
-                        FROM JOBOPENING_JOBKIND GROUP BY JOBOPENING_SEQ
-                    ) JOK ON JOK.JOBOPENING_SEQ = JO.SEQ  
+                        SELECT RECRUIT_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
+                        FROM RECRUIT_JOBKIND GROUP BY RECRUIT_SEQ
+                    ) JOK ON JOK.RECRUIT_SEQ = JO.SEQ  
                 LIMIT ? OFFSET ?`;
             const [rows, fields] = await pool.query(sql, [limit, offset]);
             if (rows.length > 0) 
                 return rows;
             else {
-                logger.writeLog('error', `models/jobOpeningModel.list: No data found`);           
+                logger.writeLog('error', `models/recruitModel.list: No data found`);           
                 return null;
             }                
         } catch (error) {
-            logger.writeLog('error', `models/jobOpeningModel.list: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.list: ${error}`);           
             return null;
         }
     }
 
     //공고에 이력서 지원
-    static async applyResume(jobOpeningSeq, resumeSeq, userSeq) {
+    static async applyResume(recruitSeq, resumeSeq, userSeq) {
         try 
         {
-            await pool.query(`INSERT INTO JOBOPENING_RESUME (JOBOPENING_SEQ, RESUME_SEQ, USER_SEQ, APPLYDATE) VALUES (?, ?, ?, CURRENT_TIMESTAMP())`, [jobOpeningSeq, resumeSeq, userSeq]);
-            logger.writeLog('info', `models/jobOpeningModel.applyResume: ${jobOpeningSeq} 공고에 사용자[${userSeq}]의 이력서[${resumeSeq}]로 지원되었습니다.`);           
-            return jobOpeningSeq;
+            await pool.query(`INSERT INTO RECRUIT_RESUME (RECRUIT_SEQ, RESUME_SEQ, USER_SEQ, APPLYDATE) VALUES (?, ?, ?, CURRENT_TIMESTAMP())`, [recruitSeq, resumeSeq, userSeq]);
+            logger.writeLog('info', `models/recruitModel.applyResume: ${recruitSeq} 공고에 사용자[${userSeq}]의 이력서[${resumeSeq}]로 지원되었습니다.`);           
+            return recruitSeq;
         } catch (error) {
-            logger.writeLog('error', `models/jobOpeningModel.applyResume: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.applyResume: ${error}`);           
             return null;
         }
     }
 
     //공고에 지원한 이력서 취소
-    static async cancelApply(jobOpeningSeq, resumeSeq) {
+    static async cancelApply(recruitSeq, resumeSeq) {
         try 
         {
-            await pool.query(`DELETE FROM JOBOPENING_RESUME WHERE JOBOPENING_SEQ=? AND RESUME_SEQ=?`, [jobOpeningSeq, resumeSeq]);
-            logger.writeLog('info', `models/jobOpeningModel.applyResume: ${jobOpeningSeq} 공고에 이력서[${resumeSeq}]가 지원 취소되었습니다.`);           
-            return jobOpeningSeq;
+            await pool.query(`DELETE FROM RECRUIT_RESUME WHERE RECRUIT_SEQ=? AND RESUME_SEQ=?`, [recruitSeq, resumeSeq]);
+            logger.writeLog('info', `models/recruitModel.applyResume: ${recruitSeq} 공고에 이력서[${resumeSeq}]가 지원 취소되었습니다.`);           
+            return recruitSeq;
         } catch (error) {
-            logger.writeLog('error', `models/jobOpeningModel.cancelApply: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.cancelApply: ${error}`);           
             return null;
         }
     }

@@ -1,4 +1,4 @@
-const jobOpeningService = require('../services/jobOpening.js');
+const jobOpeningService = require('../services/recruit.js');
 const resumeService = require('../services/resume.js');
 const rowCount = 20;
 
