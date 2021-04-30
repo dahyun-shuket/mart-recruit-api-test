@@ -3,6 +3,7 @@ process.env.NODE_ENV = "develope";
 
 var createError = require('http-errors');
 var express = require('express');
+var cors = require('cors');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 const morgan = require('morgan');
@@ -15,6 +16,7 @@ app.set('views', path.join(__dirname, 'app/view'));
 app.set('view engine', 'ejs');
 
 // app.use(logger('dev'));
+app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -33,6 +35,9 @@ app.use('/api/workingRegion', require('./routes/workingRegion'));
 app.use('/api/mart', require('./routes/mart'));
 app.use('/api/jobOpening', require('./routes/jobOpening'));
 app.use('/api/resume', require('./routes/resume'));
+app.use('/api/files', require('./routes/files'));
+
+app.set('mediaPath', (process.env.NODE_ENV == 'develope') ? 'D:/Project/mart-recruit/mart-recruit-api/PDSData/' : '');
 
 app.use(
   morgan('combined', 

@@ -59,6 +59,25 @@ module.exports = {
         }
     },
 
+    async updateLogo(req, res, next) {        
+        const seq = req.body.SEQ;
+        const logoFile = req.body.LOGOFILE;
+
+        const result = await martService.updateLogo(req.app.get('mediaPath'), seq, logoFile);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+
     async remove(req, res, next) {
         const seq = req.query.seq;
 
@@ -111,5 +130,7 @@ module.exports = {
             }
         });    
     }
+
+
 }
 

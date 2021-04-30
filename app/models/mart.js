@@ -1,5 +1,7 @@
 const logger = require('../config/logger.js');
 const pool = (process.env.NODE_ENV == "production") ? require("../config/database") : require("../config/database_dev");
+const path = require('path');
+const fs = require('fs');
 
 module.exports = class martModel {
     static async create(user_Seq, name, logoFile, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank) {
@@ -34,6 +36,38 @@ module.exports = class martModel {
             return null;
         }
     }
+    static async updateLogo(mediaPath, seq, logoFile) {
+        const connection = await pool.getConnection(async conn => conn);
+        try 
+        {
+            await connection.beginTransaction();    // transaction
+
+            // 기존 파일을 찾아서 삭제
+            const [rowsFind, fieldsFind] = await pool.query(`SELECT SEQ, LOCATION, FILENAME, RELATED_SEQ FROM FILESTORAGE WHERE RELATED_TABLE=? AND RELATED_SEQ=?`, ['MART', seq]);
+            if (rowsFind.length > 0) {
+                // 기존 파일 정보가 있으면 삭제
+                fs.unlinkSync(mediaPath + "uploads/" + rowsFind[0].LOCATION + "/" + rowsFind[0].FILENAME);
+                // 레코드도 삭제
+                await pool.query(`DELETE FROM FILESTORAGE WHERE SEQ=?`, [rowsFind[0].SEQ]);
+            }
+            // 새로운 파일 저장 정보를 추가
+            const [rows, fields] = await pool.query(`INSERT INTO FILESTORAGE 
+                (LOCATION, FILENAME, RELATED_TABLE, RELATED_SEQ) VALUES (?, ?, ?, ?)`, [path.dirname(logoFile), path.basename(logoFile), 'MART', seq]);
+            // 해당 정보로 로고 파일 정보 갱신
+            await pool.query(`UPDATE MART SET LOGOFILE=?, MODIFIED=CURRENT_TIMESTAMP() WHERE SEQ=?`, [rows.insertId, seq]);
+
+            await connection.commit(); // commit
+            connection.release();
+
+            return rows.insertId;
+        } catch (error) {
+            await connection.rollback();    // rollback
+            connection.release();
+
+            logger.writeLog('error', `models/martModel.updateLogo: ${error}`);           
+            return null;
+        }
+    }
     static async remove(seq) {
         const connection = await pool.getConnection(async conn => conn);
         try 
@@ -41,7 +75,7 @@ module.exports = class martModel {
             await connection.beginTransaction();    // transaction
 
             await pool.query(`UPDATE MART SET ACTIVE='N' WHERE SEQ=?`, [seq]);
-            await connection.query(`UPDATE MART_RECRUIT.USERS SET ACTIVE='N' WHERE SEQ = (SELECT USER_SEQ FROM MART WHERE SEQ = ?);`, [seq]);
+            await connection.query(`UPDATE USERS SET ACTIVE='N' WHERE SEQ = (SELECT USER_SEQ FROM MART WHERE SEQ = ?);`, [seq]);
 
             await connection.commit(); // commit
             connection.release();
@@ -104,7 +138,6 @@ module.exports = class martModel {
                 ORDER BY 
                     NAME
                 LIMIT ? OFFSET ?`;
-                console.log(query);
             const [rows, fields] = await pool.query(query, [limit, offset]);
             if (rows.length > 0) 
                 return rows;

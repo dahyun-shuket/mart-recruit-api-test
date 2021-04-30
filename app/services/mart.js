@@ -24,6 +24,17 @@ module.exports = class martService {
             }
         })
     }
+    static updateLogo(mediaPath, seq, logoFile) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = martModel.updateLogo(mediaPath, seq, logoFile);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/martService/updateLogo: ${error}`);           
+            }
+        })
+    }
     static remove(seq) {
         return new Promise(function(resolve, reject) {
             try {
