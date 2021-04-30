@@ -24,12 +24,13 @@ module.exports = class userService {
     //     return list;
     // };
     // static async list(searchName, page, rowCount) {
-    static async list(page, rowCount) {
+    static async list(usertype, userLoginId, page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;
+                console.log(rowCount)
                 // let list = userModel.list(searchName, rowCount, offset);
-                let list = userModel.list(rowCount, offset);
+                let list = userModel.list(usertype, userLoginId, rowCount, offset);
                 // console.log(list)
                 resolve(list)
                 // return list;

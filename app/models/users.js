@@ -60,13 +60,19 @@ module.exports = class userModel {
         }
     }
 
-    static async list(limit, offset) {
+    static async list(usertype, userLoginId, limit, offset) {
         try {
                 var sql = ` SELECT
                                 SEQ, LOGINID, PWD, USERTYPE, ACTIVE, CREATED, MODIFIED 
                             FROM
                                 USERS 
+                            WHERE
+                                ACTIVE='Y'  AND
+                                USERTYPE='${usertype}' 
+                                
+                                
                             LIMIT ? OFFSET ? `
+                            // ${(userLoginId && userLoginId != '') ? 'AND LOGINID LIKE \'%' + userLoginId + '%\'' : ''}  
                 const [rows, fields] = await pool.query(sql, [limit, offset]);
                 if(rows.length > 0){
                     return rows;
@@ -85,6 +91,7 @@ module.exports = class userModel {
         // console.log("유저한명조회 모델 들어옴" + seq);
         try {
             const [rows, fields] = await pool.query(`select * from USERS WHERE SEQ=?`, [seq]);
+            console.log(rows[0]);
             return rows[0];
         } catch (error) {
             console.log("login model Error ! : " + error);
@@ -115,7 +122,7 @@ module.exports = class userModel {
     // 마트업체 조회
     static async getMartList(data) {
         try {
-            const [rows, fields] = await pool.query(`select * from USERS where USER_TYPE = M`, []);
+            const [rows, fields] = await pool.query(`select SEQ, LOGINID, PWD, USERTYPE, ACTIVE, CREATED, MODIFIED from USERS where USER_TYPE = M`, []);
             return rows;
         } catch (error) {
             console.log("getMartList model Error ! : " + error);

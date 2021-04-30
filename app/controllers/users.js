@@ -72,8 +72,12 @@ module.exports = {
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount : defaultRowCount;
         const totalCount = await userService.count();
+        const userType = req.body.userType
+        console.log(userType)
+        console.log(page)
+        const userLoginId = req.body.userLoginId
         // const list = await userService.list(req.body.name, page, rowCount);
-        const list = await userService.list(page, rowCount);
+        const list = await userService.list(userType, userLoginId, page, rowCount);
         // console.log(list);
         return res.json({
             result: "success",
@@ -83,7 +87,7 @@ module.exports = {
     },
     // 유저 한명조회
     async get(req, res) {
-        const seq = req.param.seq;
+        const seq = req.params.id;
         const getUser = await userService.get(seq);
         return res.json({
             result: "success",
@@ -97,8 +101,8 @@ module.exports = {
         let userType = req.body.userType
         let active = req.body.active
         let seq = req.body.seq
-        const salt = genSaltSync(10);
-        password = hashSync(password, salt);
+        // const salt = genSaltSync(10);
+        // password = hashSync(password, salt);
         let updateUser = await userService.update(userId, password, userType, active, seq);
         console.log(updateUser);
         return res.json({
