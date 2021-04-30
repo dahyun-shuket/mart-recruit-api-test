@@ -1,11 +1,13 @@
 var express = require('express');
 var router = express.Router();
 
-const { create, update, remove, get, list } = require('../app/controllers/mart.js');
+const { create, update, updateLogo, remove, get, list } = require('../app/controllers/mart.js');
 
 router.post('/create', create);
 
 router.post('/update', update);
+
+router.post('/updateLogo', updateLogo);
 
 router.get('/remove', remove);
 
