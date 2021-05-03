@@ -81,10 +81,10 @@ module.exports = class userService {
         return paging;
     };
     
-    static async count(){
+    static async count(searchId, usertype){
         return new Promise(function (resolve, reject) {
             try {
-                let count = userModel.count();
+                let count = userModel.count(searchId, usertype);
                 resolve(count);
             } catch (error) {
                 logger.writeLog('error', `services/userService/count: ${error}`);           

@@ -10,9 +10,9 @@ module.exports = {
     // 유저 생성
     async create(req, res, next) {
         try {
-            let userId = req.body.userid
+            let userId = req.body.userId
             let password = req.body.password
-            let userType = req.body.usertype
+            let userType = req.body.userType
             let active = req.body.active
             
             let salt = genSaltSync(10);
@@ -71,14 +71,11 @@ module.exports = {
     async list(req,res, next){
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount : defaultRowCount;
-        const totalCount = await userService.count();
         const userType = req.body.userType
-        console.log(userType)
-        console.log(page)
-        const userLoginId = req.body.userLoginId
-        // const list = await userService.list(req.body.name, page, rowCount);
+        const totalCount = await userService.count(req.body.userLoginId, userType);
+        const userLoginId = (req.body.userLoginId) ? req.body.userLoginId : '';
+        console.log(totalCount)
         const list = await userService.list(userType, userLoginId, page, rowCount);
-        // console.log(list);
         return res.json({
             result: "success",
             totalCount : totalCount,
@@ -101,8 +98,8 @@ module.exports = {
         let userType = req.body.userType
         let active = req.body.active
         let seq = req.body.seq
-        // const salt = genSaltSync(10);
-        // password = hashSync(password, salt);
+        const salt = genSaltSync(10);
+        password = hashSync(password, salt);
         let updateUser = await userService.update(userId, password, userType, active, seq);
         console.log(updateUser);
         return res.json({

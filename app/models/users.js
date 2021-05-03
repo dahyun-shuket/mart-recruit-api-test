@@ -23,7 +23,6 @@ module.exports = class userModel {
     static async update(userId, password, userType, active, seq) {
         try {
             const [rows, fields] = await pool.query(`update USERS set LOGINID=?, PWD=?, USERTYPE=?, ACTIVE=? where seq = ?`, [userId, password, userType, active, seq]);
-
             return rows;
         } catch (error) {
             console.log("userUpdate model Error ! : " + error);
@@ -33,7 +32,6 @@ module.exports = class userModel {
     static async remove(seq) {
         try {
             const [rows, fields] = await pool.query(`UPDATE USERS set ACTIVE="N" where seq = ?`, [seq]);
-            console.log("엑티브 변경 완료");
             return rows;
         } catch (error) {
             console.log("userRemove model Error ! : " + error);
@@ -68,12 +66,12 @@ module.exports = class userModel {
                                 USERS 
                             WHERE
                                 ACTIVE='Y'  AND
-                                USERTYPE='${usertype}' 
-                                
-                                
+                                USERTYPE='${usertype}'
+                                ${(userLoginId && userLoginId != '') ? 'AND LOGINID LIKE \'%' + userLoginId + '%\'' : ''}  
                             LIMIT ? OFFSET ? `
-                            // ${(userLoginId && userLoginId != '') ? 'AND LOGINID LIKE \'%' + userLoginId + '%\'' : ''}  
-                const [rows, fields] = await pool.query(sql, [limit, offset]);
+                                
+                                // ${(userLoginId) ? 'AND LOGINID=' + userLoginId :''}
+                                const [rows, fields] = await pool.query(sql, [limit, offset]);
                 if(rows.length > 0){
                     return rows;
                 }else{
@@ -110,9 +108,19 @@ module.exports = class userModel {
     }
         
     // 전체 페이지 갯수
-    static async count() {
+    static async count(searchId, usertype) {
         try {
-            const [rows, fields] = await pool.query('SELECT COUNT(*) AS cnt FROM USERS',[]);
+            const sql = `SELECT 
+                            COUNT(*) AS cnt 
+                        FROM 
+                            USERS 
+                        WHERE 
+                            ACTIVE='Y' 
+                            ${(searchId && searchId != '') ? 'AND LOGINID LIKE \'%' + searchId + '%\'' : ''} 
+                            ${(usertype && usertype != '') ? 'AND USERTYPE LIKE \'%' + usertype + '%\'' : ''}
+                            `;
+            const [rows, fields] = await pool.query(sql,[]);
+            // const [rows, fields] = await pool.query('SELECT COUNT(*) AS cnt FROM USERS',[]);
             return rows[0].cnt;
         } catch (error) {
             console.log("userCount model Error ! : " + error);
