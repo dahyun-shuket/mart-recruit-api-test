@@ -1,7 +1,7 @@
 var express = require('express');
 var router = express.Router();
 
-const { create, update, remove, get, list, updateJobKind, updateWorkingRegion, addCarrier, updateCarrier, removeCarrier, getCarrier, listCarrier } = require('../app/controllers/resume.js');
+const { create, update, remove, get, list, listPerRecruit, updateJobKind, updateWorkingRegion, addCarrier, updateCarrier, removeCarrier, getCarrier, listCarrier } = require('../app/controllers/resume.js');
 
 router.post('/create', create);
 
@@ -12,6 +12,8 @@ router.get('/remove', remove);
 router.get('/get', get);
 
 router.get('/list', list);
+
+router.get('/listPerRecruit', listPerRecruit);
 
 router.get('/updateJobKind', updateJobKind);
 

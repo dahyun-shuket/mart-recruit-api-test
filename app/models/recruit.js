@@ -88,6 +88,7 @@ module.exports = class recruitModel {
                     REQUIREDOCS, 
                     WORKREGION_SEQ,
                     WORKREGION_NAME,
+                    CONTENT,
                     ACTIVE, 
                     CREATED, 
                     MODIFIED
@@ -116,16 +117,52 @@ module.exports = class recruitModel {
         }
     }
 
+    // 총 카운트 얻기
+    // userSeq가 있는 경우 페이징을 하지 않으므로 제외
+    static async totalCount(martSeq, name, regions, jobKinds) {
+        try 
+        {
+            //순번에 따라서 리스팅
+            const query = `
+            SELECT
+                COUNT(SEQ) AS TOTALCOUNT
+            FROM (
+                SELECT 
+                    DISTINCT
+                    RECRUIT.SEQ
+            
+                FROM 
+                    RECRUIT
+                    INNER JOIN CARRIER ON CARRIER.SEQ = RECRUIT.CARRIER_SEQ
+                    INNER JOIN MART ON MART.SEQ = RECRUIT.MART_SEQ
+                    LEFT JOIN RECRUIT_REGION ON RECRUIT_REGION.RECRUIT_SEQ = RECRUIT.SEQ
+                    LEFT JOIN RECRUIT_JOBKIND ON RECRUIT_JOBKIND.RECRUIT_SEQ = RECRUIT.SEQ
+                WHERE
+                    MART.ACTIVE = 'Y' AND RECRUIT.ACTIVE = 'Y'                
+                    ${(martSeq) ? 'AND RECRUIT.MART_SEQ=' + martSeq :''}
+                    ${(regions) ? 'AND RECRUIT_REGION.WORKREGION_SEQ IN (' + regions + ')':''}
+                    ${(jobKinds) ? 'AND RECRUIT_JOBKIND.JOBKIND_SEQ IN (' + jobKinds + ')':''}
+                    ${(name) ? `AND MART.NAME LIKE '%${name}%'`:''}
+            ) RECRUIT`;
+            const [rows, fields] = await pool.query(query);
+
+            return rows[0].TOTALCOUNT;
+        } catch (error) {
+            logger.writeLog('error', `models/recruitModel.totalCount: ${error}`);           
+            return 0;
+        }
+    }
     // 구인 공고 목록
     // martSeq, userSeq, userOwn, regions, jobKinds 값이 하나도 없거나 서로 조합되어도 검색에 적용    
     // regions 값이 문자열로 1,2,6 형태라고 정의
     // jobkinds 값이 문자열로 1,2 형태라고 정의
     // martSeq 있으면 해당 마트의 구인 공고 리스트
+    // name 있으면 검색된 마트의 구인 공고 리스트
     // userSeq 있고 userOwn=Y면 해당 유저의 지원 리스트
     // userSeq 있고 userOwn=N면 공고 목록에 해당 유저가 지원한 여부가 APPLY로 리턴
     // userSeq 없으면 지원자가 있으면 APPLY가 Y
     // userSeq가 없으면 userOwn은 무조건 N 이어야 한다
-    static async list(martSeq, userSeq, userOwn, regions, jobKinds, limit, offset) {
+    static async list(martSeq, name, userSeq, userOwn, regions, jobKinds, limit, offset) {
         try 
         {
             //쿼리
@@ -141,11 +178,12 @@ module.exports = class recruitModel {
                 FROM (
                     SELECT 
                         DISTINCT
-                        JO.SEQ, 
+                        MART.NAME,
+                        RECRUIT.SEQ, 
                         MART_SEQ,     
                         SUBJECT, 
-                        HRONAME, 
-                        HROCONTACT, 
+                        RECRUIT.HRONAME, 
+                        RECRUIT.HROCONTACT, 
                         CARRIER_SEQ, 
                         CR.NAME AS CARRIER_NAME, 
                         EXPYEAR, 
@@ -166,25 +204,27 @@ module.exports = class recruitModel {
                         ENDATE, 
                         HIRINGSTEP, 
                         REQUIREDOCS, 
-                        ACTIVE, 
-                        CREATED, 
-                        MODIFIED
+                        RECRUIT.ACTIVE, 
+                        RECRUIT.CREATED, 
+                        RECRUIT.MODIFIED
                     FROM 
-                        MART_RECRUIT.RECRUIT JO
-                        INNER JOIN MART_RECRUIT.CARRIER CR ON CR.SEQ = JO.CARRIER_SEQ
-                        INNER JOIN RECRUIT_REGION JOR ON JOR.RECRUIT_SEQ = JO.SEQ
-                        INNER JOIN RECRUIT_JOBKIND JOK ON JOK.RECRUIT_SEQ = JO.SEQ
+                        RECRUIT
+                        INNER JOIN CARRIER CR ON CR.SEQ = RECRUIT.CARRIER_SEQ
+                        INNER JOIN MART ON MART.SEQ = RECRUIT.MART_SEQ
+                        LEFT JOIN RECRUIT_REGION ON RECRUIT_REGION.RECRUIT_SEQ = RECRUIT.SEQ
+                        LEFT JOIN RECRUIT_JOBKIND ON RECRUIT_JOBKIND.RECRUIT_SEQ = RECRUIT.SEQ
                     WHERE
-                        1 = 1 
-                        ${(martSeq) ? 'AND JO.MART_SEQ=' + martSeq :''}
-                        ${(regions) ? 'AND JOR.WORKREGION_SEQ IN (' + regions + ')':''}
-                        ${(jobKinds) ? 'AND JOK.JOBKIND_SEQ IN (' + jobKinds + ')':''}
+                        MART.ACTIVE = 'Y' AND RECRUIT.ACTIVE = 'Y'
+                        ${(martSeq) ? 'AND RECRUIT.MART_SEQ=' + martSeq :''}
+                        ${(regions) ? 'AND RECRUIT_REGION.WORKREGION_SEQ IN (' + regions + ')':''}
+                        ${(jobKinds) ? 'AND RECRUIT_JOBKIND.JOBKIND_SEQ IN (' + jobKinds + ')':''}
+                        ${(name) ? `AND MART.NAME LIKE '%${name}%'`:''}
                     ) JO
-                    INNER JOIN (
+                    LEFT JOIN (
                         SELECT RECRUIT_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
                         FROM RECRUIT_REGION GROUP BY RECRUIT_SEQ
                     ) JOR ON JOR.RECRUIT_SEQ = JO.SEQ
-                    INNER JOIN (
+                    LEFT JOIN (
                         SELECT RECRUIT_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
                         FROM RECRUIT_JOBKIND GROUP BY RECRUIT_SEQ
                     ) JOK ON JOK.RECRUIT_SEQ = JO.SEQ  
@@ -200,7 +240,6 @@ module.exports = class recruitModel {
                 ORDER BY
                     CREATED DESC, SEQ DESC
                 LIMIT ? OFFSET ?`;
-                // console.log(sql);
             const [rows, fields] = await pool.query(sql, [limit, offset]);
             if (rows.length > 0) 
                 return rows;

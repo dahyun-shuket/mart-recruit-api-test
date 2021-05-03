@@ -61,11 +61,11 @@ module.exports = class resumeService {
             }
         })
     }
-    static list(userSeq, regions, jobKinds, waitCertificate, page, rowCount) {
+    static list(userSeq, regions, jobKinds, waitCertificate, recruitSeq, page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {
-                var offset = (page - 1) * rowCount;
-                let result = resumeModel.list(userSeq, regions, jobKinds, waitCertificate, NULL, rowCount, offset);
+                var offset = (page) ? (page - 1) * rowCount : 0;
+                let result = resumeModel.list(userSeq, regions, jobKinds, waitCertificate, recruitSeq, rowCount, offset);
     
                 resolve(result);
             } catch (error) {

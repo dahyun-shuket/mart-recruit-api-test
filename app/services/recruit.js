@@ -50,11 +50,22 @@ module.exports = class recruitService {
             }
         })
     }
-    static list(martSeq, userSeq, userOwn, regions, jobKinds, page, rowCount) {
+    static totalCount(martSeq, name, regions, jobKinds) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.totalCount(martSeq, name, regions, jobKinds);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/totalCount: ${error}`);           
+            }
+        })
+    }
+    static list(martSeq, name, userSeq, userOwn, regions, jobKinds, page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;
-                let result = recruitModel.list(martSeq, userSeq, userOwn, regions, jobKinds, rowCount, offset);
+                let result = recruitModel.list(martSeq, name, userSeq, userOwn, regions, jobKinds, rowCount, offset);
     
                 resolve(result);
             } catch (error) {

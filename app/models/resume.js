@@ -125,10 +125,10 @@ module.exports = class resumeModel {
         }
     }
     //이력서 목록
-    //martSeq, regions, jobKinds 값이 하나도 없거나 서로 조합되어도 검색에 적용
+    //userSeq, regions, jobKinds 값이 하나도 없거나 서로 조합되어도 검색에 적용
     //regions 값이 문자열로 1,2,6 형태라고 정의
     //jobkinds 값이 문자열로 1,2 형태라고 정의
-    static async list(userSeq, regions, jobKinds, waitCertificate, jobOPeningSeq, applyOnly, limit, offset) {
+    static async list(userSeq, regions, jobKinds, waitCertificate, recruitSeq, limit, offset) {
         try 
         {
             //쿼리
@@ -143,7 +143,7 @@ module.exports = class resumeModel {
                     SELECT 
                         DISTINCT
                         R.SEQ,
-                        USER_SEQ, 
+                        R.USER_SEQ, 
                         SUBJECT, 
                         PHOTO, 
                         R.NAME, 
@@ -170,14 +170,16 @@ module.exports = class resumeModel {
                         ACTIVE, 
                         CREATED, 
                         MODIFIED
+                        ${(recruitSeq) ? ', APPLYDATE ' : ''}
                     FROM 
                         RESUME R
                         INNER JOIN CARRIER C ON C.SEQ = R.CARRIER_SEQ
                         LEFT JOIN RESUME_REGION RR ON RR.RESUME_SEQ = R.SEQ
                         LEFT JOIN RESUME_JOBKIND RK ON RK.RESUME_SEQ = R.SEQ
+                        ${(recruitSeq) ? 'LEFT JOIN RECRUIT_RESUME ON RECRUIT_RESUME.RECRUIT_SEQ = 5 AND RECRUIT_RESUME.RESUME_SEQ = R.SEQ' : '' }
                     WHERE
                         1 = 1 
-                        ${(jobOPeningSeq) ? 'AND R.SEQ IN (SELECT RESUME_SEQ FROM JOBOPENING_RESUME WHERE JOBOPENING_SEQ = ' + jobOPeningSeq + ')' : ''}
+                        ${(recruitSeq) ? 'AND R.SEQ IN (SELECT RESUME_SEQ FROM RECRUIT_RESUME WHERE RECRUIT_SEQ = ' + recruitSeq + ')' : ''}
                         ${(waitCertificate == 'Y') ? `AND CERTIFICATE != 'Y' AND NOT CAREERCERTIFICATE IS NULL` : ''}
                         ${(userSeq) ? 'AND R.USER_SEQ=' + userSeq :''}
                         ${(regions) ? 'AND RR.WORKREGION_SEQ IN (' + regions + ')':''}
@@ -192,6 +194,7 @@ module.exports = class resumeModel {
                         FROM RESUME_REGION GROUP BY RESUME_SEQ
                     ) RR ON RR.RESUME_SEQ = R.SEQ  
                 LIMIT ? OFFSET ?`;
+            // console.log(sql);
             const [rows, fields] = await pool.query(sql, [limit, offset]);
             if (rows.length > 0) 
                 return rows;

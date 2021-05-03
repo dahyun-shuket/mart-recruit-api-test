@@ -1,6 +1,6 @@
-const jobOpeningService = require('../services/recruit.js');
+const recruitService = require('../services/recruit.js');
 const resumeService = require('../services/resume.js');
-const rowCount = 20;
+const defaultRowCount = 20;
 
 module.exports = {
     async create(req, res, next) {
@@ -29,7 +29,7 @@ module.exports = {
         const hiringStep = req.body.hiringStep;
         const requireDocs = req.body.requireDocs;
 
-        const result = await jobOpeningService.create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+        const result = await recruitService.create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
             workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs);
 
         if (result) {
@@ -71,7 +71,7 @@ module.exports = {
         const hiringStep = req.body.hiringStep;
         const requireDocs = req.body.requireDocs;
 
-        const result = await jobOpeningService.update(seq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+        const result = await recruitService.update(seq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
             workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs);
 
         if (result) {
@@ -90,7 +90,7 @@ module.exports = {
     async remove(req, res, next) {
         const seq = req.query.seq;
 
-        const result = await jobOpeningService.remove(seq);
+        const result = await recruitService.remove(seq);
 
         if (result) {
             res.status(200).json({
@@ -112,7 +112,7 @@ module.exports = {
 
         if (jobOPeningSeq) {
 
-            const jobOpeningInfo = await jobOpeningService.get(jobOPeningSeq);
+            const jobOpeningInfo = await recruitService.get(jobOPeningSeq);
 
             res.status(200).json({
                 result: 'success',
@@ -133,6 +133,7 @@ module.exports = {
     // 지역, 직종으로만 나열
     async list(req, res, next) {
         const martSeq = req.query.martSeq;
+        const name = req.query.name;
         const regions = req.query.regions;
         const jobkinds = req.query.jobkinds;
         const userSeq = req.query.userSeq;
@@ -140,12 +141,37 @@ module.exports = {
 
         if (userSeq) { if (userOwn == undefined) userOwn = 'N'};
         const page = (req.query.page) ? req.query.page : 1;
+        const rowCount = (req.query.rowCount) ? req.query.rowCount * 1 : defaultRowCount;
 
-        const list = await jobOpeningService.list(martSeq, userSeq, userOwn, regions, jobkinds, page, rowCount);
+        const totalCount = await recruitService.totalCount(martSeq, name, regions, jobkinds);
+        const list = await recruitService.list(martSeq, name, userSeq, userOwn, regions, jobkinds, page, rowCount);
 
         res.status(200).json({
             result: 'success',
-            data: list
+            data: {
+                totalCount: totalCount,
+                list: list
+            }
+        });    
+    },
+
+    async listForAdmin(req, res, next) {
+        const name = req.query.name;
+        const regions = req.query.regions;
+        const jobkinds = req.query.jobkinds;
+
+        const page = (req.query.page) ? req.query.page : 1;
+        const rowCount = (req.query.rowCount) ? req.query.rowCount * 1 : defaultRowCount;
+
+        const totalCount = await recruitService.totalCount(null, name, regions, jobkinds);
+        const list = await recruitService.list(null, name, null, null, regions, jobkinds, page, rowCount);
+
+        res.status(200).json({
+            result: 'success',
+            data: {
+                totalCount: totalCount,
+                list: list
+            }
         });    
     },
 
@@ -165,7 +191,7 @@ module.exports = {
         const jobOpeningSeq = req.query.seq;
         const jobKinds = req.query.jobKinds;
 
-        const result = await jobOpeningService.updateJobKind(jobOpeningSeq, jobKinds);
+        const result = await recruitService.updateJobKind(jobOpeningSeq, jobKinds);
 
         if (result) {
             res.status(200).json({
@@ -184,7 +210,7 @@ module.exports = {
         const jobOpeningSeq = req.query.seq;
         const workingRegions = req.query.regions;
 
-        const result = await jobOpeningService.updateWorkingRegion(jobOpeningSeq, workingRegions);
+        const result = await recruitService.updateWorkingRegion(jobOpeningSeq, workingRegions);
 
         if (result) {
             res.status(200).json({

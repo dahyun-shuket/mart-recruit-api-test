@@ -1,5 +1,5 @@
 const resumeService = require('../services/resume.js');
-const rowCount = 20;
+const defaultRowCount = 20;
 
 module.exports = {
     async create(req, res, next) {
@@ -160,10 +160,23 @@ module.exports = {
         const userSeq = req.query.userSeq;
         const regions = req.query.regions;
         const jobkinds = req.query.jobkinds;
-
+        const recruitSeq = req.query.recruitSeq;
+        
         const page = (req.query.page) ? req.query.page : 1;
+        const rowCount = (req.query.rowCount) ? req.query.rowCount : defaultRowCount;
 
         const list = await resumeService.list(userSeq, regions, jobkinds, 'N', page, rowCount);
+
+        res.status(200).json({
+            result: 'success',
+            data: list
+        });    
+    },
+
+    async listPerRecruit(req, res, next) {
+        const recruitSeq = req.query.recruitSeq;
+        
+        const list = await resumeService.list(null, null, null, 'N', recruitSeq, 1, 100);
 
         res.status(200).json({
             result: 'success',
@@ -177,6 +190,7 @@ module.exports = {
         const jobkinds = req.query.jobkinds;
 
         const page = (req.query.page) ? req.query.page : 1;
+        const rowCount = (req.query.rowCount) ? req.query.rowCount : defaultRowCount;
 
         const list = await resumeService.list(userSeq, regions, jobkinds, 'Y', page, rowCount);
 
