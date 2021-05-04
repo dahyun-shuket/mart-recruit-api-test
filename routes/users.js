@@ -5,11 +5,11 @@ const { create, login, list, get, update, remove, checkid} = require("../app/con
 
 router.post("/login", login);
 // router.get("/list",  tokenVerify, list);
-router.post("/list",tokenVerify,  list);
+router.post("/list", tokenVerify,  list);
 router.get("/get/:id", tokenVerify, get);
 router.post("/get/:id", tokenVerify, get);
 router.post("/create", create);
-router.patch("/update", tokenVerify, update);
+router.patch("/update/:seq", tokenVerify, update);
 router.patch("/remove/:seq", tokenVerify, remove);
 router.post("/checkid", checkid);
 module.exports = router;
