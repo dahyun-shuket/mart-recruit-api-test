@@ -66,7 +66,6 @@ module.exports = class resumeModel {
     static async get(seq) {
         try 
         {
-            //순번에 따라서 리스팅
             const [rows, fields] = await pool.query(`SELECT 
                     R.SEQ,
                     USER_SEQ, 

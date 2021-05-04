@@ -9,6 +9,7 @@ module.exports = {
         // 파일 정보를 얻어온다        
         const fileInfo = await fileStorageService.get(seq);
 
+        // 파일을 읽어서 스트림으로 전달. 다이렉트로 파일이 접근되는 것을 방지
         if (fileInfo) {
             fileFullPath = req.app.get('mediaPath') + 'uploads/' + fileInfo.LOCATION + '/' + fileInfo.FILENAME;
             if (fs.existsSync(fileFullPath)) {  

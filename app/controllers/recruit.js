@@ -137,7 +137,7 @@ module.exports = {
         const regions = req.body.regions;
         const jobkinds = req.body.jobkinds;
         const userSeq = req.body.userSeq;
-        var userOwn = req.body.userOwn;
+        const userOwn = req.body.userOwn;
 
         if (userSeq) { if (userOwn == undefined) userOwn = 'N'};
         const page = (req.body.page) ? req.body.page : 1;
@@ -155,6 +155,7 @@ module.exports = {
         });    
     },
 
+    // 관리자용 리스트에는 martSeq, userSeq, userOwn 이 무시된다
     async listForAdmin(req, res, next) {
         const name = req.body.name;
         const regions = req.body.regions;
