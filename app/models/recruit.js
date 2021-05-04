@@ -2,17 +2,17 @@ const logger = require('../config/logger.js');
 const pool = (process.env.NODE_ENV == "production") ? require("../config/database") : require("../config/database_dev");
 
 module.exports = class recruitModel {
-    static async create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+    static async create(martSeq, subject, HRONname, HROContact, jobKindSeq, careerSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
         workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
         try 
         {
             const [rows, fields] = await pool.query(`INSERT INTO RECRUIT (
-                MART_SEQ, SUBJECT, HRONAME, HROCONTACT, JOBKIND_SEQ, CARRIER_SEQ, EXPYEAR, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
+                MART_SEQ, SUBJECT, HRONAME, HROCONTACT, JOBKIND_SEQ, CAREER_SEQ, EXPYEAR, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
                 WORKINGTYPE_SEQS, WORKINGTYPE_NAMESS, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, WORKREGION_SEQ, GENDER, AGE, STARTDATE, ENDATE, HIRINGSTEP, REQUIREDOCS, ACTIVE, CREATED, MODIFIED
                 ) VALUES 
                 ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
                 [
-                    martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+                    martSeq, subject, HRONname, HROContact, jobKindSeq, careerSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
                     workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs
                 ]);
             return rows.insertId;
@@ -22,17 +22,17 @@ module.exports = class recruitModel {
         }
     }
 
-    static async update(seq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+    static async update(seq, subject, HRONname, HROContact, jobKindSeq, careerSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
         workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
         try 
         {
             await pool.query(`UPDATE RECRUIT SET 
-                    SUBJECT=?, HRONAME=?, HROCONTACT=?, JOBKIND_SEQ=?, CARRIER_SEQ=?, EXPYEAR=?, CHARGE=?, JOBRANK=?, PREFERENTIAL=?, EDUCATION=?, SALARYTYPE=?, SALARY=?,
+                    SUBJECT=?, HRONAME=?, HROCONTACT=?, JOBKIND_SEQ=?, CAREER_SEQ=?, EXPYEAR=?, CHARGE=?, JOBRANK=?, PREFERENTIAL=?, EDUCATION=?, SALARYTYPE=?, SALARY=?,
                     WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, PROBATIONTERM=?, WORKSHIFT=?, WORKSHIFTTIME=?, WORKREGION_SEQ=?, GENDER=?, AGE=?, STARTDATE=?, ENDATE=?, HIRINGSTEP=?, REQUIREDOCS=?, MODIFIED=CURRENT_TIMESTAMP()
                 WHERE 
                     SEQ=?`, 
                 [
-                    subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
+                    subject, HRONname, HROContact, jobKindSeq, careerSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
                     workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs, 
                     seq
                 ]);
@@ -66,8 +66,8 @@ module.exports = class recruitModel {
                     HROCONTACT, 
                     JOBKIND_SEQ,
                     JOBKIND_NAME,
-                    CARRIER_SEQ, 
-                    CR.NAME AS CARRIER_NAME, 
+                    CAREER_SEQ, 
+                    CR.NAME AS CAREER_NAME, 
                     EXPYEAR, 
                     CHARGE, 
                     JOBRANK, 
@@ -94,7 +94,7 @@ module.exports = class recruitModel {
                     MODIFIED
                 FROM 
                     RECRUIT RC
-                    INNER JOIN CARRIER CR ON CR.SEQ = RC.CARRIER_SEQ
+                    INNER JOIN CAREER CR ON CR.SEQ = RC.CAREER_SEQ
                     INNER JOIN (
                         SELECT RECRUIT_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
                         FROM RECRUIT_JOBKIND GROUP BY RECRUIT_SEQ
@@ -133,7 +133,7 @@ module.exports = class recruitModel {
             
                 FROM 
                     RECRUIT
-                    INNER JOIN CARRIER ON CARRIER.SEQ = RECRUIT.CARRIER_SEQ
+                    INNER JOIN CAREER ON CAREER.SEQ = RECRUIT.CAREER_SEQ
                     INNER JOIN MART ON MART.SEQ = RECRUIT.MART_SEQ
                     LEFT JOIN RECRUIT_REGION ON RECRUIT_REGION.RECRUIT_SEQ = RECRUIT.SEQ
                     LEFT JOIN RECRUIT_JOBKIND ON RECRUIT_JOBKIND.RECRUIT_SEQ = RECRUIT.SEQ
@@ -184,8 +184,8 @@ module.exports = class recruitModel {
                         SUBJECT, 
                         RECRUIT.HRONAME, 
                         RECRUIT.HROCONTACT, 
-                        CARRIER_SEQ, 
-                        CR.NAME AS CARRIER_NAME, 
+                        CAREER_SEQ, 
+                        CR.NAME AS CAREER_NAME, 
                         EXPYEAR, 
                         CHARGE, 
                         JOBRANK, 
@@ -209,7 +209,7 @@ module.exports = class recruitModel {
                         RECRUIT.MODIFIED
                     FROM 
                         RECRUIT
-                        INNER JOIN CARRIER CR ON CR.SEQ = RECRUIT.CARRIER_SEQ
+                        INNER JOIN CAREER CR ON CR.SEQ = RECRUIT.CAREER_SEQ
                         INNER JOIN MART ON MART.SEQ = RECRUIT.MART_SEQ
                         LEFT JOIN RECRUIT_REGION ON RECRUIT_REGION.RECRUIT_SEQ = RECRUIT.SEQ
                         LEFT JOIN RECRUIT_JOBKIND ON RECRUIT_JOBKIND.RECRUIT_SEQ = RECRUIT.SEQ
@@ -321,13 +321,13 @@ module.exports = class recruitModel {
                 FROM (
                     SELECT 
                         DISTINCT
-                        JO.SEQ, 
+                        RECRUIT.SEQ, 
                         MART_SEQ,     
                         SUBJECT, 
                         HRONAME, 
                         HROCONTACT, 
-                        CARRIER_SEQ, 
-                        CR.NAME AS CARRER_NAME, 
+                        CAREER_SEQ, 
+                        CAREER.NAME AS CAREER_NAME, 
                         EXPYEAR, 
                         CHARGE, 
                         JOBRANK, 
@@ -337,7 +337,6 @@ module.exports = class recruitModel {
                         SALARY,
                         WORKINGTYPE_SEQS, 
                         WORKINGTYPE_NAMES, 
-                        WT.NAME AS WORKINGTYPE_NAME,
                         PROBATIONTERM, 
                         WORKSHIFT, 
                         WORKSHIFTTIME, 
@@ -351,14 +350,13 @@ module.exports = class recruitModel {
                         CREATED, 
                         MODIFIED
                     FROM 
-                        MART_RECRUIT.RECRUIT JO
-                        INNER JOIN MART_RECRUIT.CARRIER CR ON CR.SEQ = JO.CARRIER_SEQ
-                        INNER JOIN MART_RECRUIT.WORKINGTYPE WT ON WT.SEQ = JO.WORKINGTYPE_SEQ
-                        INNER JOIN RECRUIT_REGION JOR ON JOR.RECRUIT_SEQ = JO.SEQ
-                        INNER JOIN RECRUIT_JOBKIND JOK ON JOK.RECRUIT_SEQ = JO.SEQ
+                        RECRUIT
+                        INNER JOIN CAREER ON CAREER.SEQ = RECRUIT.CAREER_SEQ
+                        INNER JOIN RECRUIT_REGION ON RECRUIT_REGION.RECRUIT_SEQ = RECRUIT.SEQ
+                        INNER JOIN RECRUIT_JOBKIND ON RECRUIT_JOBKIND.RECRUIT_SEQ = RECRUIT.SEQ
                     WHERE
-                        1 = 1 
-                        ${(martSeq) ? 'AND JO.MART_SEQ=' + martSeq :''}
+                        RECRUIT.ACTIVE = 'Y'
+                        ${(recruitSeq) ? 'AND JO.SEQ=' + recruitSeq :''}
                         ${(regions) ? 'AND JOR.WORKREGION_SEQ IN (' + regions + ')':''}
                         ${(jobKinds) ? 'AND JOK.JOBKIND_SEQ IN (' + jobKinds + ')':''}
                     ) JO
@@ -375,11 +373,11 @@ module.exports = class recruitModel {
             if (rows.length > 0) 
                 return rows;
             else {
-                logger.writeLog('error', `models/recruitModel.list: No data found`);           
+                logger.writeLog('error', `models/recruitModel.listResume: No data found`);           
                 return null;
             }                
         } catch (error) {
-            logger.writeLog('error', `models/recruitModel.list: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.listResume: ${error}`);           
             return null;
         }
     }

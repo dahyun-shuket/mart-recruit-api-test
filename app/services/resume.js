@@ -61,11 +61,22 @@ module.exports = class resumeService {
             }
         })
     }
-    static list(userSeq, regions, jobKinds, waitCertificate, recruitSeq, page, rowCount) {
+    static totalCount(regions, jobKinds, name, certificate) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = resumeModel.totalCount(regions, jobKinds, name, certificate);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/totalCount: ${error}`);           
+            }
+        })
+    }
+    static list(userSeq, regions, jobKinds, name, certificate, recruitSeq, page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page) ? (page - 1) * rowCount : 0;
-                let result = resumeModel.list(userSeq, regions, jobKinds, waitCertificate, recruitSeq, rowCount, offset);
+                let result = resumeModel.list(userSeq, regions, jobKinds, name, certificate, recruitSeq, rowCount, offset);
     
                 resolve(result);
             } catch (error) {
@@ -73,15 +84,15 @@ module.exports = class resumeService {
             }
         })
     }
-    static listForJobOpening(jobOpeningSeq, page, rowCount) {
+    static listForRecruit(recruitSeq, page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;
-                let result = resumeModel.list(NULL, NULL, NULL, 'N', jobOpeningSeq, rowCount, offset);
+                let result = resumeModel.list(NULL, NULL, NULL, 'N', recruitSeq, rowCount, offset);
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/resumeService/listForJobOpening: ${error}`);           
+                logger.writeLog('error', `services/resumeService/listForRecruit: ${error}`);           
             }
         })
     }
@@ -152,14 +163,14 @@ module.exports = class resumeService {
             }
         })
     }
-    static listCarrier(resumeSeq) {
+    static listCareer(resumeSeq) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = resumeModel.listCarrier(resumeSeq);
+                let result = resumeModel.listCareer(resumeSeq);
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/resumeService/listCarrier: ${error}`);           
+                logger.writeLog('error', `services/resumeService/listCareer: ${error}`);           
             }
         })
     }

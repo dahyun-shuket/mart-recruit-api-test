@@ -159,24 +159,30 @@ module.exports = {
     async list(req, res, next) {
         const userSeq = req.body.userSeq;
         const regions = req.body.regions;
-        const jobkinds = req.body.jobkinds;
+        const jobKinds = req.body.jobKinds;
         const recruitSeq = req.body.recruitSeq;
-        const certificate = (req.body.cert) ? req.body.cert : 'N';
+        const name = req.body.name;
+        const certificate = req.body.certificate;
         
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount : defaultRowCount;
-        const list = await resumeService.list(userSeq, regions, jobkinds, certificate, recruitSeq, page, rowCount);
+
+        const totalCount = (userSeq && recruitSeq) ? 0 : await resumeService.totalCount(regions, jobKinds, name, certificate);
+        const list = await resumeService.list(userSeq, regions, jobKinds, name, certificate, recruitSeq, page, rowCount);
 
         res.status(200).json({
             result: 'success',
-            data: list
+            data: {
+                totalCount: totalCount,
+                list: list
+            }
         });    
     },
 
     async listPerRecruit(req, res, next) {
         const recruitSeq = req.body.recruitSeq;
         
-        const list = await resumeService.list(null, null, null, 'N', recruitSeq, 1, 100);
+        const list = await resumeService.list(null, null, null, null, null, recruitSeq, 1, 100);
 
         res.status(200).json({
             result: 'success',
@@ -185,10 +191,10 @@ module.exports = {
     },
 
     async updateJobKind(req, res, next) {
-        const jobOpeningSeq = req.body.seq;
+        const resumeSeq = req.body.seq;
         const jobKinds = req.body.jobKinds;
 
-        const result = await jobOpeningService.updateJobKind(jobOpeningSeq, jobKinds);
+        const result = await resumeService.updateJobKind(resumeSeq, jobKinds);
 
         if (result) {
             res.status(200).json({
@@ -204,10 +210,10 @@ module.exports = {
     },
 
     async updateWorkingRegion(req, res, next) {
-        const jobOpeningSeq = req.body.seq;
+        const resumeSeq = req.body.seq;
         const workingRegions = req.body.regions;
 
-        const result = await jobOpeningService.updateWorkingRegion(jobOpeningSeq, workingRegions);
+        const result = await resumeService.updateWorkingRegion(resumeSeq, workingRegions);
 
         if (result) {
             res.status(200).json({
@@ -222,18 +228,18 @@ module.exports = {
         }
     },
 
-    async addCarrier(req, res, next) {
+    async addCareer(req, res, next) {
         const resumeSeq = req.body.resumeSeq;
         const workStart = req.body.workStart;
         const workEnd = req.body.workEnd;
-        const carrier = req.body.carrier;
+        const career = req.body.career;
         const position = req.body.position;
         const jobType = req.body.jobType;
         const workRegion = req.body.workRegion;
         const charge = req.body.charge;
         const salaly = req.body.salaly;
 
-        const result = await resumeService.addCarrier(resumeSeq, workStart, workEnd, carrier, position, jobType, workRegion, charge, salaly);
+        const result = await resumeService.addCareer(resumeSeq, workStart, workEnd, career, position, jobType, workRegion, charge, salaly);
 
         if (result) {
             res.status(200).json({
@@ -248,19 +254,19 @@ module.exports = {
         }
     },
 
-    async updateCarrier(req, res, next) {
+    async updateCareer(req, res, next) {
         const seq = req.body.seq;
         const resumeSeq = req.body.resumeSeq;
         const workStart = req.body.workStart;
         const workEnd = req.body.workEnd;
-        const carrier = req.body.carrier;
+        const career = req.body.career;
         const position = req.body.position;
         const jobType = req.body.jobType;
         const workRegion = req.body.workRegion;
         const charge = req.body.charge;
         const salaly = req.body.salaly;
 
-        const result = await resumeService.updateCarrier(seq, workStart, workEnd, carrier, position, jobType, workRegion, charge, salaly);
+        const result = await resumeService.updateCareer(seq, workStart, workEnd, career, position, jobType, workRegion, charge, salaly);
 
         if (result) {
             res.status(200).json({
@@ -275,10 +281,10 @@ module.exports = {
         }
     },
    
-    async removeCarrier(req, res, next) {
+    async removeCareer(req, res, next) {
         const seq = req.body.seq;
 
-        const result = await resumeService.removeCarrier(seq);
+        const result = await resumeService.removeCareer(seq);
 
         if (result) {
             res.status(200).json({
@@ -293,15 +299,15 @@ module.exports = {
         }
     },
 
-    async getCarrier(req, res, next) {
+    async getCareer(req, res, next) {
         const seq = req.body.seq;
 
         if (resumeSeq) {
-            const resumeCarrierInfo = await resumeService.getCarrier(seq);
+            const resumeCareerInfo = await resumeService.getCareer(seq);
 
             res.status(200).json({
                 result: 'success',
-                data: resumeCarrierInfo
+                data: resumeCareerInfo
             });    
         } else {
             res.status(200).json({
@@ -311,10 +317,10 @@ module.exports = {
         }
     },
 
-    async listCarrier(req, res, next) {
+    async listCareer(req, res, next) {
         const resumeSeq = req.body.resumeSeq;
 
-        const list = await resumeService.list(resumeSeq);
+        const list = await resumeService.listCareer(resumeSeq);
 
         res.status(200).json({
             result: 'success',
