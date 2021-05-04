@@ -132,6 +132,8 @@ module.exports = {
     // http://localhost:3000/api/jobOpening/list?regions=1,2&jobkinds=1,5
     // 지역, 직종으로만 나열
     async list(req, res, next) {
+        logger.writeLog('info', `controller/authService/list`);           
+
         const martSeq = req.query.martSeq;
         const name = req.query.name;
         const regions = req.query.regions;

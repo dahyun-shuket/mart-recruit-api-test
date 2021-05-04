@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 module.exports = {
     async isAuthorized(req, res, next) {
         const token = req.headers['authorization'] || req.query.token;
-        const secretKey = req.body.secretKey || req.query.secretKey;
+        const secretKey = req.body.key || req.query.key;
 
         if (token) {
             jwt.verify(token, secretKey, (err, decoded) => {

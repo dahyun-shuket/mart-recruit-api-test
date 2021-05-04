@@ -55,7 +55,7 @@ logger.stream = {
 
 logger.writeLog = function (logType, logMessage) {
     logger.log(logType, logMessage);
-    if (process.env.NODE_ENV != "production") console.log(`[${logType}] ${logMessage}`);
+    if (process.env.NODE_ENV != "production") console.log(`---------------[${logType}] ${logMessage}`);
 }
 
 module.exports = logger

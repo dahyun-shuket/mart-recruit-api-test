@@ -1,22 +1,23 @@
 var express = require('express');
+const { tokenVerify } = require("../app/services/auth");
 var router = express.Router();
 
 const { create, update, remove, get, list, listForAdmin, updateJobKind, updateWorkingRegion } = require('../app/controllers/recruit.js');
 
-router.post('/create', create);
+router.post('/create', tokenVerify, create);
 
-router.post('/update', update);
+router.post('/update', tokenVerify, update);
 
-router.get('/remove', remove);
+router.get('/remove', tokenVerify, remove);
 
 router.get('/get', get);
 
 router.get('/list', list);
 
-router.get('/listForAdmin', listForAdmin);
+router.get('/listForAdmin', tokenVerify, listForAdmin);
 
-router.get('/updateJobKind', updateJobKind);
+router.get('/updateJobKind', tokenVerify, updateJobKind);
 
-router.get('/updateRegion', updateWorkingRegion);
+router.get('/updateRegion', tokenVerify, updateWorkingRegion);
 
 module.exports = router;

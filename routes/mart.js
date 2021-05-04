@@ -1,15 +1,16 @@
 var express = require('express');
+const { tokenVerify } = require("../app/services/auth");
 var router = express.Router();
 
 const { create, update, updateLogo, remove, get, list } = require('../app/controllers/mart.js');
 
-router.post('/create', create);
+router.post('/create', tokenVerify, create);
 
-router.post('/update', update);
+router.post('/update', tokenVerify, update);
 
-router.post('/updateLogo', updateLogo);
+router.post('/updateLogo', tokenVerify, updateLogo);
 
-router.get('/remove', remove);
+router.get('/remove', tokenVerify, remove);
 
 router.get('/get', get);
 

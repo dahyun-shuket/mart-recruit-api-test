@@ -1,4 +1,5 @@
 var express = require('express');
+const { tokenVerify } = require("../app/services/auth");
 var router = express.Router();
 
 const { create, update, remove, get, list, listPerRecruit, updateJobKind, updateWorkingRegion, addCarrier, updateCarrier, removeCarrier, getCarrier, listCarrier } = require('../app/controllers/resume.js');
