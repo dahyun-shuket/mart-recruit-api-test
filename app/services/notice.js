@@ -69,13 +69,13 @@ module.exports = class noticeService {
     }
 
     // 공지사항 수정
-    static update(seq) {
+    static update(body) {
         return new Promise(function(resolve, reject) {
-            //console.log('services/notice/update 확인')
+            
             try {
 
-                let noticeUpdate = noticeModel.update(seq);
-                //console.log(body);
+                let noticeUpdate = noticeModel.update(body);
+
                 resolve(noticeUpdate);
                 console.log('services/notice/update 정보 받기 성공');
             } catch (error) {
@@ -83,6 +83,7 @@ module.exports = class noticeService {
             }
         });
     }
+
 
     static get(seq) {
         return new Promise(function(resolve, reject) {

@@ -22,7 +22,7 @@ module.exports = class notice {
             const[rows, fileds] = await pool.query(`SELECT SUBJECT, CONTENT, USER_SEQ, CREATED
              FROM NOTICEBOARD WHERE SEQ=?`, 
             [seq]);
-            return rows;
+            return rows[0];
         } catch(error) {
             logger.writeLog(`[ERROR] models/notice/Views:  + ${error}`);
             return null;
@@ -61,10 +61,10 @@ module.exports = class notice {
     }
 
     // noticeboard 수정 데이터
-    static async update(seq) {
-        try { 
-            const [rows, fileds] = await pool.query(`UPDATE NOTICEBOARD SET SUBJECT=?, CONTENT=?, USER_SEQ=?, MODIFIED=? WHERE SEQ=?`, 
-            [seq.SUBJECT, seq.CONTENT, seq.USER_SEQ, seq.MODIFIED, seq.SEQ]);
+    static async update(body) {
+        try {
+            const [rows, fileds] = await pool.query(`UPDATE NOTICEBOARD SET SUBJECT=?, CONTENT=?, USER_SEQ=?, MODIFIED=NOW() WHERE SEQ=?`, 
+            [body.SUBJECT, body.CONTENT, body.USER_SEQ, body.SEQ]);
             return rows;
         } catch(error) {
             logger.writeLog(`[ERROR] models/notice/edit:  + ${error}`);

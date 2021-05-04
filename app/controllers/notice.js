@@ -59,9 +59,9 @@ module.exports = {
 
     // 공지사항 글을 수정할때
     async noticeUpdate(req, res, next) {
-        const seq = req.query.seq;
-
-        const noticeUpdate = await noticeService.update(seq);
+        const body = req.body;
+        console.log(body);
+        const noticeUpdate = await noticeService.update(body);
         console.log(noticeUpdate);
         res.status(200).json({
             result: 'success',

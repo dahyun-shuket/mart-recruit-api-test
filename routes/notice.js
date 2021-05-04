@@ -11,7 +11,7 @@ const { noticeList, noticeDelete, addNoticeCreate,  noticeUpdate, noticeView, li
 router.get('/view', noticeView);
 
 // 공지사항 삭제 
-router.get('/remove', noticeDelete);
+router.post('/remove', noticeDelete);
 
 // 공지사항 글 작성 페이지  
 router.post('/create', addNoticeCreate);  
