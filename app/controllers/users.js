@@ -10,9 +10,10 @@ module.exports = {
     // 유저 생성
     async create(req, res, next) {
         try {
-            let userId = req.body.userId
+            console.log(JSON.stringify(req.body))
+            let userId = req.body.userid
             let password = req.body.password
-            let userType = req.body.userType
+            let userType = req.body.usertype
             let active = req.body.active
             
             let salt = genSaltSync(10);

@@ -4,7 +4,6 @@ const { tokenVerify } = require("../app/services/auth");
 const { create, login, list, get, update, remove, checkid} = require("../app/controllers/users");
 
 router.post("/login", login);
-// router.get("/list",  tokenVerify, list);
 router.post("/list", tokenVerify,  list);
 router.get("/get/:id", tokenVerify, get);
 router.post("/get/:id", tokenVerify, get);
