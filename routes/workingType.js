@@ -3,12 +3,12 @@ var router = express.Router();
 
 const { create, update, remove, list } = require('../app/controllers/workingType.js');
 
-router.get('/create', create);
+router.post('/create', create);
 
-router.get('/update', update);
+router.post('/update', update);
 
-router.get('/remove', remove);
+router.post('/remove', remove);
 
-router.get('/list', list);
+router.post('/list', list);
 
 module.exports = router;

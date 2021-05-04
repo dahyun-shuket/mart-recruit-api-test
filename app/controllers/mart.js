@@ -79,7 +79,7 @@ module.exports = {
     },
 
     async remove(req, res, next) {
-        const seq = req.query.seq;
+        const seq = req.body.seq;
 
         const result = await martService.remove(seq);
 
@@ -97,7 +97,7 @@ module.exports = {
     },
 
     async get(req, res, next) {
-        const martSeq = req.query.seq;
+        const martSeq = req.body.seq;
 
         if (martSeq) {
 
@@ -116,11 +116,11 @@ module.exports = {
     },
 
     async list(req, res, next) {
-        const page = (req.query.page) ? req.query.page : 1;
-        const rowCount = (req.query.rowCount) ? req.query.rowCount * 1 : defaultRowCount;
+        const page = (req.body.page) ? req.body.page : 1;
+        const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
         
         const totalCount = await martService.totalCount(req.query.name);
-        const list = await martService.list(req.query.name, page, rowCount);
+        const list = await martService.list(req.body.name, page, rowCount);
 
         res.status(200).json({
             result: 'success',

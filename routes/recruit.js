@@ -8,16 +8,16 @@ router.post('/create', tokenVerify, create);
 
 router.post('/update', tokenVerify, update);
 
-router.get('/remove', tokenVerify, remove);
+router.post('/remove', tokenVerify, remove);
 
-router.get('/get', get);
+router.post('/get', get);
 
-router.get('/list', list);
+router.post('/list', list);
 
-router.get('/listForAdmin', tokenVerify, listForAdmin);
+router.post('/listForAdmin', tokenVerify, listForAdmin);
 
-router.get('/updateJobKind', tokenVerify, updateJobKind);
+router.post('/updateJobKind', tokenVerify, updateJobKind);
 
-router.get('/updateRegion', tokenVerify, updateWorkingRegion);
+router.post('/updateRegion', tokenVerify, updateWorkingRegion);
 
 module.exports = router;

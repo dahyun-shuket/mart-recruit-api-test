@@ -88,7 +88,7 @@ module.exports = {
     },
 
     async remove(req, res, next) {
-        const seq = req.query.seq;
+        const seq = req.body.seq;
 
         const result = await recruitService.remove(seq);
 
@@ -107,12 +107,10 @@ module.exports = {
 
     // ?martseq=&page=&criteria=
     async get(req, res, next) {
-        const jobOPeningSeq = req.query.seq;
+        const recruitSeq = req.body.seq;
 
-
-        if (jobOPeningSeq) {
-
-            const jobOpeningInfo = await recruitService.get(jobOPeningSeq);
+        if (recruitSeq) {
+            const jobOpeningInfo = await recruitService.get(recruitSeq);
 
             res.status(200).json({
                 result: 'success',
@@ -134,16 +132,16 @@ module.exports = {
     async list(req, res, next) {
         logger.writeLog('info', `controller/authService/list`);           
 
-        const martSeq = req.query.martSeq;
-        const name = req.query.name;
-        const regions = req.query.regions;
-        const jobkinds = req.query.jobkinds;
-        const userSeq = req.query.userSeq;
-        var userOwn = req.query.userOwn;
+        const martSeq = req.body.martSeq;
+        const name = req.body.name;
+        const regions = req.body.regions;
+        const jobkinds = req.body.jobkinds;
+        const userSeq = req.body.userSeq;
+        var userOwn = req.body.userOwn;
 
         if (userSeq) { if (userOwn == undefined) userOwn = 'N'};
-        const page = (req.query.page) ? req.query.page : 1;
-        const rowCount = (req.query.rowCount) ? req.query.rowCount * 1 : defaultRowCount;
+        const page = (req.body.page) ? req.body.page : 1;
+        const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
 
         const totalCount = await recruitService.totalCount(martSeq, name, regions, jobkinds);
         const list = await recruitService.list(martSeq, name, userSeq, userOwn, regions, jobkinds, page, rowCount);
@@ -158,12 +156,12 @@ module.exports = {
     },
 
     async listForAdmin(req, res, next) {
-        const name = req.query.name;
-        const regions = req.query.regions;
-        const jobkinds = req.query.jobkinds;
+        const name = req.body.name;
+        const regions = req.body.regions;
+        const jobkinds = req.body.jobkinds;
 
-        const page = (req.query.page) ? req.query.page : 1;
-        const rowCount = (req.query.rowCount) ? req.query.rowCount * 1 : defaultRowCount;
+        const page = (req.body.page) ? req.body.page : 1;
+        const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
 
         const totalCount = await recruitService.totalCount(null, name, regions, jobkinds);
         const list = await recruitService.list(null, name, null, null, regions, jobkinds, page, rowCount);
@@ -178,8 +176,8 @@ module.exports = {
     },
 
     async listResume(req, res, next) {
-        const jobOpeningSeq = req.query.jobOpeningSeq;
-        const page = (req.query.page) ? req.query.page : 1;
+        const jobOpeningSeq = req.body.jobOpeningSeq;
+        const page = (req.body.page) ? req.body.page : 1;
 
         const list = await resumeService.listForJobOpening(jobOpeningSeq, page, rowCount);
 
@@ -190,8 +188,8 @@ module.exports = {
     },
 
     async updateJobKind(req, res, next) {
-        const jobOpeningSeq = req.query.seq;
-        const jobKinds = req.query.jobKinds;
+        const jobOpeningSeq = req.body.seq;
+        const jobKinds = req.body.jobKinds;
 
         const result = await recruitService.updateJobKind(jobOpeningSeq, jobKinds);
 
@@ -209,8 +207,8 @@ module.exports = {
     },
 
     async updateWorkingRegion(req, res, next) {
-        const jobOpeningSeq = req.query.seq;
-        const workingRegions = req.query.regions;
+        const jobOpeningSeq = req.body.seq;
+        const workingRegions = req.body.regions;
 
         const result = await recruitService.updateWorkingRegion(jobOpeningSeq, workingRegions);
 

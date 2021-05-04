@@ -8,26 +8,26 @@ router.post('/create', create);
 
 router.post('/update', update);
 
-router.get('/remove', remove);
+router.post('/remove', remove);
 
-router.get('/get', get);
+router.post('/get', get);
 
-router.get('/list', list);
+router.post('/list', list);
 
-router.get('/listPerRecruit', listPerRecruit);
+router.post('/listPerRecruit', listPerRecruit);
 
-router.get('/updateJobKind', updateJobKind);
+router.post('/updateJobKind', updateJobKind);
 
-router.get('/updateRegion', updateWorkingRegion);
+router.post('/updateRegion', updateWorkingRegion);
 
 router.post('/addCarrier', addCarrier);
 
 router.post('/updateCarrier', updateCarrier);
 
-router.get('/removeCarrier', removeCarrier);
+router.post('/removeCarrier', removeCarrier);
 
-router.get('/getCarrier', getCarrier);
+router.post('/getCarrier', getCarrier);
 
-router.get('/listCarrier', listCarrier);
+router.post('/listCarrier', listCarrier);
 
 module.exports = router;

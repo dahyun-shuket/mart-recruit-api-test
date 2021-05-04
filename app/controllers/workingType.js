@@ -2,7 +2,7 @@ const workingTypeService = require('../services/workingType.js');
 
 module.exports = {
     async create(req, res, next) {
-        const workingTypeName = req.query.workingType;
+        const workingTypeName = req.body.workingType;
 
         await workingTypeService.create(workingTypeName);
 
@@ -12,8 +12,8 @@ module.exports = {
     },
 
     async update(req, res, next) {
-        const workingTypeSeq = req.query.seq;
-        const workingTypeName = req.query.workingType;
+        const workingTypeSeq = req.body.seq;
+        const workingTypeName = req.body.workingType;
 
         await workingTypeService.update(workingTypeSeq, workingTypeName);
 
@@ -23,7 +23,7 @@ module.exports = {
     },
 
     async remove(req, res, next) {
-        const workingTypeSeq = req.query.seq;
+        const workingTypeSeq = req.body.seq;
 
         const result = await workingTypeService.remove(workingTypeSeq);
 

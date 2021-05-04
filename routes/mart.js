@@ -10,10 +10,10 @@ router.post('/update', tokenVerify, update);
 
 router.post('/updateLogo', tokenVerify, updateLogo);
 
-router.get('/remove', tokenVerify, remove);
+router.post('/remove', tokenVerify, remove);
 
-router.get('/get', get);
+router.post('/get', get);
 
-router.get('/list', list);
+router.post('/list', list);
 
 module.exports = router;

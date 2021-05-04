@@ -81,7 +81,7 @@ module.exports = {
     },
    
     async remove(req, res, next) {
-        const seq = req.query.seq;
+        const seq = req.body.seq;
 
         const result = await resumeService.remove(seq);
 
@@ -99,7 +99,7 @@ module.exports = {
     },
 
     async certificate(req, res, next) {
-        const seq = req.query.seq;
+        const seq = req.body.seq;
 
         const result = await resumeService.setCertificate(seq, 'Y');
 
@@ -117,7 +117,7 @@ module.exports = {
     },
 
     async clearCertificate(req, res, next) {
-        const seq = req.query.seq;
+        const seq = req.body.seq;
 
         const result = await resumeService.setCertificate(seq, 'N');
 
@@ -135,7 +135,7 @@ module.exports = {
     },
     
     async get(req, res, next) {
-        const resumeSeq = req.query.seq;
+        const resumeSeq = req.body.seq;
 
         if (resumeSeq) {
             const resumeInfo = await resumeService.get(resumeSeq);
@@ -157,15 +157,15 @@ module.exports = {
     // http://localhost:3000/api/resume/list?userSeq=1&jobkinds=1,5
     // http://localhost:3000/api/resume/list?regions=1,2&jobkinds=1,5
     async list(req, res, next) {
-        const userSeq = req.query.userSeq;
-        const regions = req.query.regions;
-        const jobkinds = req.query.jobkinds;
-        const recruitSeq = req.query.recruitSeq;
+        const userSeq = req.body.userSeq;
+        const regions = req.body.regions;
+        const jobkinds = req.body.jobkinds;
+        const recruitSeq = req.body.recruitSeq;
+        const certificate = (req.body.cert) ? req.body.cert : 'N';
         
-        const page = (req.query.page) ? req.query.page : 1;
-        const rowCount = (req.query.rowCount) ? req.query.rowCount : defaultRowCount;
-
-        const list = await resumeService.list(userSeq, regions, jobkinds, 'N', page, rowCount);
+        const page = (req.body.page) ? req.body.page : 1;
+        const rowCount = (req.body.rowCount) ? req.body.rowCount : defaultRowCount;
+        const list = await resumeService.list(userSeq, regions, jobkinds, certificate, recruitSeq, page, rowCount);
 
         res.status(200).json({
             result: 'success',
@@ -174,7 +174,7 @@ module.exports = {
     },
 
     async listPerRecruit(req, res, next) {
-        const recruitSeq = req.query.recruitSeq;
+        const recruitSeq = req.body.recruitSeq;
         
         const list = await resumeService.list(null, null, null, 'N', recruitSeq, 1, 100);
 
@@ -184,25 +184,9 @@ module.exports = {
         });    
     },
 
-    async listWaitCertificate(req, res, next) {
-        const userSeq = req.query.userSeq;
-        const regions = req.query.regions;
-        const jobkinds = req.query.jobkinds;
-
-        const page = (req.query.page) ? req.query.page : 1;
-        const rowCount = (req.query.rowCount) ? req.query.rowCount : defaultRowCount;
-
-        const list = await resumeService.list(userSeq, regions, jobkinds, 'Y', page, rowCount);
-
-        res.status(200).json({
-            result: 'success',
-            data: list
-        });    
-    },
-
     async updateJobKind(req, res, next) {
-        const jobOpeningSeq = req.query.seq;
-        const jobKinds = req.query.jobKinds;
+        const jobOpeningSeq = req.body.seq;
+        const jobKinds = req.body.jobKinds;
 
         const result = await jobOpeningService.updateJobKind(jobOpeningSeq, jobKinds);
 
@@ -220,8 +204,8 @@ module.exports = {
     },
 
     async updateWorkingRegion(req, res, next) {
-        const jobOpeningSeq = req.query.seq;
-        const workingRegions = req.query.regions;
+        const jobOpeningSeq = req.body.seq;
+        const workingRegions = req.body.regions;
 
         const result = await jobOpeningService.updateWorkingRegion(jobOpeningSeq, workingRegions);
 
@@ -292,7 +276,7 @@ module.exports = {
     },
    
     async removeCarrier(req, res, next) {
-        const seq = req.query.seq;
+        const seq = req.body.seq;
 
         const result = await resumeService.removeCarrier(seq);
 
@@ -310,7 +294,7 @@ module.exports = {
     },
 
     async getCarrier(req, res, next) {
-        const seq = req.query.seq;
+        const seq = req.body.seq;
 
         if (resumeSeq) {
             const resumeCarrierInfo = await resumeService.getCarrier(seq);
@@ -328,7 +312,7 @@ module.exports = {
     },
 
     async listCarrier(req, res, next) {
-        const resumeSeq = req.query.resumeSeq;
+        const resumeSeq = req.body.resumeSeq;
 
         const list = await resumeService.list(resumeSeq);
 

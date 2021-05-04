@@ -2,7 +2,7 @@ const jobKindService = require('../services/jobKind.js');
 
 module.exports = {
     async create(req, res, next) {
-        const jobKindName = req.query.jobKind;
+        const jobKindName = req.body.jobKind;
 
         await jobKindService.create(jobKindName);
 
@@ -12,8 +12,8 @@ module.exports = {
     },
 
     async update(req, res, next) {
-        const jobKindSeq = req.query.seq;
-        const jobKindName = req.query.jobKind;
+        const jobKindSeq = req.body.seq;
+        const jobKindName = req.body.jobKind;
 
         await jobKindService.update(jobKindSeq, jobKindName);
 
@@ -23,7 +23,7 @@ module.exports = {
     },
 
     async remove(req, res, next) {
-        const jobKindSeq = req.query.seq;
+        const jobKindSeq = req.body.seq;
 
         const result = await jobKindService.delete(jobKindSeq);
 

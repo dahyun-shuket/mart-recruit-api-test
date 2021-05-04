@@ -2,7 +2,7 @@ const workingRegionService = require('../services/workingRegion.js');
 
 module.exports = {
     async create(req, res, next) {
-        const workingRegionName = req.query.workingRegion;
+        const workingRegionName = req.body.workingRegion;
 
         await workingRegionService.create(workingRegionName);
 
@@ -12,8 +12,8 @@ module.exports = {
     },
 
     async update(req, res, next) {
-        const workingRegionSeq = req.query.seq;
-        const workingRegionName = req.query.workingRegion;
+        const workingRegionSeq = req.body.seq;
+        const workingRegionName = req.body.workingRegion;
 
         await workingRegionService.update(workingRegionSeq, workingRegionName);
 
@@ -23,7 +23,7 @@ module.exports = {
     },
 
     async remove(req, res, next) {
-        const workingRegionSeq = req.query.seq;
+        const workingRegionSeq = req.body.seq;
 
         const result = await workingRegionService.remove(workingRegionSeq);
 
