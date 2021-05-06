@@ -50,7 +50,7 @@ module.exports = {
         if (result) {
             // 토큰 생성
             results.password = undefined;
-            let accessToken = sign({ result: [results.SEQ,results.LOGINID] }, secretKey, options);
+            let accessToken = sign({ result: [results.SEQ,results.LOGINID, results.USERTYPE] }, secretKey, options);
             // console.log("Access Token ? ? : " + accessToken);
             logger.writeLog('info', `controller/login: 로그인 성공 ${userId} / ${accessToken}`);
 
@@ -121,9 +121,8 @@ module.exports = {
     },
     // 아이디 중복 체크
     async checkid(req, res) {
-        const userId = req.body.userId
+        const userId = req.body.userid
         let checkIdUser = await userService.checkId(userId);
-        console.log(checkIdUser);
         return res.json({
             result: "success",
             data: checkIdUser,

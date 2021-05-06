@@ -19,11 +19,6 @@ module.exports = class userService {
         return login;
     };
 
-    // static async list() {
-    //     let list = await userModel.list();
-    //     return list;
-    // };
-    // static async list(searchName, page, rowCount) {
     static async list(usertype, userLoginId, page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {

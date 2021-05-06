@@ -40,10 +40,11 @@ module.exports = class userModel {
     // 아이디 중복 체크
     static async checkId(userId) {
         try {
+            console.log(userId)
             const [rows, fields] = await pool.query(`select LOGINID from USERS where LOGINID = ?`, [userId]);
             let checkUserId = new Object();
             checkUserId.tf = false; // 이 아이디를 사용가능 한가요??
-
+            console.log(rows[0])
             if (rows[0] === undefined) {
                 //중복되는게 없으면
                 checkUserId.tf = true; //없음 사용가능
