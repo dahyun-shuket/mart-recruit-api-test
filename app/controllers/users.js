@@ -67,7 +67,7 @@ module.exports = {
             logger.writeLog('info', `controller/login: 로그인 실패 (암호 매칭 실패) ${userId} / ${password}`);
             return res.json({
                 result: "fail",
-                data: "Invalid Password",
+                data: "아이디 혹은 페스워드가 틀립니다.",
             });
         }
     },
