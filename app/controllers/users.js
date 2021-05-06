@@ -36,8 +36,8 @@ module.exports = {
     async login(req, res, next) {
         let userId = req.body.userId
         let password = req.body.password
-        let results = await userService.login(userId);
-        if (!results) {
+        let userInfo = await userService.login(userId);
+        if (!userInfo) {
             // 로그인이 실패했다
             logger.writeLog('info', `controller/login: 로그인 실패 (아이디 찾을 수 없음) ${userId} / ${password}`);
             return res.json({
@@ -45,20 +45,24 @@ module.exports = {
                 data: "Invalid ID or Password",
             });
         }
+        console.log('accessToken');
         // 암호화된 암호를 비교
-        const result = compareSync(password, results.PWD);
+        const result = compareSync(password, userInfo.PWD);
         if (result) {
             // 토큰 생성
-            results.password = undefined;
-            let accessToken = sign({ result: [results.SEQ,results.LOGINID, results.USERTYPE] }, secretKey, options);
-            // console.log("Access Token ? ? : " + accessToken);
+            let accessToken = sign({ result: [userInfo.SEQ,userInfo.LOGINID, userInfo.USERTYPE] }, secretKey, options);
             logger.writeLog('info', `controller/login: 로그인 성공 ${userId} / ${accessToken}`);
 
-            return res.json({
+            let returnJSON = {
                 result: "success",
-                data: results,
-                token: accessToken,
-            });
+                data: {
+                    SEQ: userInfo.SEQ,
+                    LOGINID: userInfo.LOGINID,
+                    USERTYPE: userInfo.USERTYPE,
+                    token: accessToken
+                }
+            };
+            return res.json(returnJSON);
         } else {
             logger.writeLog('info', `controller/login: 로그인 실패 (암호 매칭 실패) ${userId} / ${password}`);
             return res.json({
