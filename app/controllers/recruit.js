@@ -134,6 +134,7 @@ module.exports = {
 
         const martSeq = req.body.martSeq;
         const name = req.body.name;
+        const subject = req.body.subject;
         const regions = req.body.regions;
         const jobkinds = req.body.jobkinds;
         const userSeq = req.body.userSeq;
@@ -143,8 +144,8 @@ module.exports = {
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
 
-        const totalCount = await recruitService.totalCount(martSeq, name, regions, jobkinds);
-        const list = await recruitService.list(martSeq, name, userSeq, userOwn, regions, jobkinds, page, rowCount);
+        const totalCount = await recruitService.totalCount(martSeq, name, subject, regions, jobkinds);
+        const list = await recruitService.list(martSeq, name, subject, userSeq, userOwn, regions, jobkinds, page, rowCount);
 
         res.status(200).json({
             result: 'success',
@@ -158,14 +159,15 @@ module.exports = {
     // 관리자용 리스트에는 martSeq, userSeq, userOwn 이 무시된다
     async listForAdmin(req, res, next) {
         const name = req.body.name;
+        const subject = req.body.subject;
         const regions = req.body.regions;
         const jobkinds = req.body.jobkinds;
 
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
 
-        const totalCount = await recruitService.totalCount(null, name, regions, jobkinds);
-        const list = await recruitService.list(null, name, null, null, regions, jobkinds, page, rowCount);
+        const totalCount = await recruitService.totalCount(null, name, subject, regions, jobkinds);
+        const list = await recruitService.list(null, name, subject, null, null, regions, jobkinds, page, rowCount);
 
         res.status(200).json({
             result: 'success',
