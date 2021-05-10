@@ -1,5 +1,6 @@
 const logger = require("../config/logger");
 var userModel = require("../models/users");
+// const got = require("got");
 
 module.exports = class userService {
     static create(userId, password, userType, active) {
@@ -23,12 +24,8 @@ module.exports = class userService {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;
-                console.log(rowCount)
-                // let list = userModel.list(searchName, rowCount, offset);
                 let list = userModel.list(usertype, userLoginId, rowCount, offset);
-                // console.log(list)
                 resolve(list)
-                // return list;
             } catch(error){
                 logger.writeLog('error', `API - services/userService/list: ${error}`)
             }
@@ -87,5 +84,27 @@ module.exports = class userService {
     })
     };
     
+    // static async bizNoCheck(bizno){
+    //     try {
+            
+    //         console.log(bizno);
+            
+    //         let apiURL = "https://teht.hometax.go.kr/wqAction.do?actionId=ATTABZAA001R08&screenId=UTEABAAA13&popupYn=false&realScreenId=";
+    //         const {body} = await got.post(apiURL, '"'+bizno+'"',{
+    //             headers: {
+    //                 'contentType': 'application/xml'
+    //             }
+    //         });
+    //         if (body.result === 'success') {
+    //             return body.data;
+    //         } else {
+    //             //실패
+    //             logger.writeLog('error', `services/userService/bizNoCheck: ${body.result}`);           
+    //             return body.data;
+    //         }
+    //     } catch (error) {
+    //         logger.writeLog('error', `services/userService/bizNoCheck: ${error}`);           
+    //     }
+    // };
     
 };

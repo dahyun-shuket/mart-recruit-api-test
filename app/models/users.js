@@ -22,7 +22,7 @@ module.exports = class userModel {
     // 유저 업데이트
     static async update(userId, password, userType, active, seq) {
         try {
-            const [rows, fields] = await pool.query(`update USERS set LOGINID=?, PWD=?, USERTYPE=?, ACTIVE=? where seq = ?`, [userId, password, userType, active, seq]);
+            const [rows, fields] = await pool.query(`update USERS set LOGINID=?, PWD=?, USERTYPE=?, ACTIVE=? where SEQ = ?`, [userId, password, userType, active, seq]);
             return rows;
         } catch (error) {
             console.log("userUpdate model Error ! : " + error);
@@ -31,7 +31,7 @@ module.exports = class userModel {
     // 유저 삭제
     static async remove(seq) {
         try {
-            const [rows, fields] = await pool.query(`UPDATE USERS set ACTIVE="N" where seq = ?`, [seq]);
+            const [rows, fields] = await pool.query(`UPDATE USERS set ACTIVE="N" where SEQ = ?`, [seq]);
             return rows;
         } catch (error) {
             console.log("userRemove model Error ! : " + error);
@@ -40,11 +40,9 @@ module.exports = class userModel {
     // 아이디 중복 체크
     static async checkId(userId) {
         try {
-            console.log(userId)
             const [rows, fields] = await pool.query(`select LOGINID from USERS where LOGINID = ?`, [userId]);
             let checkUserId = new Object();
             checkUserId.tf = false; // 이 아이디를 사용가능 한가요??
-            console.log(rows[0])
             if (rows[0] === undefined) {
                 //중복되는게 없으면
                 checkUserId.tf = true; //없음 사용가능
@@ -70,9 +68,7 @@ module.exports = class userModel {
                                 USERTYPE='${usertype}'
                                 ${(userLoginId && userLoginId != '') ? 'AND LOGINID LIKE \'%' + userLoginId + '%\'' : ''}  
                             LIMIT ? OFFSET ? `
-                                
-                                // ${(userLoginId) ? 'AND LOGINID=' + userLoginId :''}
-                                const [rows, fields] = await pool.query(sql, [limit, offset]);
+                const [rows, fields] = await pool.query(sql, [limit, offset]);
                 if(rows.length > 0){
                     return rows;
                 }else{
@@ -90,7 +86,6 @@ module.exports = class userModel {
         // console.log("유저한명조회 모델 들어옴" + seq);
         try {
             const [rows, fields] = await pool.query(`select * from USERS WHERE SEQ=?`, [seq]);
-            console.log(rows[0]);
             return rows[0];
         } catch (error) {
             console.log("login model Error ! : " + error);
@@ -99,7 +94,6 @@ module.exports = class userModel {
     
     // 페이징
     static async paging(beginRow, rowPerPage) {
-        console.log("API 페이징 쿼리");
         try {
             const [rows, fields] = await pool.query(`select * from USERS ORDER BY SEQ DESC LIMIT ?,?`,[beginRow,rowPerPage]);
             return rows;
@@ -121,7 +115,6 @@ module.exports = class userModel {
                             ${(usertype && usertype != '') ? 'AND USERTYPE LIKE \'%' + usertype + '%\'' : ''}
                             `;
             const [rows, fields] = await pool.query(sql,[]);
-            // const [rows, fields] = await pool.query('SELECT COUNT(*) AS cnt FROM USERS',[]);
             return rows[0].cnt;
         } catch (error) {
             console.log("userCount model Error ! : " + error);

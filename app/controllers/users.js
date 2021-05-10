@@ -10,10 +10,9 @@ module.exports = {
     // 유저 생성
     async create(req, res, next) {
         try {
-            console.log(JSON.stringify(req.body))
-            let userId = req.body.userid
+            let userId = req.body.userId
             let password = req.body.password
-            let userType = req.body.usertype
+            let userType = req.body.userType
             let active = req.body.active
             
             let salt = genSaltSync(10);
@@ -45,7 +44,6 @@ module.exports = {
                 data: "Invalid ID or Password",
             });
         }
-        console.log('accessToken');
         // 암호화된 암호를 비교
         const result = compareSync(password, userInfo.PWD);
         if (result) {
@@ -79,12 +77,14 @@ module.exports = {
         const userType = req.body.userType
         const totalCount = await userService.count(req.body.userLoginId, userType);
         const userLoginId = (req.body.userLoginId) ? req.body.userLoginId : '';
-        console.log(totalCount)
         const list = await userService.list(userType, userLoginId, page, rowCount);
+        
         return res.json({
             result: "success",
-            totalCount : totalCount,
-            data: list,
+            data: {
+                list: list,
+                totalCount: totalCount
+            }
         });
     },
     // 유저 한명조회
@@ -106,7 +106,6 @@ module.exports = {
         const salt = genSaltSync(10);
         password = hashSync(password, salt);
         let updateUser = await userService.update(userId, password, userType, active, seq);
-        console.log(updateUser);
         return res.json({
             result: "success",
             data: updateUser,
@@ -115,17 +114,16 @@ module.exports = {
     // 유저 삭제
     async remove(req, res) {
         let seq = req.body.seq
-        console.log(seq)
         let removeUser = await userService.remove(seq);
-        console.log(removeUser);
         return res.json({
             result: "success",
             data: removeUser,
         });
     },
+
     // 아이디 중복 체크
     async checkid(req, res) {
-        const userId = req.body.userid
+        const userId = req.body.userId
         let checkIdUser = await userService.checkId(userId);
         return res.json({
             result: "success",
@@ -133,4 +131,14 @@ module.exports = {
         });
     },
     
+    // 사업자등록번호 체크 api
+    // async bizNoCheck(req, res) {
+    //     const bizno = req.body.bodyData
+    //     let checkBizno = await userService.bizNoCheck(bizno);
+    //     return checkBizno
+    //     res.json({
+    //         result: "success",
+    //         data: checkBizno,
+    //     });
+    // },
 };

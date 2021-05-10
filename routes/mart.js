@@ -4,7 +4,7 @@ var router = express.Router();
 
 const { create, update, updateLogo, remove, get, list } = require('../app/controllers/mart.js');
 
-router.post('/create', tokenVerify, create);
+router.post('/create', create);
 
 router.post('/update', tokenVerify, update);
 
