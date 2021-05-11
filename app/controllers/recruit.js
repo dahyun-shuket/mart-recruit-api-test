@@ -130,13 +130,12 @@ module.exports = {
     // http://localhost:3000/api/jobOpening/list?regions=1,2&jobkinds=1,5
     // 지역, 직종으로만 나열
     async list(req, res, next) {
-        logger.writeLog('info', `controller/authService/list`);           
-
         const martSeq = req.body.martSeq;
         const name = req.body.name;
         const subject = req.body.subject;
         const regions = req.body.regions;
-        const jobkinds = req.body.jobkinds;
+        const jobkinds = req.body.jobKinds;
+        const workingTypes = req.body.workingTypes;
         const userSeq = req.body.userSeq;
         const userOwn = req.body.userOwn;
 
@@ -144,8 +143,8 @@ module.exports = {
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
 
-        const totalCount = await recruitService.totalCount(martSeq, name, subject, regions, jobkinds);
-        const list = await recruitService.list(martSeq, name, subject, userSeq, userOwn, regions, jobkinds, page, rowCount);
+        const totalCount = await recruitService.totalCount(martSeq, name, subject, regions, jobkinds, workingTypes);
+        const list = await recruitService.list(martSeq, name, subject, userSeq, userOwn, regions, jobkinds, workingTypes, null, page, rowCount);
 
         res.status(200).json({
             result: 'success',
@@ -166,8 +165,8 @@ module.exports = {
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
 
-        const totalCount = await recruitService.totalCount(null, name, subject, regions, jobkinds);
-        const list = await recruitService.list(null, name, subject, null, null, regions, jobkinds, page, rowCount);
+        const totalCount = await recruitService.totalCount(null, name, subject, regions, jobkinds, null);
+        const list = await recruitService.list(null, name, subject, null, null, regions, jobkinds, null, null, page, rowCount);
 
         res.status(200).json({
             result: 'success',

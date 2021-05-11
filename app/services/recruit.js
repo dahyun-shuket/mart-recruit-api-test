@@ -50,10 +50,10 @@ module.exports = class recruitService {
             }
         })
     }
-    static totalCount(martSeq, name, subject, regions, jobKinds) {
+    static totalCount(martSeq, name, subject, regions, jobKinds, workingTypes) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = recruitModel.totalCount(martSeq, name, subject, regions, jobKinds);
+                let result = recruitModel.totalCount(martSeq, name, subject, regions, jobKinds, workingTypes);
     
                 resolve(result);
             } catch (error) {
@@ -61,11 +61,11 @@ module.exports = class recruitService {
             }
         })
     }
-    static list(martSeq, name, subject, userSeq, userOwn, regions, jobKinds, page, rowCount) {
+    static list(martSeq, name, subject, userSeq, userOwn, regions, jobKinds, workingTypes, scrapSeq, page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;
-                let result = recruitModel.list(martSeq, name, subject, userSeq, userOwn, regions, jobKinds, rowCount, offset);
+                let result = recruitModel.list(martSeq, name, subject, userSeq, userOwn, regions, jobKinds, workingTypes, scrapSeq, rowCount, offset);
     
                 resolve(result);
             } catch (error) {

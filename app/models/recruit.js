@@ -8,7 +8,7 @@ module.exports = class recruitModel {
         {
             const [rows, fields] = await pool.query(`INSERT INTO RECRUIT (
                 MART_SEQ, SUBJECT, HRONAME, HROCONTACT, JOBKIND_SEQ, CAREER_SEQ, EXPYEAR, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
-                WORKINGTYPE_SEQS, WORKINGTYPE_NAMESS, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, WORKREGION_SEQ, GENDER, AGE, STARTDATE, ENDATE, HIRINGSTEP, REQUIREDOCS, ACTIVE, CREATED, MODIFIED
+                WORKINGTYPE_SEQS, WORKINGTYPE_NAMESS, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, WORKREGION_SEQ, GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, ACTIVE, CREATED, MODIFIED
                 ) VALUES 
                 ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
                 [
@@ -28,7 +28,7 @@ module.exports = class recruitModel {
         {
             await pool.query(`UPDATE RECRUIT SET 
                     SUBJECT=?, HRONAME=?, HROCONTACT=?, JOBKIND_SEQ=?, CAREER_SEQ=?, EXPYEAR=?, CHARGE=?, JOBRANK=?, PREFERENTIAL=?, EDUCATION=?, SALARYTYPE=?, SALARY=?,
-                    WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, PROBATIONTERM=?, WORKSHIFT=?, WORKSHIFTTIME=?, WORKREGION_SEQ=?, GENDER=?, AGE=?, STARTDATE=?, ENDATE=?, HIRINGSTEP=?, REQUIREDOCS=?, MODIFIED=CURRENT_TIMESTAMP()
+                    WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, PROBATIONTERM=?, WORKSHIFT=?, WORKSHIFTTIME=?, WORKREGION_SEQ=?, GENDER=?, AGE=?, STARTDATE=?, ENDDATE=?, HIRINGSTEP=?, REQUIREDOCS=?, MODIFIED=CURRENT_TIMESTAMP()
                 WHERE 
                     SEQ=?`, 
                 [
@@ -57,54 +57,63 @@ module.exports = class recruitModel {
     static async get(seq) {
         try 
         {
-            //순번에 따라서 리스팅
             const [rows, fields] = await pool.query(`SELECT 
-                    RECRUIT.SEQ, 
-                    MART_SEQ,     
-                    SUBJECT, 
-                    HRONAME, 
-                    HROCONTACT, 
-                    JOBKIND_SEQ,
-                    JOBKIND_NAME,
-                    CAREER_SEQ, 
-                    CR.NAME AS CAREER_NAME, 
-                    EXPYEAR, 
-                    CHARGE, 
-                    JOBRANK, 
-                    PREFERENTIAL, 
-                    EDUCATION, 
-                    SALARYTYPE, 
-                    SALARY,
-                    WORKINGTYPE_SEQS, 
-                    WORKINGTYPE_NAMES, 
-                    PROBATIONTERM, 
-                    WORKSHIFT, 
-                    WORKSHIFTTIME, 
-                    GENDER, 
-                    AGE, 
-                    STARTDATE, 
-                    ENDATE, 
-                    HIRINGSTEP, 
-                    REQUIREDOCS, 
-                    WORKREGION_SEQ,
-                    WORKREGION_NAME,
-                    CONTENT,
-                    ACTIVE, 
-                    CREATED, 
-                    MODIFIED
-                FROM 
-                    RECRUIT 
-                    INNER JOIN CAREER CR ON CR.SEQ = RECRUIT.CAREER_SEQ
-                    INNER JOIN (
-                        SELECT RECRUIT_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
-                        FROM RECRUIT_JOBKIND GROUP BY RECRUIT_SEQ
-                    ) RJ ON RJ.RECRUIT_SEQ = RECRUIT.SEQ                    
-                    INNER JOIN (
-                        SELECT RECRUIT_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
-                        FROM RECRUIT_REGION GROUP BY RECRUIT_SEQ
-                    ) RR ON RR.RECRUIT_SEQ = RECRUIT.SEQ
-                WHERE
-                    RECRUIT.SEQ = ?`, [seq]);
+                        RECRUIT.SEQ, 
+                        MART_SEQ,     
+                        MART.NAME,
+                        MART.LOGOFILE,
+                        MART.POSTCODE,
+                        MART.ADDRESS,
+                        MART.ADDRESSEXTRA,
+                        SUBJECT, 
+                        RECRUIT.HRONAME, 
+                        RECRUIT.HROCONTACT, 
+                        JOBKIND_SEQ,
+                        JOBKIND_NAME,
+                        CAREER_SEQ, 
+                        CR.NAME AS CAREER_NAME, 
+                        EXPYEAR, 
+                        CHARGE, 
+                        JOBRANK, 
+                        PREFERENTIAL, 
+                        EDUCATION, 
+                        SALARYTYPE, 
+                        SALARY,
+                        WORKINGTYPE_SEQ, 
+                        WORKINGTYPE_NAME, 
+                        PROBATIONTERM, 
+                        WORKSHIFT, 
+                        WORKSHIFTTIME, 
+                        GENDER, 
+                        AGE, 
+                        STARTDATE, 
+                        ENDDATE, 
+                        HIRINGSTEP, 
+                        REQUIREDOCS, 
+                        WORKREGION_SEQ,
+                        WORKREGION_NAME,
+                        CONTENT,
+                        RECRUIT.ACTIVE, 
+                        RECRUIT.CREATED, 
+                        RECRUIT.MODIFIED
+                    FROM 
+                        RECRUIT 
+                        INNER JOIN CAREER CR ON CR.SEQ = RECRUIT.CAREER_SEQ
+                        INNER JOIN MART ON MART.SEQ = RECRUIT.MART_SEQ
+                        INNER JOIN (
+                            SELECT RECRUIT_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
+                            FROM RECRUIT_JOBKIND GROUP BY RECRUIT_SEQ
+                        ) RJ ON RJ.RECRUIT_SEQ = RECRUIT.SEQ                    
+                        INNER JOIN (
+                            SELECT RECRUIT_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
+                            FROM RECRUIT_REGION GROUP BY RECRUIT_SEQ
+                        ) RR ON RR.RECRUIT_SEQ = RECRUIT.SEQ
+                        INNER JOIN (
+                            SELECT RECRUIT_SEQ, GROUP_CONCAT(WORKINGTYPE_SEQ SEPARATOR ',') AS WORKINGTYPE_SEQ,  GROUP_CONCAT(WORKINGTYPE_NAME SEPARATOR ',') AS WORKINGTYPE_NAME
+                            FROM RECRUIT_WORKINGTYPE GROUP BY RECRUIT_SEQ
+                        ) RECRUIT_WORKINGTYPE ON RECRUIT_WORKINGTYPE.RECRUIT_SEQ = RECRUIT.SEQ  
+                    WHERE
+                        RECRUIT.SEQ = ?`, [seq]);
             if (rows.length > 0) 
                 return rows[0];
             else {
@@ -119,7 +128,7 @@ module.exports = class recruitModel {
 
     // 총 카운트 얻기
     // userSeq가 있는 경우 페이징을 하지 않으므로 제외
-    static async totalCount(martSeq, name, subject, regions, jobKinds) {
+    static async totalCount(martSeq, name, subject, regions, jobKinds, workingTypes) {
         try 
         {
             //순번에 따라서 리스팅
@@ -129,19 +138,20 @@ module.exports = class recruitModel {
             FROM (
                 SELECT 
                     DISTINCT
-                    RECRUIT.SEQ
-            
+                    RECRUIT.SEQ            
                 FROM 
                     RECRUIT
                     INNER JOIN CAREER ON CAREER.SEQ = RECRUIT.CAREER_SEQ
                     INNER JOIN MART ON MART.SEQ = RECRUIT.MART_SEQ
                     LEFT JOIN RECRUIT_REGION ON RECRUIT_REGION.RECRUIT_SEQ = RECRUIT.SEQ
                     LEFT JOIN RECRUIT_JOBKIND ON RECRUIT_JOBKIND.RECRUIT_SEQ = RECRUIT.SEQ
+                    LEFT JOIN RECRUIT_WORKINGTYPE ON RECRUIT_WORKINGTYPE.RECRUIT_SEQ = RECRUIT.SEQ
                 WHERE
                     MART.ACTIVE = 'Y' AND RECRUIT.ACTIVE = 'Y'                
                     ${(martSeq) ? 'AND RECRUIT.MART_SEQ=' + martSeq :''}
                     ${(regions) ? 'AND RECRUIT_REGION.WORKREGION_SEQ IN (' + regions + ')':''}
                     ${(jobKinds) ? 'AND RECRUIT_JOBKIND.JOBKIND_SEQ IN (' + jobKinds + ')':''}
+                    ${(workingTypes) ? 'AND RECRUIT_WORKINGTYPE.WORKINGTYPE_SEQ IN (' + workingTypes + ')':''}
                     ${(name) ? `AND MART.NAME LIKE '%${name}%'`:''}
                     ${(subject) ? `AND RECRUIT.SUBJECT LIKE '%${subject}%'`:''}
             ) RECRUIT`;
@@ -161,27 +171,34 @@ module.exports = class recruitModel {
     // name 있으면 검색된 마트의 구인 공고 리스트
     // userSeq 있고 userOwn=Y면 해당 유저의 지원 리스트
     // userSeq 있고 userOwn=N면 공고 목록에 해당 유저가 지원한 여부가 APPLY로 리턴
-    // userSeq 없으면 지원자가 있으면 APPLY가 Y
+    // userSeq 없고 지원자가 있으면 APPLY가 Y
     // userSeq가 없으면 userOwn은 무조건 N 이어야 한다
-    static async list(martSeq, name, subject, userSeq, userOwn, regions, jobKinds, limit, offset) {
+    // scrapSeq는 스크랩한 사용자의 번호인데, 이 값이 있으면 다른 검색 조건을 모두 null과 최대치로 보내 줘야 한다
+    static async list(martSeq, name, subject, userSeq, userOwn, regions, jobKinds, workingTypes, scrapSeq, limit, offset) {
         try 
         {
             //쿼리
             const sql = `
                 SELECT
-                    JO.*,
-                    JOK.JOBKIND_SEQ,
-                    JOK.JOBKIND_NAME,
-                    JOR.WORKREGION_SEQ,
-                    JOR.WORKREGION_NAME,
-                    IF(JORE.USER_SEQ IS NULL, 'N', 'Y') AS APPLY ,
-                    IFNULL(JOREC.COUNT, 0) AS APPLYCOUNT
+                    RECRUIT.*,
+                    RECRUIT_JOBKIND.JOBKIND_SEQ,
+                    RECRUIT_JOBKIND.JOBKIND_NAME,
+                    RECRUIT_REGION.WORKREGION_SEQ,
+                    RECRUIT_REGION.WORKREGION_NAME,
+                    RECRUIT_WORKINGTYPE.WORKINGTYPE_SEQ,
+                    RECRUIT_WORKINGTYPE.WORKINGTYPE_NAME,
+                    IF(RECRUIT_RESUME.USER_SEQ IS NULL, 'N', 'Y') AS APPLY ,
+                    IFNULL(RECRUIT_RESUME_COUNT.COUNT, 0) AS APPLYCOUNT
                 FROM (
                     SELECT 
                         DISTINCT
-                        MART.NAME,
                         RECRUIT.SEQ, 
                         MART_SEQ,     
+                        MART.NAME,
+                        MART.LOGOFILE,
+                        MART.POSTCODE,
+                        MART.ADDRESS,
+                        MART.ADDRESSEXTRA,
                         SUBJECT, 
                         RECRUIT.HRONAME, 
                         RECRUIT.HROCONTACT, 
@@ -194,15 +211,13 @@ module.exports = class recruitModel {
                         EDUCATION, 
                         SALARYTYPE, 
                         SALARY,
-                        WORKINGTYPE_SEQS, 
-                        WORKINGTYPE_NAMES, 
                         PROBATIONTERM, 
                         WORKSHIFT, 
                         WORKSHIFTTIME, 
                         GENDER, 
                         AGE, 
                         STARTDATE, 
-                        ENDATE, 
+                        ENDDATE, 
                         HIRINGSTEP, 
                         REQUIREDOCS, 
                         RECRUIT.ACTIVE, 
@@ -214,34 +229,42 @@ module.exports = class recruitModel {
                         INNER JOIN MART ON MART.SEQ = RECRUIT.MART_SEQ
                         LEFT JOIN RECRUIT_REGION ON RECRUIT_REGION.RECRUIT_SEQ = RECRUIT.SEQ
                         LEFT JOIN RECRUIT_JOBKIND ON RECRUIT_JOBKIND.RECRUIT_SEQ = RECRUIT.SEQ
+                        LEFT JOIN RECRUIT_WORKINGTYPE ON RECRUIT_WORKINGTYPE.RECRUIT_SEQ = RECRUIT.SEQ
                     WHERE
                         MART.ACTIVE = 'Y' AND RECRUIT.ACTIVE = 'Y'
-                        ${(martSeq) ? 'AND RECRUIT.MART_SEQ=' + martSeq :''}
+                        ${(martSeq) ? 'AND RECRUIT.MART_SEQ=' + martSeq :''}                        
                         ${(regions) ? 'AND RECRUIT_REGION.WORKREGION_SEQ IN (' + regions + ')':''}
                         ${(jobKinds) ? 'AND RECRUIT_JOBKIND.JOBKIND_SEQ IN (' + jobKinds + ')':''}
+                        ${(workingTypes) ? 'AND RECRUIT_WORKINGTYPE.WORKINGTYPE_SEQ IN (' + workingTypes + ')':''}
                         ${(name) ? `AND MART.NAME LIKE '%${name}%'`:''}
                         ${(subject) ? `AND RECRUIT.SUBJECT LIKE '%${subject}%'`:''}
-                    ) JO
+                    ) RECRUIT
                     LEFT JOIN (
                         SELECT RECRUIT_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
                         FROM RECRUIT_REGION GROUP BY RECRUIT_SEQ
-                    ) JOR ON JOR.RECRUIT_SEQ = JO.SEQ
+                    ) RECRUIT_REGION ON RECRUIT_REGION.RECRUIT_SEQ = RECRUIT.SEQ
                     LEFT JOIN (
                         SELECT RECRUIT_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
                         FROM RECRUIT_JOBKIND GROUP BY RECRUIT_SEQ
-                    ) JOK ON JOK.RECRUIT_SEQ = JO.SEQ  
+                    ) RECRUIT_JOBKIND ON RECRUIT_JOBKIND.RECRUIT_SEQ = RECRUIT.SEQ  
+                    LEFT JOIN (
+                        SELECT RECRUIT_SEQ, GROUP_CONCAT(WORKINGTYPE_SEQ SEPARATOR ',') AS WORKINGTYPE_SEQ,  GROUP_CONCAT(WORKINGTYPE_NAME SEPARATOR ',') AS WORKINGTYPE_NAME
+                        FROM RECRUIT_WORKINGTYPE GROUP BY RECRUIT_SEQ
+                    ) RECRUIT_WORKINGTYPE ON RECRUIT_WORKINGTYPE.RECRUIT_SEQ = RECRUIT.SEQ  
                     ${(userSeq && userOwn == 'Y') ? 'INNER' : 'LEFT'} JOIN (
                         SELECT RECRUIT_SEQ, GROUP_CONCAT(USER_SEQ SEPARATOR ',') AS USER_SEQ, COUNT(SEQ) AS COUNT
                         FROM RECRUIT_RESUME 
                         ${(userSeq) ? 'WHERE USER_SEQ = ' + userSeq : ''}
                         GROUP BY RECRUIT_SEQ
-                    ) JORE ON JORE.RECRUIT_SEQ = JO.SEQ  
+                    ) RECRUIT_RESUME ON RECRUIT_RESUME.RECRUIT_SEQ = RECRUIT.SEQ  
                     LEFT JOIN (
                         SELECT RECRUIT_SEQ, COUNT(SEQ) AS COUNT FROM RECRUIT_RESUME GROUP BY RECRUIT_SEQ
-                    ) JOREC ON JOREC.RECRUIT_SEQ = JO.SEQ                      
+                    ) RECRUIT_RESUME_COUNT ON RECRUIT_RESUME_COUNT.RECRUIT_SEQ = RECRUIT.SEQ                 
+                    ${(scrapSeq) ? 'INNER JOIN RECRUIT_SCRAP ON RECRUIT_SCRAP.RECRUIT_SEQ = RECRUIT.SEQ AND RECRUIT_SCRAP.USER_SEQ = ' + scrapSeq : ''}    
                 ORDER BY
                     CREATED DESC, SEQ DESC
                 LIMIT ? OFFSET ?`;
+            console.log(sql);
             const [rows, fields] = await pool.query(sql, [limit, offset]);
             if (rows.length > 0) 
                 return rows;
@@ -345,7 +368,7 @@ module.exports = class recruitModel {
                         GENDER, 
                         AGE, 
                         STARTDATE, 
-                        ENDATE, 
+                        ENDDATE, 
                         HIRINGSTEP, 
                         REQUIREDOCS, 
                         ACTIVE, 

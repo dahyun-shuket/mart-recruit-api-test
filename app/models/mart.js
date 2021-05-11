@@ -4,7 +4,7 @@ const path = require('path');
 const fs = require('fs');
 
 module.exports = class martModel {
-    static async create(user_Seq, name, logoFile, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank) {
+    static async create(userSeq, name, logoFile, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank) {
         try 
         {
             const [rows, fields] = await pool.query(`INSERT INTO MART (
@@ -12,7 +12,7 @@ module.exports = class martModel {
                 ) VALUES 
                 ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
                 [
-                    user_Seq, name, logoFile, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank
+                    userSeq, name, logoFile, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank
                 ]);
             return rows.insertId;
         } catch (error) {
