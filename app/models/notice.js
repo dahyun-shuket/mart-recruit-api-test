@@ -3,19 +3,39 @@ const pool = require("../../app/config/database_dev");
 
 module.exports = class notice {
 
-    // noticeboard 전체 데이터
-    static async list() {
-        try {
-            
-            const [rows, fileds] = await pool.query(`SELECT SEQ, SUBJECT, CONTENT, USER_SEQ, CREATED, MODIFIED, ACTIVE
-             FROM NOTICEBOARD LIMIT ? OFFSET ? ORDER BY SEQ DESC`, []); 
-            return rows;
-        } catch(error) {
-            logger.writeLog(`[ERROR] models/notice/list:  + ${error}`);
+    //공지사항 리스트
+    static async list(seq, limit, offset) {
+        try 
+        {
+            var query = `SELECT SEQ, SUBJECT, CONTENT, USER_SEQ, CREATED, MODIFIED, ACTIVE FROM NOTICEBOARD WHERE ACTIVE='Y' ORDER BY SEQ DESC LIMIT ? OFFSET ?`;
+            const [rows, fields] = await pool.query( query, [limit, offset], seq);
+            if (rows.length > 0) 
+                return rows;
+            else {
+                logger.writeLog('error', `models/noticeModel.list: No data found`);           
+                return null;
+            }                
+        } catch (error) {
+            logger.writeLog('error', `models/noticeModel.list: ${error}`);           
             return null;
-        };
-
+        }
     }
+    
+    // 공지사항 totalcount
+    static async totalCount() {
+        try 
+        {
+            var query = `SELECT COUNT(SEQ) AS TOTALCOUNT FROM NOTICEBOARD WHERE ACTIVE='Y'`;
+            const [rows, fields] = await pool.query(query);
+            logger.writeLog('error', `models/noticeModel.totalCount 요기: ${rows}`);   
+            return rows[0].TOTALCOUNT;
+
+        } catch (error) {
+            logger.writeLog('error', `models/noticeModel.totalCount : ${error}`);           
+            return 0;
+        }
+    }
+
     // noticeViews 보기 데이터
     static async views(seq) {
         try {
@@ -61,10 +81,10 @@ module.exports = class notice {
     }
 
     // noticeboard 수정 데이터
-    static async update(body) {
+    static async update(seq) {
         try {
             const [rows, fileds] = await pool.query(`UPDATE NOTICEBOARD SET SUBJECT=?, CONTENT=?, USER_SEQ=?, MODIFIED=NOW() WHERE SEQ=?`, 
-            [body.SUBJECT, body.CONTENT, body.USER_SEQ, body.SEQ]);
+            [seq.SUBJECT, seq.CONTENT, seq.USER_SEQ, seq.SEQ]);
             return rows;
         } catch(error) {
             logger.writeLog(`[ERROR] models/notice/edit:  + ${error}`);
@@ -88,39 +108,8 @@ module.exports = class notice {
             return null;
         }
     }
-    //static async totalCount(seq) {
-    static async totalCount() {
-        try 
-        {
-
-            var query = `SELECT COUNT(SEQ) AS TOTALCOUNT FROM NOTICEBOARD WHERE ACTIVE='Y'`;
-            //const [rows, fields] = await pool.query(query, [seq]);
-            const [rows, fields] = await pool.query(query);
-            logger.writeLog('error', `models/noticeModel.totalCount 요기: ${rows}`);   
-            return rows[0].TOTALCOUNT;
-        } catch (error) {
-            logger.writeLog('error', `models/noticeModel.totalCount : ${error}`);           
-            return 0;
-        }
-    }
-    //static async list(name, limit, offset) {
-    static async list(limit, offset) {
-        try 
-        {
-
-            var query = `SELECT SEQ, SUBJECT, CONTENT, USER_SEQ, CREATED, MODIFIED, ACTIVE FROM NOTICEBOARD WHERE ACTIVE='Y' ORDER BY SEQ DESC LIMIT ? OFFSET ?`;
-            const [rows, fields] = await pool.query(query, [limit, offset]);
-            if (rows.length > 0) 
-                return rows;
-            else {
-                logger.writeLog('error', `models/noticeModel.list: No data found`);           
-                return null;
-            }                
-        } catch (error) {
-            logger.writeLog('error', `models/noticeModel.list: ${error}`);           
-            return null;
-        }
-    }
+    
+    
 
 }
 
