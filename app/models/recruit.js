@@ -65,9 +65,11 @@ module.exports = class recruitModel {
                         MART.POSTCODE,
                         MART.ADDRESS,
                         MART.ADDRESSEXTRA,
+                        MART.CONTACT,
                         SUBJECT, 
                         RECRUIT.HRONAME, 
                         RECRUIT.HROCONTACT, 
+                        RECRUIT.HROEMAIL,
                         JOBKIND_SEQ,
                         JOBKIND_NAME,
                         CAREER_SEQ, 
@@ -95,7 +97,8 @@ module.exports = class recruitModel {
                         CONTENT,
                         RECRUIT.ACTIVE, 
                         RECRUIT.CREATED, 
-                        RECRUIT.MODIFIED
+                        RECRUIT.MODIFIED,
+                        IFNULL(RECRUIT_RESUME_COUNT.COUNT, 0) AS APPLYCOUNT
                     FROM 
                         RECRUIT 
                         INNER JOIN CAREER CR ON CR.SEQ = RECRUIT.CAREER_SEQ
@@ -112,6 +115,9 @@ module.exports = class recruitModel {
                             SELECT RECRUIT_SEQ, GROUP_CONCAT(WORKINGTYPE_SEQ SEPARATOR ',') AS WORKINGTYPE_SEQ,  GROUP_CONCAT(WORKINGTYPE_NAME SEPARATOR ',') AS WORKINGTYPE_NAME
                             FROM RECRUIT_WORKINGTYPE GROUP BY RECRUIT_SEQ
                         ) RECRUIT_WORKINGTYPE ON RECRUIT_WORKINGTYPE.RECRUIT_SEQ = RECRUIT.SEQ  
+						LEFT JOIN (
+							SELECT RECRUIT_SEQ, COUNT(SEQ) AS COUNT FROM RECRUIT_RESUME GROUP BY RECRUIT_SEQ
+						) RECRUIT_RESUME_COUNT ON RECRUIT_RESUME_COUNT.RECRUIT_SEQ = RECRUIT.SEQ                 
                     WHERE
                         RECRUIT.SEQ = ?`, [seq]);
             if (rows.length > 0) 
@@ -264,7 +270,6 @@ module.exports = class recruitModel {
                 ORDER BY
                     CREATED DESC, SEQ DESC
                 LIMIT ? OFFSET ?`;
-            console.log(sql);
             const [rows, fields] = await pool.query(sql, [limit, offset]);
             if (rows.length > 0) 
                 return rows;
