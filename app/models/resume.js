@@ -103,12 +103,12 @@ module.exports = class resumeModel {
                     WORKREGION_NAME
                 FROM
                     RESUME R
-                    INNER JOIN CAREER C ON C.SEQ = R.CAREER_SEQ
-                    INNER JOIN (
+                    LEFT JOIN CAREER C ON C.SEQ = R.CAREER_SEQ
+                    LEFT JOIN (
                         SELECT RESUME_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
                         FROM RESUME_JOBKIND GROUP BY RESUME_SEQ
                     ) RK ON RK.RESUME_SEQ = R.SEQ   
-                    INNER JOIN (
+                    LEFT JOIN (
                         SELECT RESUME_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
                         FROM RESUME_REGION GROUP BY RESUME_SEQ
                     ) RR ON RR.RESUME_SEQ = R.SEQ
