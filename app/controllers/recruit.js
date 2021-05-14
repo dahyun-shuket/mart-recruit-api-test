@@ -178,10 +178,10 @@ module.exports = {
     },
 
     async listResume(req, res, next) {
-        const jobOpeningSeq = req.body.jobOpeningSeq;
+        const recruitSeq = req.body.seq;
         const page = (req.body.page) ? req.body.page : 1;
 
-        const list = await resumeService.listForJobOpening(jobOpeningSeq, page, rowCount);
+        const list = await resumeService.listForJobOpening(recruitSeq, page, rowCount);
 
         res.status(200).json({
             result: 'success',
@@ -190,10 +190,10 @@ module.exports = {
     },
 
     async updateJobKind(req, res, next) {
-        const jobOpeningSeq = req.body.seq;
+        const recruitSeq = req.body.seq;
         const jobKinds = req.body.jobKinds;
 
-        const result = await recruitService.updateJobKind(jobOpeningSeq, jobKinds);
+        const result = await recruitService.updateJobKind(recruitSeq, jobKinds);
 
         if (result) {
             res.status(200).json({
@@ -209,15 +209,72 @@ module.exports = {
     },
 
     async updateWorkingRegion(req, res, next) {
-        const jobOpeningSeq = req.body.seq;
+        const recruitSeq = req.body.seq;
         const workingRegions = req.body.regions;
 
-        const result = await recruitService.updateWorkingRegion(jobOpeningSeq, workingRegions);
+        const result = await recruitService.updateWorkingRegion(recruitSeq, workingRegions);
 
         if (result) {
             res.status(200).json({
                 result: 'success',
                 data: list
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
+    },
+
+    async getUserStatus(req, res, next) {
+        const recruitSeq = req.body.recruitSeq;
+        const userSeq = req.body.userSeq;
+
+        const result = await recruitService.getUserStatus(recruitSeq, userSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
+    },
+
+    async apply(req, res, next) {
+        const recruitSeq = req.body.recruitSeq;
+        const userSeq = req.body.userSeq;
+
+        const result = await recruitService.apply(recruitSeq, userSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
+    },
+
+    async cancelApply(req, res, next) {
+        const recruitSeq = req.body.recruitSeq;
+        const userSeq = req.body.userSeq;
+
+        const result = await recruitService.cancelApply(recruitSeq, userSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
             });    
         } else {
             res.status(200).json({

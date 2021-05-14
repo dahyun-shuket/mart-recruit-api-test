@@ -21,8 +21,8 @@ module.exports = class scrapModel {
     static async remove(userSeq, recruitSeq) {
         try 
         {
-            await pool.query(`DELETE FROM RECRUIT_SCRAP USER_SEQ=?, RECRUIT_SEQ=?`, [userSeq, recruitSeq]);
-            return 0;
+            await pool.query(`DELETE FROM RECRUIT_SCRAP WHERE USER_SEQ=? AND RECRUIT_SEQ=?`, [userSeq, recruitSeq]);
+            return recruitSeq;
         } catch (error) {
             logger.writeLog('error', `models/scrapModel.remove: ${error}`);           
             return null;
@@ -32,7 +32,7 @@ module.exports = class scrapModel {
         try 
         {
             await pool.query(`DELETE FROM RECRUIT_SCRAP SEQ=?`, [seq]);
-            return 0;
+            return recruitSeq;
         } catch (error) {
             logger.writeLog('error', `models/scrapModel.removeSeq: ${error}`);           
             return null;
