@@ -151,6 +151,23 @@ module.exports = {
             });    
         }
     },
+    async getByUserSeq(req, res, next) {
+        const resumeSeq = req.body.seq;
+
+        if (resumeSeq) {
+            const resumeInfo = await resumeService.getByUserSeq(resumeSeq);
+
+            res.status(200).json({
+                result: 'success',
+                data: resumeInfo
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
 
     // http://localhost:3000/api/resume/list?userSeq=1&regions=1,2&jobkinds=1,5
     // http://localhost:3000/api/resume/list?userSeq=1&regions=1,2
@@ -163,6 +180,7 @@ module.exports = {
         const recruitSeq = req.body.recruitSeq;
         const name = req.body.name;
         const certificate = req.body.certificate;
+        
         
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount : defaultRowCount;

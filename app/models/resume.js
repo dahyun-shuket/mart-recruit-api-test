@@ -7,7 +7,7 @@ module.exports = class resumeModel {
         try 
         {
             const [rows, fields] = await pool.query(`INSERT INTO RESUME (
-                    USER_SEQ, SUBJECT, PHOTO, NAME, CONTACT, EMAIL, POSTCODE, ADDRESS, ADDRESSEXTRA, EDUCATION, EDUCATIONSCHOOL, CARRIER_SEQ, 
+                    USER_SEQ, SUBJECT, PHOTO, NAME, CONTACT, EMAIL, POSTCODE, ADDRESS, ADDRESSEXTRA, EDUCATION, EDUCATIONSCHOOL, CAREER_SEQ, 
                     TECHNICAL, LICENSE, ISWELFARE, ISMILITALY, CAREERCERTIFICATE, INTRODUCE, WORKINGTYPE_SEQS, WORKINGTYPE_NAMES, SALARY, CERTIFICATE, CERTIFICATEDATE, ACTIVE, CREATED, MODIFIED
                 ) VALUES ( 
                     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'N', NULL, 'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
@@ -18,7 +18,7 @@ module.exports = class resumeModel {
                 ]);
             return rows.insertId;
         } catch (error) {
-            logger.writeLog('error', `models/resumeModel.create: ${error}`);           
+            logger.writeLog('error', `models/resumeModel.create: ${error}`);
             return null;
         }
     }
@@ -28,7 +28,7 @@ module.exports = class resumeModel {
         try 
         {
             await pool.query(`UPDATE RESUME SET 
-                    SUBJECT=?, PHOTO=?, NAME=?, CONTACT=?, EMAIL=?, POSTCODE=?, ADDRESS=?, ADDRESSEXTRA=?, EDUCATION=?, EDUCATIONSCHOOL=?, CARRER_SEQ=?, 
+                    SUBJECT=?, PHOTO=?, NAME=?, CONTACT=?, EMAIL=?, POSTCODE=?, ADDRESS=?, ADDRESSEXTRA=?, EDUCATION=?, EDUCATIONSCHOOL=?, CAREER_SEQ=?, 
                     TECHNICAL=?, LICENSE=?, ISWELFARE=?, ISMILITALY=?, CAREERCERTIFICATE=?, INTRODUCE=?, WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, SALARY=?, CERTIFICATE='N', CERTIFICATEDATE=NULL, MODIFIED=CURRENT_TIMESTAMP()
                 WHERE 
                     SEQ=?`, 
@@ -122,6 +122,69 @@ module.exports = class resumeModel {
             }                
         } catch (error) {
             logger.writeLog('error', `models/resumeModel.get: ${error}`);           
+            return null;
+        }
+    }
+    // 유저의 SEQ를 가져와서 이력서 조회
+    static async getByUserSeq(seq) {
+        try 
+        {
+            const [rows, fields] = await pool.query(`SELECT 
+                    R.SEQ,
+                    USER_SEQ, 
+                    SUBJECT, 
+                    PHOTO, 
+                    R.NAME, 
+                    BIRTHYEAR,
+                    GENDER, 
+                    CONTACT, 
+                    EMAIL, 
+                    POSTCODE, 
+                    ADDRESS, 
+                    ADDRESSEXTRA, 
+                    EDUCATION, 
+                    EDUCATIONSCHOOL, 
+                    CAREER_SEQ, 
+                    C.NAME AS CARRER_NAME,
+                    TECHNICAL, 
+                    LICENSE, 
+                    ISWELFARE, 
+                    ISMILITALY, 
+                    CAREERCERTIFICATE, 
+                    INTRODUCE, 
+                    WORKINGTYPE_SEQS, 
+                    WORKINGTYPE_NAMES, 
+                    SALARY, 
+                    CERTIFICATE, 
+                    CERTIFICATEDATE,
+                    ACTIVE, 
+                    CREATED, 
+                    MODIFIED,
+                    JOBKIND_SEQ,
+                    JOBKIND_NAME,
+                    WORKREGION_SEQ,
+                    WORKREGION_NAME
+                FROM
+                    RESUME R
+                    LEFT JOIN CAREER C ON C.SEQ = R.CAREER_SEQ
+                    LEFT JOIN (
+                        SELECT RESUME_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
+                        FROM RESUME_JOBKIND GROUP BY RESUME_SEQ
+                    ) RK ON RK.RESUME_SEQ = R.SEQ   
+                    LEFT JOIN (
+                        SELECT RESUME_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
+                        FROM RESUME_REGION GROUP BY RESUME_SEQ
+                    ) RR ON RR.RESUME_SEQ = R.SEQ
+                WHERE
+                    R.USER_SEQ=?`, [seq]);
+            if (rows.length > 0) 
+                return rows[0];
+            else {
+                logger.writeLog('error', `models/resumeModel.getByUserSeq: No data found`);           
+                return null;
+            }                
+        } catch (error) {
+            logger.writeLog('error', `models/resumeModel.getByUserSeq: ${error}`);           
             return null;
         }
     }

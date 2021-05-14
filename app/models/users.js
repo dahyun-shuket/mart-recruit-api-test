@@ -10,6 +10,49 @@ module.exports = class userModel {
             console.log("userCreate model Error ! : " + error);
         }
     }
+    static async createTransaction(userId, password, userType, active) {
+        const connection = await pool.getConnection(async conn => conn);
+        try 
+        {
+            await connection.beginTransaction();    // transaction
+            const [rows, fields] = await pool.query(`insert into USERS(LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [userId, password, userType, active]);
+            console.log(rows);
+            if (userType =='M') {
+                // 마트일때 마트를 생성해준다.
+                const [rowsMart, fieldsMart] = await pool.query(`INSERT INTO MART (
+                    USER_SEQ, ACTIVE, CREATED, MODIFIED
+                ) VALUES 
+                ( ?,  'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
+                [
+                    rows.insertId
+                ]);
+
+            }else if(userType =='U'){
+                // 유저일때 비어있는 이력서를 만들어준다.
+                const [rowsResume, fieldsResume] = await pool.query(`INSERT INTO RESUME (
+                    USER_SEQ, CERTIFICATE, CERTIFICATEDATE, ACTIVE, CREATED, MODIFIED
+                ) VALUES ( 
+                    ?, 'N', NULL, 'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
+                )`, 
+                [
+                    rows.insertId
+                ]);
+
+            }else{
+                // 어드민일땐 그냥 넘김.
+            }
+            await connection.commit(); // commit
+            connection.release();
+
+            return rows;
+        } catch (error) {
+            await connection.rollback();    // rollback
+            connection.release();
+
+            logger.writeLog('error', `models/userModel.createTransaction: ${error}`);           
+            return null;
+        }
+    }
     // 유저 로그인
     static async login(userId) {
         try {

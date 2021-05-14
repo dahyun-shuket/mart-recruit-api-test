@@ -6,6 +6,7 @@ const fileStorageService = require('../services/fileStorage.js');
 module.exports = {
     async getFile(req, res, next) {
         const seq = req.params.SEQ;
+        
         // 파일 정보를 얻어온다        
         const fileInfo = await fileStorageService.get(seq);
 
@@ -17,7 +18,7 @@ module.exports = {
 
                 res.setHeader('Content-disposition', 'attachment; filename=' + fileInfo.FILENAME ); //origFileNm으로 로컬PC에 파일 저장
                 res.setHeader('Content-type', mimetype);
-              
+
                 var filestream = fs.createReadStream(fileFullPath);
                 filestream.pipe(res);
             };

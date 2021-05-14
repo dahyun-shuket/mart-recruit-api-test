@@ -6,7 +6,7 @@ module.exports = class userService {
     static create(userId, password, userType, active) {
         return new Promise(function (resolve, reject) {
             try {
-                let createUser = userModel.create(userId, password, userType, active);
+                let createUser = userModel.createTransaction(userId, password, userType, active);
                 resolve(createUser);
             } catch (error) {
                 reject(error);
@@ -104,7 +104,7 @@ module.exports = class userService {
     //         }
     //     } catch (error) {
     //         logger.writeLog('error', `services/userService/bizNoCheck: ${error}`);           
-    //     }
+    //     }x
     // };
     
 };

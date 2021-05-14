@@ -62,7 +62,6 @@ module.exports = {
     async updateLogo(req, res, next) {        
         const seq = req.body.SEQ;
         const logoFile = req.body.LOGOFILE;
-
         const result = await martService.updateLogo(req.app.get('mediaPath'), seq, logoFile);
 
         if (result) {

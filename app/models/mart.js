@@ -44,9 +44,14 @@ module.exports = class martModel {
 
             // 기존 파일을 찾아서 삭제
             const [rowsFind, fieldsFind] = await pool.query(`SELECT SEQ, LOCATION, FILENAME, RELATED_SEQ FROM FILESTORAGE WHERE RELATED_TABLE=? AND RELATED_SEQ=?`, ['MART', seq]);
+            
             if (rowsFind.length > 0) {
                 // 기존 파일 정보가 있으면 삭제
-                fs.unlinkSync(mediaPath + "uploads/" + rowsFind[0].LOCATION + "/" + rowsFind[0].FILENAME);
+                try {
+                    fs.unlinkSync(mediaPath + "uploads/" + rowsFind[0].LOCATION + "/" + rowsFind[0].FILENAME);
+                } catch {
+                    console.log("파일 삭제 오류");    
+                }
                 // 레코드도 삭제
                 await pool.query(`DELETE FROM FILESTORAGE WHERE SEQ=?`, [rowsFind[0].SEQ]);
             }
@@ -54,6 +59,7 @@ module.exports = class martModel {
             const [rows, fields] = await pool.query(`INSERT INTO FILESTORAGE 
                 (LOCATION, FILENAME, RELATED_TABLE, RELATED_SEQ) VALUES (?, ?, ?, ?)`, [path.dirname(logoFile), path.basename(logoFile), 'MART', seq]);
             // 해당 정보로 로고 파일 정보 갱신
+
             await pool.query(`UPDATE MART SET LOGOFILE=?, MODIFIED=CURRENT_TIMESTAMP() WHERE SEQ=?`, [rows.insertId, seq]);
 
             await connection.commit(); // commit
