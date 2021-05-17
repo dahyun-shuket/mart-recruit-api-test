@@ -95,5 +95,38 @@ module.exports = class recruitService {
             }
         })
     }
+    static getUserStatus(recruitSeq, userSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.getUserStatus(recruitSeq, userSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/getUserStatus: ${error}`);           
+            }
+        })
+    }
+    static apply(recruitSeq, userSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.apply(recruitSeq, userSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/apply: ${error}`);           
+            }
+        })
+    }
+    static cancelApply(recruitSeq, userSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.cancelApply(recruitSeq, userSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/cancelApply: ${error}`);           
+            }
+        })
+    }
     
 }

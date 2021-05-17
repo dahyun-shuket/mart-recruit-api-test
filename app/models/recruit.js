@@ -413,11 +413,11 @@ module.exports = class recruitModel {
     }
 
     //공고에 이력서 지원
-    static async applyResume(recruitSeq, resumeSeq, userSeq) {
+    static async apply(recruitSeq, userSeq) {
         try 
         {
-            await pool.query(`INSERT INTO RECRUIT_RESUME (RECRUIT_SEQ, RESUME_SEQ, USER_SEQ, APPLYDATE) VALUES (?, ?, ?, CURRENT_TIMESTAMP())`, [recruitSeq, resumeSeq, userSeq]);
-            logger.writeLog('info', `models/recruitModel.applyResume: ${recruitSeq} 공고에 사용자[${userSeq}]의 이력서[${resumeSeq}]로 지원되었습니다.`);           
+            await pool.query(`INSERT INTO RECRUIT_RESUME (RECRUIT_SEQ, RESUME_SEQ, USER_SEQ, APPLYDATE) VALUES (?, (SELECT SEQ FROM RESUME WHERE USER_SEQ = ?), ?, CURRENT_TIMESTAMP());`, [recruitSeq, userSeq, userSeq]);
+            logger.writeLog('info', `models/recruitModel.applyResume: ${recruitSeq} 공고에 사용자[${userSeq}]가 지원하였습니다.`);           
             return recruitSeq;
         } catch (error) {
             logger.writeLog('error', `models/recruitModel.applyResume: ${error}`);           
@@ -426,11 +426,11 @@ module.exports = class recruitModel {
     }
 
     //공고에 지원한 이력서 취소
-    static async cancelApply(recruitSeq, resumeSeq) {
+    static async cancelApply(recruitSeq, userSeq) {
         try 
         {
-            await pool.query(`DELETE FROM RECRUIT_RESUME WHERE RECRUIT_SEQ=? AND RESUME_SEQ=?`, [recruitSeq, resumeSeq]);
-            logger.writeLog('info', `models/recruitModel.applyResume: ${recruitSeq} 공고에 이력서[${resumeSeq}]가 지원 취소되었습니다.`);           
+            await pool.query(`DELETE FROM RECRUIT_RESUME WHERE RECRUIT_SEQ=? AND USER_SEQ=?`, [recruitSeq, userSeq]);
+            logger.writeLog('info', `models/recruitModel.cancelApply: ${recruitSeq} 공고에 사용자[${userSeq}]가 지원 취소하였습니다.`);           
             return recruitSeq;
         } catch (error) {
             logger.writeLog('error', `models/recruitModel.cancelApply: ${error}`);           
@@ -438,5 +438,33 @@ module.exports = class recruitModel {
         }
     }
     
+    // 공고 지원 여부와 스크랩 여부. 0은 미지원, 스크랩 안함 1은 지원, 스크랩함
+    static async getUserStatus(recruitSeq, userSeq) {
+        try 
+        {
+            //순번에 따라서 리스팅
+            const query = `
+            SELECT
+                USERS.USER_SEQ,
+                APPLY.ISAPPLY,
+                APPLY.APPLYDATE,
+                SCRAP.ISSCRAP
+            FROM 
+                (SELECT ${userSeq} AS USER_SEQ) USERS
+                LEFT JOIN 
+                (SELECT ${userSeq} AS USER_SEQ, RECRUIT_RESUME.SEQ AS ISAPPLY, RECRUIT_RESUME.APPLYDATE FROM RECRUIT_RESUME WHERE USER_SEQ = ${userSeq} AND RECRUIT_SEQ = ${recruitSeq}) 
+                APPLY ON APPLY.USER_SEQ = USERS.USER_SEQ 
+                LEFT JOIN 
+                (SELECT ${userSeq} AS USER_SEQ, RECRUIT_SCRAP.SEQ AS ISSCRAP FROM RECRUIT_SCRAP WHERE USER_SEQ = ${userSeq} AND RECRUIT_SEQ = ${recruitSeq}) 
+                SCRAP ON SCRAP.USER_SEQ = USERS.USER_SEQ`;
+            const [rows, fields] = await pool.query(query);
+
+            return rows[0];
+        } catch (error) {
+            logger.writeLog('error', `models/recruitModel.getUserStatus: ${error}`);           
+            return 0;
+        }
+
+    }
 };
 

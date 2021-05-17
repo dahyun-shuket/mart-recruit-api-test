@@ -16,8 +16,7 @@ module.exports = class scrapService {
     static remove(userSeq, recruitSeq) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = resumeModel.remove(userSeq, recruitSeq);
-    
+                let result = scrapModel.remove(userSeq, recruitSeq);
                 resolve(result);
             } catch (error) {
                 logger.writeLog('error', `services/scrapService/remove: ${error}`);           
@@ -27,7 +26,7 @@ module.exports = class scrapService {
     static removeSeq(seq) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = resumeModel.removeSeq(seq);
+                let result = scrapModel.removeSeq(seq);
     
                 resolve(result);
             } catch (error) {
