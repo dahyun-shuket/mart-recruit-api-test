@@ -185,5 +185,27 @@ module.exports = class resumeService {
             }
         })
     }
-
+    static updateImage(mediaPath, seq, resumeFile) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = resumeModel.updateImage(mediaPath, seq, resumeFile);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/updateImage: ${error}`);           
+            }
+        })
+    }
+    static updatecertificate(mediaPath, seq, resumeFile) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = resumeModel.updatecertificate(mediaPath, seq, resumeFile);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/updatecertificate: ${error}`);           
+            }
+        })
+    }
+    
 }

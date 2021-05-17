@@ -344,5 +344,44 @@ module.exports = {
             result: 'success',
             data: list
         });    
-    },}
+    },
+    async updateImage(req, res, next) {
+        const seq = req.body.SEQ;
+        const resumeFile = req.body.RESUMEFILE;
+        const result = await resumeService.updateImage(req.app.get('mediaPath'), seq, resumeFile);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+    async updatecertificate(req, res, next) {
+        const seq = req.body.SEQ;
+        const resumeFile = req.body.RESUMEFILE;
+        console.log(seq);
+        console.log(resumeFile);
+        console.log(req.app.get('mediaPath'));
+        const result = await resumeService.updatecertificate(req.app.get('mediaPath'), seq, resumeFile);
+        
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+    
+}
 
