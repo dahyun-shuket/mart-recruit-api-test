@@ -6,12 +6,14 @@ var noticeModel = require("../models/notice");
 module.exports = class noticeService {
 
     // 공지사항 리스트
-    static list(seq, page, rowCount) {
+    static listId(page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;
-                let result = noticeModel.list(seq, rowCount, offset);
-    
+                
+                //let result = noticeModel.list(seq, rowCount, offset);
+                let result = noticeModel.listId(rowCount, offset);
+                //console.log(result);
                 resolve(result);
             } catch (error) {
                 logger.writeLog('error', `services/noticeService/list : ${error}`);           
@@ -39,7 +41,7 @@ module.exports = class noticeService {
         return new Promise(function(resolve, reject) {
             
             try {
-
+               
                 let noticeView = noticeModel.views(seq);
                 resolve(noticeView);
                 
@@ -80,13 +82,13 @@ module.exports = class noticeService {
     }
 
     // 공지사항 수정
-    static update(seq) {
+    static update(seq, userSeq, subject, content) {
         return new Promise(function(resolve, reject) {
             
             try {
-                let noticeUpdate = noticeModel.update(seq);
+                let noticeUpdate = noticeModel.update(seq, userSeq, subject, content);
                 resolve(noticeUpdate);
-
+                
             } catch (error) {
                 logger.writeLog('error',`services/noticeService/update: ${error}`);  
             }
@@ -105,6 +107,7 @@ module.exports = class noticeService {
             }
         })
     }
+
 
     
 };
