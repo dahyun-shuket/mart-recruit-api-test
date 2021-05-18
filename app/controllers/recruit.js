@@ -131,6 +131,7 @@ module.exports = {
     // 지역, 직종으로만 나열
     async list(req, res, next) {
         const martSeq = req.body.martSeq;
+        const active = req.body.active;
         const name = req.body.name;
         const subject = req.body.subject;
         const regions = req.body.regions;
@@ -143,8 +144,8 @@ module.exports = {
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
 
-        const totalCount = await recruitService.totalCount(martSeq, name, subject, regions, jobkinds, workingTypes);
-        const list = await recruitService.list(martSeq, name, subject, userSeq, userOwn, regions, jobkinds, workingTypes, null, page, rowCount);
+        const totalCount = await recruitService.totalCount(martSeq, active, name, subject, regions, jobkinds, workingTypes);
+        const list = await recruitService.list(martSeq, active, name, subject, userSeq, userOwn, regions, jobkinds, workingTypes, null, page, rowCount);
 
         res.status(200).json({
             result: 'success',
@@ -157,6 +158,7 @@ module.exports = {
 
     // 관리자용 리스트에는 martSeq, userSeq, userOwn 이 무시된다
     async listForAdmin(req, res, next) {
+        const active = req.body.active;
         const name = req.body.name;
         const subject = req.body.subject;
         const regions = req.body.regions;
@@ -165,8 +167,8 @@ module.exports = {
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
 
-        const totalCount = await recruitService.totalCount(null, name, subject, regions, jobkinds, null);
-        const list = await recruitService.list(null, name, subject, null, null, regions, jobkinds, null, null, page, rowCount);
+        const totalCount = await recruitService.totalCount(null, active, name, subject, regions, jobkinds, null);
+        const list = await recruitService.list(null, active, name, subject, null, null, regions, jobkinds, null, null, page, rowCount);
 
         res.status(200).json({
             result: 'success',
@@ -282,7 +284,26 @@ module.exports = {
                 data: null
             });        
         }
+    },
+
+    async getActiveCount(req, res, next) {
+        const martSeq = req.body.martSeq;
+
+        const result = await recruitService.getActiveCount(martSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
     }
+
 
 }
 

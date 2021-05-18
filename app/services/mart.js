@@ -57,6 +57,17 @@ module.exports = class martService {
             }
         })
     }
+    static getByUser(userSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = martModel.getByUser(userSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/martService/remove: ${error}`);           
+            }
+        })
+    }
     static totalCount(searchName) {
         return new Promise(function(resolve, reject) {
             try {

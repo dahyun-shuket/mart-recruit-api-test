@@ -134,7 +134,7 @@ module.exports = class recruitModel {
 
     // 총 카운트 얻기
     // userSeq가 있는 경우 페이징을 하지 않으므로 제외
-    static async totalCount(martSeq, name, subject, regions, jobKinds, workingTypes) {
+    static async totalCount(martSeq, active, name, subject, regions, jobKinds, workingTypes) {
         try 
         {
             //순번에 따라서 리스팅
@@ -153,8 +153,9 @@ module.exports = class recruitModel {
                     LEFT JOIN RECRUIT_JOBKIND ON RECRUIT_JOBKIND.RECRUIT_SEQ = RECRUIT.SEQ
                     LEFT JOIN RECRUIT_WORKINGTYPE ON RECRUIT_WORKINGTYPE.RECRUIT_SEQ = RECRUIT.SEQ
                 WHERE
-                    MART.ACTIVE = 'Y' AND RECRUIT.ACTIVE = 'Y'                
-                    ${(martSeq) ? 'AND RECRUIT.MART_SEQ=' + martSeq :''}
+                    MART.ACTIVE = 'Y'                     
+                    ${(active) ? `AND RECRUIT.ACTIVE = '${active}'` : ''}
+                    ${(martSeq) ? `AND RECRUIT.MART_SEQ=${martSeq}` :''}
                     ${(regions) ? 'AND RECRUIT_REGION.WORKREGION_SEQ IN (' + regions + ')':''}
                     ${(jobKinds) ? 'AND RECRUIT_JOBKIND.JOBKIND_SEQ IN (' + jobKinds + ')':''}
                     ${(workingTypes) ? 'AND RECRUIT_WORKINGTYPE.WORKINGTYPE_SEQ IN (' + workingTypes + ')':''}
@@ -180,11 +181,11 @@ module.exports = class recruitModel {
     // userSeq 없고 지원자가 있으면 APPLY가 Y
     // userSeq가 없으면 userOwn은 무조건 N 이어야 한다
     // scrapSeq는 스크랩한 사용자의 번호인데, 이 값이 있으면 다른 검색 조건을 모두 null과 최대치로 보내 줘야 한다
-    static async list(martSeq, name, subject, userSeq, userOwn, regions, jobKinds, workingTypes, scrapSeq, limit, offset) {
+    static async list(martSeq, active, name, subject, userSeq, userOwn, regions, jobKinds, workingTypes, scrapSeq, limit, offset) {
         try 
         {
             //쿼리
-            const sql = `
+            const query = `
                 SELECT
                     RECRUIT.*,
                     RECRUIT_JOBKIND.JOBKIND_SEQ,
@@ -194,7 +195,8 @@ module.exports = class recruitModel {
                     RECRUIT_WORKINGTYPE.WORKINGTYPE_SEQ,
                     RECRUIT_WORKINGTYPE.WORKINGTYPE_NAME,
                     IF(RECRUIT_RESUME.USER_SEQ IS NULL, 'N', 'Y') AS APPLY ,
-                    IFNULL(RECRUIT_RESUME_COUNT.COUNT, 0) AS APPLYCOUNT
+                    IFNULL(RECRUIT_RESUME_COUNT.COUNT, 0) AS APPLYCOUNT,
+                    IFNULL(RECRUIT_RESUME_COUNT.VIEWCOUNT, 0) AS VIEWCOUNT                    
                 FROM (
                     SELECT 
                         DISTINCT
@@ -237,8 +239,9 @@ module.exports = class recruitModel {
                         LEFT JOIN RECRUIT_JOBKIND ON RECRUIT_JOBKIND.RECRUIT_SEQ = RECRUIT.SEQ
                         LEFT JOIN RECRUIT_WORKINGTYPE ON RECRUIT_WORKINGTYPE.RECRUIT_SEQ = RECRUIT.SEQ
                     WHERE
-                        MART.ACTIVE = 'Y' AND RECRUIT.ACTIVE = 'Y'
-                        ${(martSeq) ? 'AND RECRUIT.MART_SEQ=' + martSeq :''}                        
+                        MART.ACTIVE = 'Y' 
+                        ${(active) ? `AND RECRUIT.ACTIVE = '${active}'` : ''}
+                        ${(martSeq) ? `AND RECRUIT.MART_SEQ = ${martSeq}` :''}
                         ${(regions) ? 'AND RECRUIT_REGION.WORKREGION_SEQ IN (' + regions + ')':''}
                         ${(jobKinds) ? 'AND RECRUIT_JOBKIND.JOBKIND_SEQ IN (' + jobKinds + ')':''}
                         ${(workingTypes) ? 'AND RECRUIT_WORKINGTYPE.WORKINGTYPE_SEQ IN (' + workingTypes + ')':''}
@@ -264,13 +267,13 @@ module.exports = class recruitModel {
                         GROUP BY RECRUIT_SEQ
                     ) RECRUIT_RESUME ON RECRUIT_RESUME.RECRUIT_SEQ = RECRUIT.SEQ  
                     LEFT JOIN (
-                        SELECT RECRUIT_SEQ, COUNT(SEQ) AS COUNT FROM RECRUIT_RESUME GROUP BY RECRUIT_SEQ
+                        SELECT RECRUIT_SEQ, COUNT(SEQ) AS COUNT, SUM(CASE WHEN READING = 'Y' THEN 1 ELSE 0 END) AS VIEWCOUNT FROM RECRUIT_RESUME GROUP BY RECRUIT_SEQ
                     ) RECRUIT_RESUME_COUNT ON RECRUIT_RESUME_COUNT.RECRUIT_SEQ = RECRUIT.SEQ                 
                     ${(scrapSeq) ? 'INNER JOIN RECRUIT_SCRAP ON RECRUIT_SCRAP.RECRUIT_SEQ = RECRUIT.SEQ AND RECRUIT_SCRAP.USER_SEQ = ' + scrapSeq : ''}    
                 ORDER BY
                     CREATED DESC, SEQ DESC
                 LIMIT ? OFFSET ?`;
-            const [rows, fields] = await pool.query(sql, [limit, offset]);
+                const [rows, fields] = await pool.query(query, [limit, offset]);
             if (rows.length > 0) 
                 return rows;
             else {
@@ -341,7 +344,7 @@ module.exports = class recruitModel {
         try 
         {
             //쿼리
-            const sql = `
+            const query = `
                 SELECT
                     JO.*,
                     JOK.JOBKIND_SEQ,
@@ -399,7 +402,7 @@ module.exports = class recruitModel {
                         FROM RECRUIT_JOBKIND GROUP BY RECRUIT_SEQ
                     ) JOK ON JOK.RECRUIT_SEQ = JO.SEQ  
                 LIMIT ? OFFSET ?`;
-            const [rows, fields] = await pool.query(sql, [limit, offset]);
+            const [rows, fields] = await pool.query(query, [limit, offset]);
             if (rows.length > 0) 
                 return rows;
             else {
@@ -450,21 +453,48 @@ module.exports = class recruitModel {
                 APPLY.APPLYDATE,
                 SCRAP.ISSCRAP
             FROM 
-                (SELECT ${userSeq} AS USER_SEQ) USERS
+                (SELECT '${userSeq}' AS USER_SEQ) USERS
                 LEFT JOIN 
-                (SELECT ${userSeq} AS USER_SEQ, RECRUIT_RESUME.SEQ AS ISAPPLY, RECRUIT_RESUME.APPLYDATE FROM RECRUIT_RESUME WHERE USER_SEQ = ${userSeq} AND RECRUIT_SEQ = ${recruitSeq}) 
+                (SELECT '${userSeq}' AS USER_SEQ, RECRUIT_RESUME.SEQ AS ISAPPLY, RECRUIT_RESUME.APPLYDATE FROM RECRUIT_RESUME WHERE USER_SEQ = ? AND RECRUIT_SEQ = ?) 
                 APPLY ON APPLY.USER_SEQ = USERS.USER_SEQ 
                 LEFT JOIN 
-                (SELECT ${userSeq} AS USER_SEQ, RECRUIT_SCRAP.SEQ AS ISSCRAP FROM RECRUIT_SCRAP WHERE USER_SEQ = ${userSeq} AND RECRUIT_SEQ = ${recruitSeq}) 
+                (SELECT '${userSeq}' AS USER_SEQ, RECRUIT_SCRAP.SEQ AS ISSCRAP FROM RECRUIT_SCRAP WHERE USER_SEQ = ? AND RECRUIT_SEQ = ?) 
                 SCRAP ON SCRAP.USER_SEQ = USERS.USER_SEQ`;
-            const [rows, fields] = await pool.query(query);
+            const [rows, fields] = await pool.query(query, userSeq, recruitSeq, userSeq, recruitSeq);
 
             return rows[0];
         } catch (error) {
             logger.writeLog('error', `models/recruitModel.getUserStatus: ${error}`);           
             return 0;
         }
+    }
 
+    // 마트의 진행 공고와 종료 공고의 숫자를 리턴
+    static async getActiveCount(martSeq) {
+        try 
+        {
+            //순번에 따라서 리스팅
+            const query = `
+            SELECT
+                MART_SEQ,
+                SUM(CASE WHEN ACTIVE = 'Y' THEN 1 ELSE 0 END) AS ACTIVE,
+                SUM(CASE WHEN ACTIVE = 'N' THEN 1 ELSE 0 END) AS INACTIVE
+            FROM
+                RECRUIT
+            WHERE
+                MART_SEQ = ?`;
+            const [rows, fields] = await pool.query(query, martSeq);
+
+            if (rows.length > 0) {
+                return rows[0];
+            } else {
+                logger.writeLog('error', `models/recruitModel.getCountStatus: No data found`);
+                return null;
+            }
+        } catch (error) {
+            logger.writeLog('error', `models/recruitModel.getCountStatus: ${error}`);           
+            return null;
+        }
     }
 };
 

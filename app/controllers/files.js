@@ -23,6 +23,8 @@ module.exports = {
                 filestream.pipe(res);
             };
 
+        } else {
+            res.send(null);
         }
     }
 }

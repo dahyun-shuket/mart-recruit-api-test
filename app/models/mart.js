@@ -117,6 +117,26 @@ module.exports = class martModel {
             return null;
         }
     }
+    static async getByUser(userSeq) {
+        try 
+        {
+            const [rows, fields] = await pool.query(`SELECT 
+                    SEQ, USER_SEQ, NAME, LOGOFILE, REGNO, POSTCODE, ADDRESS, ADDRESSEXTRA, CONTACT, HRONAME, HROCONTACT, HRORANK, ACTIVE, CREATED, MODIFIED
+                FROM 
+                    MART 
+                WHERE 
+                USER_SEQ=?`, [userSeq]);
+            if (rows.length > 0) 
+                return rows[0];
+            else {
+                logger.writeLog('error', `models/martModel.getByUser: No data found`);           
+                return null;
+            }                
+        } catch (error) {
+            logger.writeLog('error', `models/martModel.getByUser: ${error}`);           
+            return null;
+        }
+    }
     static async totalCount(name) {
         try 
         {

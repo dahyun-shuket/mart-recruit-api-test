@@ -61,11 +61,11 @@ module.exports = class recruitService {
             }
         })
     }
-    static list(martSeq, name, subject, userSeq, userOwn, regions, jobKinds, workingTypes, scrapSeq, page, rowCount) {
+    static list(martSeq, active, name, subject, userSeq, userOwn, regions, jobKinds, workingTypes, scrapSeq, page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;
-                let result = recruitModel.list(martSeq, name, subject, userSeq, userOwn, regions, jobKinds, workingTypes, scrapSeq, rowCount, offset);
+                let result = recruitModel.list(martSeq, active, name, subject, userSeq, userOwn, regions, jobKinds, workingTypes, scrapSeq, rowCount, offset);
     
                 resolve(result);
             } catch (error) {
@@ -125,6 +125,17 @@ module.exports = class recruitService {
                 resolve(result);
             } catch (error) {
                 logger.writeLog('error', `services/recruitService/cancelApply: ${error}`);           
+            }
+        })
+    }
+    static getActiveCount(martSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.getActiveCount(martSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/getActiveCount: ${error}`);           
             }
         })
     }

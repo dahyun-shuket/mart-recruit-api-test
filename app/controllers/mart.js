@@ -114,6 +114,25 @@ module.exports = {
         }
     },
 
+    async getByUser(req, res, next) {
+        const userSeq = req.body.userSeq;
+
+        if (userSeq) {
+
+            const martInfo = await martService.getByUser(userSeq);
+
+            res.status(200).json({
+                result: 'success',
+                data: martInfo
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+
     async list(req, res, next) {
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
