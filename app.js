@@ -38,8 +38,7 @@ app.use('/api/scrap', require('./routes/scrap'));
 app.use('/api/resume', require('./routes/resume'));
 app.use('/api/files', require('./routes/files'));
 
-// app.set('mediaPath', (process.env.NODE_ENV == 'develope') ? 'D:/Project/mart-recruit/mart-recruit-api/PDSData/' : '');
-app.set('mediaPath', (process.env.NODE_ENV == 'develope') ? 'C:/Users/82102/Documents/Project/mart-recruit-api/PDSData/' : '');
+app.set('mediaPath', require('./app/config/env').mediaPath);
 
 app.use(
   morgan('combined', 
