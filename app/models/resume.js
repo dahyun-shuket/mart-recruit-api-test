@@ -10,7 +10,7 @@ module.exports = class resumeModel {
                     USER_SEQ, SUBJECT, PHOTO, NAME, CONTACT, EMAIL, POSTCODE, ADDRESS, ADDRESSEXTRA, EDUCATION, EDUCATIONSCHOOL, CAREER_SEQ, 
                     TECHNICAL, LICENSE, ISWELFARE, ISMILITALY, CAREERCERTIFICATE, INTRODUCE, WORKINGTYPE_SEQS, WORKINGTYPE_NAMES, SALARY, CERTIFICATE, CERTIFICATEDATE, ACTIVE, CREATED, MODIFIED
                 ) VALUES ( 
-                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'N', NULL, 'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'N', NULL, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
                 )`, 
                 [
                     userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrierSeq, 
@@ -23,21 +23,24 @@ module.exports = class resumeModel {
         }
     }
     // 업데이트하면 인증은 무조건 해제
-    static async update(seq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrierSeq, 
+    // 조건을 이력서 SEQ에서 USER_SEQ로 변경함, photo 제거 0517 김민규 
+    static async update(seq, subject, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrierSeq, 
         technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary) {
         try 
         {
-            await pool.query(`UPDATE RESUME SET 
-                    SUBJECT=?, PHOTO=?, NAME=?, CONTACT=?, EMAIL=?, POSTCODE=?, ADDRESS=?, ADDRESSEXTRA=?, EDUCATION=?, EDUCATIONSCHOOL=?, CAREER_SEQ=?, 
+            const [rows, fields] = await pool.query(`UPDATE RESUME SET 
+                    SUBJECT=?, NAME=?, CONTACT=?, EMAIL=?, POSTCODE=?, ADDRESS=?, ADDRESSEXTRA=?, EDUCATION=?, EDUCATIONSCHOOL=?, CAREER_SEQ=?, 
                     TECHNICAL=?, LICENSE=?, ISWELFARE=?, ISMILITALY=?, CAREERCERTIFICATE=?, INTRODUCE=?, WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, SALARY=?, CERTIFICATE='N', CERTIFICATEDATE=NULL, MODIFIED=CURRENT_TIMESTAMP()
                 WHERE 
-                    SEQ=?`, 
+                    USER_SEQ=?`, 
                 [
-                    subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrierSeq, 
+                    subject, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrierSeq, 
                     technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary,  
                     seq
                 ]);
-            return seq;
+            console.log(rows)
+            console.log(rows[0]);
+            return rows;
         } catch (error) {
             logger.writeLog('error', `models/resumeModel.update: ${error}`);           
             return null;

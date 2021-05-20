@@ -66,7 +66,7 @@ module.exports = {
 
         const result = await resumeService.update(seq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrerSeq, 
             technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary);
-
+            
         if (result) {
             res.status(200).json({
                 result: 'success',

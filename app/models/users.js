@@ -22,7 +22,7 @@ module.exports = class userModel {
                 const [rowsMart, fieldsMart] = await pool.query(`INSERT INTO MART (
                     USER_SEQ, ACTIVE, CREATED, MODIFIED
                 ) VALUES 
-                ( ?,  'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
+                ( ?,  'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
                 [
                     rows.insertId
                 ]);
@@ -32,7 +32,7 @@ module.exports = class userModel {
                 const [rowsResume, fieldsResume] = await pool.query(`INSERT INTO RESUME (
                     USER_SEQ, CERTIFICATE, CERTIFICATEDATE, ACTIVE, CREATED, MODIFIED
                 ) VALUES ( 
-                    ?, 'N', NULL, 'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
+                    ?, 'N', NULL, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
                 )`, 
                 [
                     rows.insertId

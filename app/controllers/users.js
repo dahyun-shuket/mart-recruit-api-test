@@ -87,6 +87,7 @@ module.exports = {
             }
         });
     },
+    
     // 유저 한명조회
     async get(req, res) {
         const seq = req.params.id;
