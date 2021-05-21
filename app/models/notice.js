@@ -112,7 +112,7 @@ module.exports = class notice {
             return rows;
         } catch(error) {
             logger.writeLog(`[ERROR] models/notice/edit:  + ${error}`);
-            return null;
+            
         };
 
     }

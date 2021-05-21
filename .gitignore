@@ -44,4 +44,8 @@ database_dev.js
 .tern-port
 
 PDSData/
-env.js
+
+# app/config/env.js
+app/config/env.js
+Usersyydh5OneDrive문서mart-recruit-apiPDSDatauploads/
+PDSDatauploads/

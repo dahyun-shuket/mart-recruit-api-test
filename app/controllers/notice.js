@@ -96,8 +96,8 @@ module.exports = {
 
     async get(req, res, next) {
 
-        const body = req.query.seq;
-        const noticeInfo = await noticeService.get(body);
+        const seq = req.body.SEQ;
+        const noticeInfo = await noticeService.get(seq);
 
         res.status(200).json({
             result:'success',
