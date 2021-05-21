@@ -99,6 +99,17 @@ module.exports = {
         }
     },
 
+    increaseView(req, res, next) {
+        const seq = req.body.seq;
+
+        resumeService.increaseView(seq);
+
+        res.status(200).json({
+            result: 'success',
+            data: 0
+        });    
+    },
+
     async certificate(req, res, next) {
         const seq = req.body.seq;
 

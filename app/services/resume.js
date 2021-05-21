@@ -39,6 +39,17 @@ module.exports = class resumeService {
             }
         })
     }    
+    static increaseView(seq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                resumeModel.increaseView(seq);
+    
+                resolve(0);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/increateView: ${error}`);           
+            }
+        })
+    }    
     static setCertificate(seq, value) {
         return new Promise(function(resolve, reject) {
             try {

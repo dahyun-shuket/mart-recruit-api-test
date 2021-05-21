@@ -8,9 +8,9 @@ module.exports = class resumeModel {
         {
             const [rows, fields] = await pool.query(`INSERT INTO RESUME (
                     USER_SEQ, SUBJECT, PHOTO, NAME, CONTACT, EMAIL, POSTCODE, ADDRESS, ADDRESSEXTRA, EDUCATION, EDUCATIONSCHOOL, CAREER_SEQ, 
-                    TECHNICAL, LICENSE, ISWELFARE, ISMILITALY, CAREERCERTIFICATE, INTRODUCE, WORKINGTYPE_SEQS, WORKINGTYPE_NAMES, SALARY, CERTIFICATE, CERTIFICATEDATE, ACTIVE, CREATED, MODIFIED
+                    TECHNICAL, LICENSE, ISWELFARE, ISMILITALY, CAREERCERTIFICATE, INTRODUCE, WORKINGTYPE_SEQS, WORKINGTYPE_NAMES, SALARY, CERTIFICATE, CERTIFICATEDATE, VIEW, ACTIVE, CREATED, MODIFIED
                 ) VALUES ( 
-                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'N', NULL, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'N', NULL, 0, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
                 )`, 
                 [
                     userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrierSeq, 
@@ -56,6 +56,16 @@ module.exports = class resumeModel {
             return null;
         }
     }
+    static increaseView(seq) {
+        try 
+        {
+            pool.query(`UPDATE RESUME SET VIEW = VIEW + 1 WHERE SEQ=?`, [seq]);
+            return seq;
+        } catch (error) {
+            logger.writeLog('error', `models/resumeModel.increaseView: ${error}`);           
+            return null;
+        }
+    }
     static async certificate(seq, toggleValue) {
         try 
         {
@@ -97,6 +107,7 @@ module.exports = class resumeModel {
                     SALARY, 
                     CERTIFICATE, 
                     CERTIFICATEDATE,
+                    VIEW,
                     ACTIVE, 
                     CREATED, 
                     MODIFIED,
@@ -160,6 +171,7 @@ module.exports = class resumeModel {
                     SALARY, 
                     CERTIFICATE, 
                     CERTIFICATEDATE,
+                    VIEW,
                     ACTIVE, 
                     CREATED, 
                     MODIFIED,
@@ -269,6 +281,7 @@ module.exports = class resumeModel {
                         SALARY, 
                         CERTIFICATE, 
                         CERTIFICATEDATE,
+                        VIEW,
                         ACTIVE, 
                         CREATED, 
                         MODIFIED
@@ -369,6 +382,7 @@ module.exports = class resumeModel {
                 SALARY, 
                 CERTIFICATE, 
                 CERTIFICATEDATE,
+                VIEW,
                 ACTIVE, 
                 CREATED, 
                 MODIFIED
