@@ -1,5 +1,6 @@
 const resumeService = require('../services/resume.js');
 const defaultRowCount = 20;
+const maxRowCount = 100;
 
 module.exports = {
     async create(req, res, next) {
@@ -197,14 +198,21 @@ module.exports = {
         });    
     },
 
-    async listPerRecruit(req, res, next) {
+    async listForRecruit(req, res, next) {
         const recruitSeq = req.body.recruitSeq;
+        const currentPage = (req.body.page) ? req.body.page : 1;
+        const rowCount = (req.body.rowCount) ? req.body.rowCount : maxRowCount;
+        const step = req.body.step;
         
-        const list = await resumeService.list(null, null, null, null, null, recruitSeq, 1, 100);
+        const totalCount = await resumeService.totalCountForRecruit(recruitSeq, step);
+        const list = await resumeService.listForRecruit(recruitSeq, step, currentPage, rowCount);
 
         res.status(200).json({
             result: 'success',
-            data: list
+            data: {
+                totalCount: totalCount,
+                list: list
+            }
         });    
     },
 

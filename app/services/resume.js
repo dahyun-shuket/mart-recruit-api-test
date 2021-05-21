@@ -95,11 +95,22 @@ module.exports = class resumeService {
             }
         })
     }
-    static listForRecruit(recruitSeq, page, rowCount) {
+    static totalCountForRecruit(recruitSeq, step) {
         return new Promise(function(resolve, reject) {
             try {
-                var offset = (page - 1) * rowCount;
-                let result = resumeModel.list(NULL, NULL, NULL, 'N', recruitSeq, rowCount, offset);
+                let result = resumeModel.totalCountForRecruit(recruitSeq, step);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/listForRecruit: ${error}`);           
+            }
+        })
+    }
+    static listForRecruit(recruitSeq, step, page, rowCount) {
+        return new Promise(function(resolve, reject) {
+            try {
+                var offset = (page) ? (page - 1) * rowCount : 0;
+                let result = resumeModel.listForRecruit(recruitSeq, step, rowCount, offset);
     
                 resolve(result);
             } catch (error) {
