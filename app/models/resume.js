@@ -463,7 +463,7 @@ module.exports = class resumeModel {
             await connection.beginTransaction();    // transaction
 
             // 기존 파일을 찾아서 삭제
-            const [rowsFind, fieldsFind] = await pool.query(`SELECT SEQ, LOCATION, FILENAME, RELATED_SEQ FROM FILESTORAGE WHERE RELATED_TABLE=? AND RELATED_SEQ=? AND LOCATION ='RESUME'`, ['RESUME', seq]);
+            const [rowsFind, fieldsFind] = await connection.query(`SELECT SEQ, LOCATION, FILENAME, RELATED_SEQ FROM FILESTORAGE WHERE RELATED_TABLE=? AND RELATED_SEQ=? AND LOCATION ='RESUME'`, ['RESUME', seq]);
             console.log(rowsFind);
             if (rowsFind.length > 0) {
                 // 기존 파일 정보가 있으면 삭제
@@ -473,14 +473,14 @@ module.exports = class resumeModel {
                     console.log("파일 삭제 오류");    
                 }
                 // 레코드도 삭제
-                await pool.query(`DELETE FROM FILESTORAGE WHERE SEQ=? AND LOCATION='RESUME'`, [rowsFind[0].SEQ]);
+                await connection.query(`DELETE FROM FILESTORAGE WHERE SEQ=? AND LOCATION='RESUME'`, [rowsFind[0].SEQ]);
             }
             // 새로운 파일 저장 정보를 추가
-            const [rows, fields] = await pool.query(`INSERT INTO FILESTORAGE 
+            const [rows, fields] = await connection.query(`INSERT INTO FILESTORAGE 
                 (LOCATION, FILENAME, RELATED_TABLE, RELATED_SEQ) VALUES (?, ?, ?, ?)`, [path.dirname(resumeFile), path.basename(resumeFile), 'RESUME', seq]);
             // 해당 정보로 로고 파일 정보 갱신
 
-            await pool.query(`UPDATE RESUME SET PHOTO=?, MODIFIED=CURRENT_TIMESTAMP() WHERE SEQ=?`, [rows.insertId, seq]);
+            await pconnectionool.query(`UPDATE RESUME SET PHOTO=?, MODIFIED=CURRENT_TIMESTAMP() WHERE SEQ=?`, [rows.insertId, seq]);
 
             await connection.commit(); // commit
             connection.release();
@@ -503,7 +503,7 @@ module.exports = class resumeModel {
 
             // 기존 파일을 찾아서 삭제
             // 증명서 위치 추가.  AND LOCATION ='certificate'
-            const [rowsFind, fieldsFind] = await pool.query(`SELECT SEQ, LOCATION, FILENAME, RELATED_SEQ FROM FILESTORAGE WHERE RELATED_TABLE=? AND RELATED_SEQ=? AND LOCATION ='CERTIFICATE'`, ['RESUME', seq]);
+            const [rowsFind, fieldsFind] = await connection.query(`SELECT SEQ, LOCATION, FILENAME, RELATED_SEQ FROM FILESTORAGE WHERE RELATED_TABLE=? AND RELATED_SEQ=? AND LOCATION ='CERTIFICATE'`, ['RESUME', seq]);
             console.log(rowsFind);
             if (rowsFind.length > 0) {
                 // 기존 파일 정보가 있으면 삭제
@@ -514,17 +514,17 @@ module.exports = class resumeModel {
                 }
                 // 레코드도 삭제
                 // 레코드 삭제할때 로케이션까지같게 조건 추가. 
-                await pool.query(`DELETE FROM FILESTORAGE WHERE SEQ=? AND LOCATION='CERTIFICATE'`, [rowsFind[0].SEQ]);
+                await connection.query(`DELETE FROM FILESTORAGE WHERE SEQ=? AND LOCATION='CERTIFICATE'`, [rowsFind[0].SEQ]);
             }
             // 새로운 파일 저장 정보를 추가
-            const [rows, fields] = await pool.query(`INSERT INTO FILESTORAGE 
+            const [rows, fields] = await connection.query(`INSERT INTO FILESTORAGE 
                 (LOCATION, FILENAME, RELATED_TABLE, RELATED_SEQ) VALUES (?, ?, ?, ?)`, [path.dirname(resumeFile), path.basename(resumeFile), 'CERTIFICATE', seq]);
             // 해당 정보로 로고 파일 정보 갱신
             
             // 이부분떄문에 포토가 같이 자꾸 바뀌었음.
             // 이부분에서 디비에 올라갔다는 사실을 알려야함.
             // 이부분에서 ㄴㄴinsertId 는 증명서 seq 니까 certificate 컬럼의 값이 바뀌어야함.
-            await pool.query(`UPDATE RESUME SET CAREERCERTIFICATE=?, MODIFIED=CURRENT_TIMESTAMP() WHERE SEQ=?`, [rows.insertId, seq]);
+            await connection.query(`UPDATE RESUME SET CAREERCERTIFICATE=?, MODIFIED=CURRENT_TIMESTAMP() WHERE SEQ=?`, [rows.insertId, seq]);
 
             await connection.commit(); // commit
             connection.release();

@@ -15,11 +15,11 @@ module.exports = class userModel {
         try 
         {
             await connection.beginTransaction();    // transaction
-            const [rows, fields] = await pool.query(`insert into USERS(LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [userId, password, userType, active]);
+            const [rows, fields] = await connection.query(`insert into USERS(LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [userId, password, userType, active]);
             console.log(rows);
             if (userType =='M') {
                 // 마트일때 마트를 생성해준다.
-                const [rowsMart, fieldsMart] = await pool.query(`INSERT INTO MART (
+                const [rowsMart, fieldsMart] = await connection.query(`INSERT INTO MART (
                     USER_SEQ, ACTIVE, CREATED, MODIFIED
                 ) VALUES 
                 ( ?,  'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
@@ -29,7 +29,7 @@ module.exports = class userModel {
 
             }else if(userType =='U'){
                 // 유저일때 비어있는 이력서를 만들어준다.
-                const [rowsResume, fieldsResume] = await pool.query(`INSERT INTO RESUME (
+                const [rowsResume, fieldsResume] = await connection.query(`INSERT INTO RESUME (
                     USER_SEQ, CERTIFICATE, CERTIFICATEDATE, ACTIVE, CREATED, MODIFIED
                 ) VALUES ( 
                     ?, 'N', NULL, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
