@@ -313,6 +313,102 @@ module.exports = class resumeModel {
         }
     }
 
+    static async totalCountForRecruit(recruitSeq, step) {
+        try 
+        {
+            //쿼리
+            const query = `
+            SELECT                        
+                COUNT(RESUME.SEQ) AS TOTALCOUNT
+            FROM 
+                RESUME
+                INNER JOIN CAREER ON CAREER.SEQ = RESUME.CAREER_SEQ
+                INNER JOIN RECRUIT_RESUME ON RECRUIT_RESUME.RESUME_SEQ = RESUME.SEQ
+            WHERE
+                RECRUIT_SEQ = ?
+                ${(step) ? `AND STEP='${step}'` : '' }`;
+            const [rows, fields] = await pool.query(query, [recruitSeq]);
+
+            return rows[0].TOTALCOUNT;
+        } catch (error) {
+            logger.writeLog('error', `models/resumeModel.totalCountForRecruit: ${error}`);           
+            return null;
+        }
+    }
+
+    static async listForRecruit(recruitSeq, step, limit, offset) {
+        try 
+        {
+            //쿼리
+            const query = `
+            SELECT                        
+                RESUME.SEQ,
+                RESUME.USER_SEQ, 
+                SUBJECT, 
+                PHOTO, 
+                RESUME.NAME,
+                BIRTHYEAR,
+                GENDER, 
+                CONTACT, 
+                EMAIL, 
+                POSTCODE, 
+                ADDRESS, 
+                ADDRESSEXTRA, 
+                EDUCATION, 
+                EDUCATIONSCHOOL, 
+                CAREER_SEQ, 
+                CAREER.NAME AS CAREER_NAME,
+                TECHNICAL, 
+                LICENSE, 
+                ISWELFARE, 
+                ISMILITALY, 
+                CAREERCERTIFICATE, 
+                INTRODUCE, 
+                WORKINGTYPE_SEQS, 
+                WORKINGTYPE_NAMES, 
+                SALARY, 
+                CERTIFICATE, 
+                CERTIFICATEDATE,
+                ACTIVE, 
+                CREATED, 
+                MODIFIED
+                APPLYDATE,
+                READING,
+                STEP,
+                JOBKIND_SEQ,
+                JOBKIND_NAME,
+                WORKREGION_SEQ,
+                WORKREGION_NAME
+            FROM 
+                RESUME
+                INNER JOIN CAREER ON CAREER.SEQ = RESUME.CAREER_SEQ
+                INNER JOIN RECRUIT_RESUME ON RECRUIT_RESUME.RESUME_SEQ = RESUME.SEQ
+                LEFT JOIN (
+                    SELECT RESUME_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
+                    FROM RESUME_JOBKIND GROUP BY RESUME_SEQ
+                ) JOBKIND ON JOBKIND.RESUME_SEQ = RESUME.SEQ   
+                LEFT JOIN (
+                    SELECT RESUME_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
+                    FROM RESUME_REGION GROUP BY RESUME_SEQ
+                ) REGION ON REGION.RESUME_SEQ = RESUME.SEQ 
+            WHERE
+                RECRUIT_SEQ = ?
+                ${(step) ? `AND STEP='${step}'` : '' }                                
+            ORDER BY RESUME.NAME, RESUME.MODIFIED DESC
+            LIMIT ? OFFSET ?`;
+            const [rows, fields] = await pool.query(query, [recruitSeq, limit, offset]);
+            if (rows.length > 0) 
+                return rows;
+            else {
+                logger.writeLog('error', `models/resumeModel.listForRecruit: No data found`);           
+                return null;
+            }                
+        } catch (error) {
+            logger.writeLog('error', `models/resumeModel.listForRecruit: ${error}`);           
+            return null;
+        }
+    }
+
     //jobkinds 값이 문자열로 1,2 형태라고 정의
     static async updateJobKind(resumeSeq, jobKinds) {
         const connection = await pool.getConnection(async conn => conn);

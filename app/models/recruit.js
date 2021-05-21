@@ -2,54 +2,144 @@ const logger = require('../config/logger.js');
 const pool = (process.env.NODE_ENV == "production") ? require("../config/database") : require("../config/database_dev");
 
 module.exports = class recruitModel {
-    static async create(martSeq, subject, HRONname, HROContact, jobKindSeq, careerSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-        workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
+    static async create(MART_SEQ, HRONAME, HROCONTACT, HROEMAIL, SUBJECT, CAREER_SEQ, CHARGE, 
+        PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, 
+        GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, JOBKIND, JOBRANK, WORKINGTYPE, WORKREGION) {
+        const connection = await pool.getConnection(async conn => conn);
         try 
         {
-            const [rows, fields] = await pool.query(`INSERT INTO RECRUIT (
-                MART_SEQ, SUBJECT, HRONAME, HROCONTACT, JOBKIND_SEQ, CAREER_SEQ, EXPYEAR, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
-                WORKINGTYPE_SEQS, WORKINGTYPE_NAMESS, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, WORKREGION_SEQ, GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, ACTIVE, CREATED, MODIFIED
+            await connection.beginTransaction();    // transaction
+
+            // RECRUIT를 저장
+            const [rows, fields] = await connection.query(`INSERT INTO RECRUIT (
+                MART_SEQ, SUBJECT, HRONAME, HROCONTACT, HROEMAIL, CAREER_SEQ, EXPYEAR, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
+                PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, ACTIVE, CREATED, MODIFIED
                 ) VALUES 
-                ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'A', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
+                ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
                 [
-                    martSeq, subject, HRONname, HROContact, jobKindSeq, careerSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-                    workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs
+                    MART_SEQ, SUBJECT, HRONAME, HROCONTACT, HROEMAIL, CAREER_SEQ, 0, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
+                    PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT
                 ]);
-            return rows.insertId;
+            let recruitSeq = rows.insertId;
+
+            // RECRUIT_JOBKIND를 저장
+            await connection.query(`INSERT INTO RECRUIT_JOBKIND (RECRUIT_SEQ, JOBKIND_SEQ, JOBKIND_NAME) SELECT ?, SEQ, NAME FROM JOBKIND WHERE SEQ IN (${JOBKIND})`, [recruitSeq]);
+
+            // RECRUIT_REGION을 저장
+            await connection.query(`INSERT INTO RECRUIT_REGION (RECRUIT_SEQ, WORKREGION_SEQ, WORKREGION_NAME) SELECT ?, SEQ, NAME FROM WORKREGION WHERE SEQ IN (${WORKREGION})`, [recruitSeq]);
+
+            // RECRUIT_WORKINGTYPE을 저장
+            await connection.query(`INSERT INTO RECRUIT_WORKINGTYPE (RECRUIT_SEQ, WORKINGTYPE_SEQ, WORKINGTYPE_NAME) SELECT ?, SEQ, NAME FROM WORKINGTYPE WHERE SEQ IN (${WORKINGTYPE})`, [recruitSeq]);
+
+            await connection.commit(); // commit
+            connection.release();
+
+            return recruitSeq;
         } catch (error) {
+            await connection.rollback();    // rollback
+            connection.release();
+
             logger.writeLog('error', `models/recruitModel.create: ${error}`);           
             return null;
         }
     }
 
-    static async update(seq, subject, HRONname, HROContact, jobKindSeq, careerSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-        workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
+    static async update(SEQ, HRONAME, HROCONTACT, HROEMAIL, SUBJECT, CAREER_SEQ, CHARGE, 
+        PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, 
+        GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, JOBKIND, JOBRANK, WORKINGTYPE, WORKREGION, ACTIVE) {
+        const connection = await pool.getConnection(async conn => conn);
         try 
         {
-            await pool.query(`UPDATE RECRUIT SET 
-                    SUBJECT=?, HRONAME=?, HROCONTACT=?, JOBKIND_SEQ=?, CAREER_SEQ=?, EXPYEAR=?, CHARGE=?, JOBRANK=?, PREFERENTIAL=?, EDUCATION=?, SALARYTYPE=?, SALARY=?,
-                    WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, PROBATIONTERM=?, WORKSHIFT=?, WORKSHIFTTIME=?, WORKREGION_SEQ=?, GENDER=?, AGE=?, STARTDATE=?, ENDDATE=?, HIRINGSTEP=?, REQUIREDOCS=?, MODIFIED=CURRENT_TIMESTAMP()
-                WHERE 
-                    SEQ=?`, 
+            await connection.beginTransaction();    // transaction
+
+            // RECRUIT 업데이트
+            await connection.query(`UPDATE RECRUIT SET 
+                SUBJECT=?, HRONAME=?, HROCONTACT=?, HROEMAIL=?, CAREER_SEQ=?, EXPYEAR=?, CHARGE=?, JOBRANK=?, PREFERENTIAL=?, EDUCATION=?, SALARYTYPE=?, SALARY=?,
+                PROBATIONTERM=?, WORKSHIFT=?, WORKSHIFTTIME=?, GENDER=?, AGE=?, STARTDATE=?, ENDDATE=?, HIRINGSTEP=?, REQUIREDOCS=?, CONTENT=?, ACTIVE=?, MODIFIED=CURRENT_TIMESTAMP()
+                WHERE SEQ=?`, 
                 [
-                    subject, HRONname, HROContact, jobKindSeq, careerSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-                    workingTypeSeqs, workingTypeNames, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs, 
-                    seq
+                    SUBJECT, HRONAME, HROCONTACT, HROEMAIL, CAREER_SEQ, 0, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
+                    PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, ACTIVE,
+                    SEQ
                 ]);
-            return seq;
+
+            // RECRUIT_JOBKIND를 저장
+            await connection.query(`DELETE FROM RECRUIT_JOBKIND WHERE RECRUIT_SEQ=?`, [SEQ]);
+            await connection.query(`INSERT INTO RECRUIT_JOBKIND (RECRUIT_SEQ, JOBKIND_SEQ, JOBKIND_NAME) SELECT ?, SEQ, NAME FROM JOBKIND WHERE SEQ IN (${JOBKIND})`, [SEQ]);
+
+            // RECRUIT_REGION을 저장
+            await connection.query(`DELETE FROM RECRUIT_REGION WHERE RECRUIT_SEQ=?`, [SEQ]);
+            await connection.query(`INSERT INTO RECRUIT_REGION (RECRUIT_SEQ, WORKREGION_SEQ, WORKREGION_NAME) SELECT ?, SEQ, NAME FROM WORKREGION WHERE SEQ IN (${WORKREGION})`, [SEQ]);
+
+            // RECRUIT_WORKINGTYPE을 저장
+            await connection.query(`DELETE FROM RECRUIT_WORKINGTYPE WHERE RECRUIT_SEQ=?`, [SEQ]);
+            await connection.query(`INSERT INTO RECRUIT_WORKINGTYPE (RECRUIT_SEQ, WORKINGTYPE_SEQ, WORKINGTYPE_NAME) SELECT ?, SEQ, NAME FROM WORKINGTYPE WHERE SEQ IN (${WORKINGTYPE})`, [SEQ]);
+
+            await connection.commit(); // commit
+            connection.release();
+    
+            return SEQ;
         } catch (error) {
+            await connection.rollback();    // rollback
+            connection.release();
+
             logger.writeLog('error', `models/recruitModel.update: ${error}`);           
             return null;
         }
     }
 
-    static async remove(seq) {
+    // ACTIVE
+    // Y: 진행 중
+    // N: 마감
+    // W: 진행 대기
+    // D: 삭제
+    static async setActive(SEQ, ACTIVE) {
         try 
         {
-            await pool.query(`UPDATE RECRUIT SET ACTIVE='N' WHERE SEQ=?`, [seq]);
-            return seq;
+            await pool.query(`UPDATE RECRUIT SET ACTIVE=? WHERE SEQ=?`, [ACTIVE, SEQ]);
+            logger.writeLog('info', `models/recruitModel.setActive: ${SEQ} 공고의 상태가 ${ACTIVE}로 변경되었습니다`);           
+            return SEQ;
         } catch (error) {
-            logger.writeLog('error', `models/recruitModel.remove: ${error}`);           
+            logger.writeLog('error', `models/recruitModel.setActive: ${error}`);           
+            return null;
+        }
+    }
+
+    static async copy(recruitSeq) {
+        const connection = await pool.getConnection(async conn => conn);
+        try 
+        {
+            await connection.beginTransaction();    // transaction
+
+            // RECRUIT 복사
+            const [rows, fields] = await connection.query(`INSERT INTO RECRUIT (MART_SEQ, SUBJECT, HRONAME, HROCONTACT, HROEMAIL, CAREER_SEQ, EXPYEAR, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, GENDER, AGE, STARTDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, ACTIVE, CREATED, MODIFIED)
+                SELECT MART_SEQ, CONCAT('[복사된 공고] ', SUBJECT), HRONAME, HROCONTACT, HROEMAIL, CAREER_SEQ, EXPYEAR, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, GENDER, AGE, STARTDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, 'W', current_timestamp(), current_timestamp()FROM RECRUIT 
+                WHERE SEQ = ?`, 
+                [recruitSeq]);
+            let newRecruitSeq = rows.insertId;
+
+            // RECRUIT_JOBKIND 복사
+            await connection.query(`INSERT INTO RECRUIT_JOBKIND (RECRUIT_SEQ, JOBKIND_SEQ, JOBKIND_NAME)  
+                SELECT ?, JOBKIND_SEQ, JOBKIND_NAME FROM RECRUIT_JOBKIND WHERE RECRUIT_SEQ = ?`, [newRecruitSeq, recruitSeq]);
+
+            // RECRUIT_REGION 복사
+            await connection.query(`INSERT INTO RECRUIT_REGION (RECRUIT_SEQ, WORKREGION_SEQ, WORKREGION_NAME)  
+                SELECT ?, WORKREGION_SEQ, WORKREGION_NAME FROM RECRUIT_REGION WHERE RECRUIT_SEQ = ?`, [newRecruitSeq, recruitSeq]);
+
+            // RECRUIT_WORKINGTYPE 복사
+            await connection.query(`INSERT INTO RECRUIT_WORKINGTYPE (RECRUIT_SEQ, WORKINGTYPE_SEQ, WORKINGTYPE_NAME)  
+            SELECT ?, WORKINGTYPE_SEQ, WORKINGTYPE_NAME FROM RECRUIT_WORKINGTYPE WHERE RECRUIT_SEQ = ?`, [newRecruitSeq, recruitSeq]);
+            
+            // await connection.rollback();    // rollback
+            await connection.commit(); // commit
+            connection.release();
+            logger.writeLog('info', `models/recruitModel.copy: ${recruitSeq}번 공고가 ${newRecruitSeq}번 공고로 복사되었습니다.`);           
+            return newRecruitSeq;
+        } catch (error) {
+            await connection.rollback();    // rollback
+            connection.release();
+
+            logger.writeLog('error', `models/recruitModel.copy: ${error}`);           
             return null;
         }
     }
@@ -98,7 +188,8 @@ module.exports = class recruitModel {
                         RECRUIT.ACTIVE, 
                         RECRUIT.CREATED, 
                         RECRUIT.MODIFIED,
-                        IFNULL(RECRUIT_RESUME_COUNT.COUNT, 0) AS APPLYCOUNT
+                        IFNULL(RECRUIT_RESUME_COUNT.COUNT, 0) AS APPLYCOUNT,
+                        IFNULL(RECRUIT_RESUME_COUNT.VIEWCOUNT, 0) AS VIEWCOUNT                    
                     FROM 
                         RECRUIT 
                         INNER JOIN CAREER CR ON CR.SEQ = RECRUIT.CAREER_SEQ
@@ -116,8 +207,8 @@ module.exports = class recruitModel {
                             FROM RECRUIT_WORKINGTYPE GROUP BY RECRUIT_SEQ
                         ) RECRUIT_WORKINGTYPE ON RECRUIT_WORKINGTYPE.RECRUIT_SEQ = RECRUIT.SEQ  
 						LEFT JOIN (
-							SELECT RECRUIT_SEQ, COUNT(SEQ) AS COUNT FROM RECRUIT_RESUME GROUP BY RECRUIT_SEQ
-						) RECRUIT_RESUME_COUNT ON RECRUIT_RESUME_COUNT.RECRUIT_SEQ = RECRUIT.SEQ                 
+                            SELECT RECRUIT_SEQ, COUNT(SEQ) AS COUNT, SUM(CASE WHEN READING = 'Y' THEN 1 ELSE 0 END) AS VIEWCOUNT FROM RECRUIT_RESUME GROUP BY RECRUIT_SEQ
+                        ) RECRUIT_RESUME_COUNT ON RECRUIT_RESUME_COUNT.RECRUIT_SEQ = RECRUIT.SEQ                 
                     WHERE
                         RECRUIT.SEQ = ?`, [seq]);
             if (rows.length > 0) 
@@ -286,6 +377,19 @@ module.exports = class recruitModel {
         }
     }
 
+    static async closeAfterDate() {
+        try 
+        {
+            let today = new Date();  
+            await pool.query(`UPDATE RECRUIT SET ACTIVE='N' WHERE ACTIVE='Y' AND ENDDATE < now();`);
+            logger.writeLog('info', `models/recruitModel.closeAfterDate: ${today} 이전에 날짜가 종료된 공고를 모두 마감처리했습니다.`);           
+            return 0;
+        } catch (error) {
+            logger.writeLog('error', `models/recruitModel.closeAfterDate: ${error}`);           
+            return null;
+        }
+    }
+
     //jobkinds 값이 문자열로 1,2 형태라고 정의
     static async updateJobKind(recruitSeq, jobKinds) {
         const connection = await pool.getConnection(async conn => conn);
@@ -419,7 +523,8 @@ module.exports = class recruitModel {
     static async apply(recruitSeq, userSeq) {
         try 
         {
-            await pool.query(`INSERT INTO RECRUIT_RESUME (RECRUIT_SEQ, RESUME_SEQ, USER_SEQ, APPLYDATE) VALUES (?, (SELECT SEQ FROM RESUME WHERE USER_SEQ = ?), ?, CURRENT_TIMESTAMP());`, [recruitSeq, userSeq, userSeq]);
+            await pool.query(`INSERT INTO RECRUIT_RESUME (RECRUIT_SEQ, RESUME_SEQ, USER_SEQ, APPLYDATE, READING, STEP) 
+            VALUES (?, (SELECT SEQ FROM RESUME WHERE USER_SEQ = ?), ?, CURRENT_TIMESTAMP(), 'N', 'D');`, [recruitSeq, userSeq, userSeq]);
             logger.writeLog('info', `models/recruitModel.applyResume: ${recruitSeq} 공고에 사용자[${userSeq}]가 지원하였습니다.`);           
             return recruitSeq;
         } catch (error) {
@@ -478,7 +583,9 @@ module.exports = class recruitModel {
             SELECT
                 MART_SEQ,
                 SUM(CASE WHEN ACTIVE = 'Y' THEN 1 ELSE 0 END) AS ACTIVE,
-                SUM(CASE WHEN ACTIVE = 'N' THEN 1 ELSE 0 END) AS INACTIVE
+                SUM(CASE WHEN ACTIVE = 'N' THEN 1 ELSE 0 END) AS INACTIVE,
+                SUM(CASE WHEN ACTIVE = 'W' THEN 1 ELSE 0 END) AS WAIT,
+                SUM(CASE WHEN ACTIVE = 'D' THEN 1 ELSE 0 END) AS DELETED
             FROM
                 RECRUIT
             WHERE
@@ -493,6 +600,36 @@ module.exports = class recruitModel {
             }
         } catch (error) {
             logger.writeLog('error', `models/recruitModel.getCountStatus: ${error}`);           
+            return null;
+        }
+    }
+
+    // 마트의 진행 공고에 지원한 사람의 통계 숫자를 리턴
+    static async getResumeCount(seq) {
+        try 
+        {
+            //순번에 따라서 리스팅
+            const query = `
+            SELECT
+                RECRUIT_SEQ,
+                SUM(CASE WHEN STEP = 'D' THEN 1 ELSE 0 END) AS DOCUMENT,
+                SUM(CASE WHEN STEP = 'I' THEN 1 ELSE 0 END) AS INTERVIEW,
+                SUM(CASE WHEN STEP = 'P' THEN 1 ELSE 0 END) AS PASS,
+                SUM(CASE WHEN STEP = 'F' THEN 1 ELSE 0 END) AS FAILURE
+            FROM
+                RECRUIT_RESUME
+            WHERE
+                RECRUIT_SEQ = ?`;
+            const [rows, fields] = await pool.query(query, seq);
+
+            if (rows.length > 0) {
+                return rows[0];
+            } else {
+                logger.writeLog('error', `models/recruitModel.getActiveCount: No data found`);
+                return null;
+            }
+        } catch (error) {
+            logger.writeLog('error', `models/recruitModel.getActiveCount: ${error}`);           
             return null;
         }
     }

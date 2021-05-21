@@ -2,7 +2,7 @@ var express = require('express');
 const { tokenVerify } = require("../app/services/auth");
 var router = express.Router();
 
-const { create, update, remove, get, getByUserSeq, list, listPerRecruit, certificate, clearCertificate, updateJobKind, updateWorkingRegion, addCareer, updateCareer, removeCareer, getCareer, listCareer, updateImage, updatecertificate } = require('../app/controllers/resume.js');
+const { create, update, remove, get, getByUserSeq, list, listForRecruit, certificate, clearCertificate, updateJobKind, updateWorkingRegion, addCareer, updateCareer, removeCareer, getCareer, listCareer, updateImage, updatecertificate } = require('../app/controllers/resume.js');
 
 router.post('/create', create);
 
@@ -16,7 +16,7 @@ router.post('/getByUserSeq', getByUserSeq);
 
 router.post('/list', list);
 
-router.post('/listPerRecruit', listPerRecruit);
+router.post('/listForRecruit', listForRecruit);
 
 router.post('/certificate', certificate);
 

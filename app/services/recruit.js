@@ -2,12 +2,15 @@ const logger = require('../config/logger.js');
 var recruitModel = require("../models/recruit");
 
 module.exports = class recruitService {
-    static create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-        workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
+    static create(MART_SEQ, HRONAME, HROCONTACT, HROEMAIL, SUBJECT, CAREER_SEQ, CHARGE, 
+        PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, 
+        GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, JOBKIND, JOBRANK, WORKINGTYPE, WORKREGION) {
         return new Promise(function(resolve, reject) {
             try {
-                let newId = recruitModel.create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-                    workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs);
+                if (ENDDATE == '') ENDDATE = null;
+                let newId = recruitModel.create(MART_SEQ, HRONAME, HROCONTACT, HROEMAIL, SUBJECT, CAREER_SEQ, CHARGE, 
+                    PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, 
+                    GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, JOBKIND, JOBRANK, WORKINGTYPE, WORKREGION);
     
                 resolve(newId);
             } catch (error) {
@@ -15,12 +18,14 @@ module.exports = class recruitService {
             }
         })
     }
-    static update(seq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-        workingType_Seq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs) {
+    static update(SEQ, HRONAME, HROCONTACT, HROEMAIL, SUBJECT, CAREER_SEQ, CHARGE, PREFERENTIAL, EDUCATION, 
+        SALARYTYPE, SALARY, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, GENDER, AGE, STARTDATE, ENDDATE, 
+        HIRINGSTEP, REQUIREDOCS, CONTENT, JOBKIND, JOBRANK, WORKINGTYPE, WORKREGION, ACTIVE) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = recruitModel.update(seq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-                    workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs);
+                let result = recruitModel.update(SEQ, HRONAME, HROCONTACT, HROEMAIL, SUBJECT, CAREER_SEQ, CHARGE, 
+                    PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, 
+                    GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, JOBKIND, JOBRANK, WORKINGTYPE, WORKREGION, ACTIVE);
     
                 resolve(result);
             } catch (error) {
@@ -28,10 +33,10 @@ module.exports = class recruitService {
             }
         })
     }
-    static remove(seq) {
+    static remove(SEQ) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = recruitModel.remove(seq);
+                let result = recruitModel.setActive(SEQ, 'D');
     
                 resolve(result);
             } catch (error) {
@@ -39,7 +44,28 @@ module.exports = class recruitService {
             }
         })
     }
-    static get(seq) {
+    static active(SEQ) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.setActive(SEQ, 'Y');
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/active: ${error}`);           
+            }
+        })
+    }
+    static close(SEQ) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.setActive(SEQ, 'N');
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/close: ${error}`);           
+            }
+        })
+    }    static get(seq) {
         return new Promise(function(resolve, reject) {
             try {
                 let result = recruitModel.get(seq);
@@ -47,6 +73,17 @@ module.exports = class recruitService {
                 resolve(result);
             } catch (error) {
                 logger.writeLog('error', `services/recruitService/get: ${error}`);           
+            }
+        })
+    }
+    static copy(seq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.copy(seq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/copy: ${error}`);           
             }
         })
     }
@@ -70,6 +107,17 @@ module.exports = class recruitService {
                 resolve(result);
             } catch (error) {
                 logger.writeLog('error', `services/recruitService/list: ${error}`);           
+            }
+        })
+    }
+    static closeAfterDate() {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.closeAfterDate();
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/closeAfterDate: ${error}`);           
             }
         })
     }
@@ -139,5 +187,15 @@ module.exports = class recruitService {
             }
         })
     }
+    static getResumeCount(seq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.getResumeCount(seq);
     
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/getResumeCount: ${error}`);           
+            }
+        })
+    }
 }

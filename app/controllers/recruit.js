@@ -4,33 +4,35 @@ const defaultRowCount = 20;
 
 module.exports = {
     async create(req, res, next) {
-        const martSeq = req.body.martSeq;
-        const subject = req.body.subject;
-        const HRONname = req.body.HRONname;
-        const HROContact = req.body.HROContact;
-        const jobKindSeq = req.body.jobKindSeq;
-        const carrierSeq = req.body.carrierSeq;
-        const expYear = req.body.expYear;
-        const charge = req.body.charge;
-        const jobRank = req.body.jobRank;
-        const preferential = req.body.preferential;
-        const education = req.body.education;
-        const salaryType = req.body.salaryType;
-        const salary = req.body.salary;
-        const workingTypeSeq = req.body.workingTypeSeq;
-        const probationTerm = req.body.probationTerm;
-        const workShift = req.body.workShift;
-        const worshiftTime = req.body.worshiftTime;
-        const workRegionSeq = req.body.workRegionSeq;
-        const gender = req.body.gender;
-        const age = req.body.age;
-        const startDate = req.body.startDate;
-        const endDate = req.body.endDate;
-        const hiringStep = req.body.hiringStep;
-        const requireDocs = req.body.requireDocs;
+        const MART_SEQ = req.body.MART_SEQ;
+        const HRONAME = req.body.HRONAME;
+        const HROCONTACT = req.body.HROCONTACT;
+        const HROEMAIL = req.body.HROEMAIL;
+        const SUBJECT = req.body.SUBJECT;
+        const CAREER_SEQ = req.body.CAREER_SEQ;
+        const CHARGE = req.body.CHARGE;
+        const PREFERENTIAL = req.body.PREFERENTIAL;
+        const EDUCATION = req.body.EDUCATION;
+        const SALARYTYPE = req.body.SALARYTYPE;
+        const SALARY = req.body.SALARY;
+        const PROBATIONTERM = req.body.PROBATIONTERM;
+        const WORKSHIFT = req.body.WORKSHIFT;
+        const WORKSHIFTTIME = req.body.WORKSHIFTTIME;
+        const GENDER = req.body.GENDER;
+        const AGE = req.body.AGE;
+        const STARTDATE = req.body.STARTDATE;
+        const ENDDATE = (req.body.ENDDATE) ? req.body.ENDDATE : null;
+        const HIRINGSTEP = req.body.HIRINGSTEP;
+        const REQUIREDOCS = req.body.REQUIREDOCS;
+        const CONTENT = req.body.CONTENT;
+        const JOBKIND = req.body.JOBKIND;
+        const JOBRANK = req.body.JOBRANK;
+        const WORKINGTYPE = req.body.WORKINGTYPE;
+        const WORKREGION = req.body.WORKREGION;
 
-        const result = await recruitService.create(martSeq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-            workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs);
+        const result = await recruitService.create(MART_SEQ, HRONAME, HROCONTACT, HROEMAIL, SUBJECT, CAREER_SEQ, CHARGE, 
+            PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, 
+            GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, JOBKIND, JOBRANK, WORKINGTYPE, WORKREGION);
 
         if (result) {
             res.status(200).json({
@@ -46,33 +48,36 @@ module.exports = {
     },
 
     async update(req, res, next) {
-        const seq = req.body.seq;
-        const subject = req.body.subject;
-        const HRONname = req.body.HRONname;
-        const HROContact = req.body.HROContact;
-        const jobKindSeq = req.body.jobKindSeq;
-        const carrierSeq = req.body.carrerSeq;
-        const expYear = req.body.expYear;
-        const charge = req.body.charge;
-        const jobRank = req.body.jobRank;
-        const preferential = req.body.preferential;
-        const education = req.body.education;
-        const salaryType = req.body.salaryType;
-        const salary = req.body.salary;
-        const workingTypeSeq = req.body.workingTypeSeq;
-        const probationTerm = req.body.probationTerm;
-        const workShift = req.body.workShift;
-        const worshiftTime = req.body.worshiftTime;
-        const workRegionSeq = req.body.workRegionSeq;
-        const gender = req.body.gender;
-        const age = req.body.age;
-        const startDate = req.body.startDate;
-        const endDate = req.body.endDate;
-        const hiringStep = req.body.hiringStep;
-        const requireDocs = req.body.requireDocs;
+        const SEQ = req.body.SEQ;
+        const HRONAME = req.body.HRONAME;
+        const HROCONTACT = req.body.HROCONTACT;
+        const HROEMAIL = req.body.HROEMAIL;
+        const SUBJECT = req.body.SUBJECT;
+        const CAREER_SEQ = req.body.CAREER_SEQ;
+        const CHARGE = req.body.CHARGE;
+        const PREFERENTIAL = req.body.PREFERENTIAL;
+        const EDUCATION = req.body.EDUCATION;
+        const SALARYTYPE = req.body.SALARYTYPE;
+        const SALARY = req.body.SALARY;
+        const PROBATIONTERM = req.body.PROBATIONTERM;
+        const WORKSHIFT = req.body.WORKSHIFT;
+        const WORKSHIFTTIME = req.body.WORKSHIFTTIME;
+        const GENDER = req.body.GENDER;
+        const AGE = req.body.AGE;
+        const STARTDATE = req.body.STARTDATE;
+        const ENDDATE = (req.body.ENDDATE) ? req.body.ENDDATE : null;
+        const HIRINGSTEP = req.body.HIRINGSTEP;
+        const REQUIREDOCS = req.body.REQUIREDOCS;
+        const CONTENT = req.body.CONTENT;
+        const JOBKIND = req.body.JOBKIND;
+        const JOBRANK = req.body.JOBRANK;
+        const WORKINGTYPE = req.body.WORKINGTYPE;
+        const WORKREGION = req.body.WORKREGION;
+        const ACTIVE = req.body.ACTIVE;
 
-        const result = await recruitService.update(seq, subject, HRONname, HROContact, jobKindSeq, carrierSeq, expYear, charge, jobRank, preferential, education, salaryType, salary,
-            workingTypeSeq, probationTerm, workShift, worshiftTime, workRegionSeq, gender, age, startDate, endDate, hiringStep, requireDocs);
+        const result = await recruitService.update(SEQ, HRONAME, HROCONTACT, HROEMAIL, SUBJECT, CAREER_SEQ, CHARGE, 
+            PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, GENDER, AGE, 
+            STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, JOBKIND, JOBRANK, WORKINGTYPE, WORKREGION, ACTIVE);
 
         if (result) {
             res.status(200).json({
@@ -104,7 +109,40 @@ module.exports = {
             });    
         }
     },
+    async active(req, res, next) {
+        const seq = req.body.seq;
 
+        const result = await recruitService.active(seq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+    async close(req, res, next) {
+        const seq = req.body.seq;
+
+        const result = await recruitService.close(seq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
     // ?martseq=&page=&criteria=
     async get(req, res, next) {
         const recruitSeq = req.body.seq;
@@ -124,6 +162,24 @@ module.exports = {
         }
     },
 
+    async copy(req, res, next) {
+        const seq = req.body.seq;
+
+        const result = await recruitService.copy(seq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+
     // http://localhost:3000/api/jobOpening/list?martSeq=1&regions=1,2&jobkinds=1,5
     // http://localhost:3000/api/jobOpening/list?martSeq=1&regions=1,2
     // http://localhost:3000/api/jobOpening/list?martSeq=1&jobkinds=1,5
@@ -131,7 +187,6 @@ module.exports = {
     // 지역, 직종으로만 나열
     async list(req, res, next) {
         const martSeq = req.body.martSeq;
-        const active = req.body.active;
         const name = req.body.name;
         const subject = req.body.subject;
         const regions = req.body.regions;
@@ -139,10 +194,13 @@ module.exports = {
         const workingTypes = req.body.workingTypes;
         const userSeq = req.body.userSeq;
         const userOwn = req.body.userOwn;
+        const active = req.body.active;
 
         if (userSeq) { if (userOwn == undefined) userOwn = 'N'};
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
+
+        await recruitService.closeAfterDate();
 
         const totalCount = await recruitService.totalCount(martSeq, active, name, subject, regions, jobkinds, workingTypes);
         const list = await recruitService.list(martSeq, active, name, subject, userSeq, userOwn, regions, jobkinds, workingTypes, null, page, rowCount);
@@ -166,6 +224,8 @@ module.exports = {
 
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
+        
+        await recruitService.closeAfterDate();
 
         const totalCount = await recruitService.totalCount(null, active, name, subject, regions, jobkinds, null);
         const list = await recruitService.list(null, active, name, subject, null, null, regions, jobkinds, null, null, page, rowCount);
@@ -290,6 +350,24 @@ module.exports = {
         const martSeq = req.body.martSeq;
 
         const result = await recruitService.getActiveCount(martSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
+    },
+
+    async getResumeCount(req, res, next) {
+        const recruitSeq = req.body.seq;
+
+        const result = await recruitService.getResumeCount(recruitSeq);
 
         if (result) {
             res.status(200).json({
