@@ -552,7 +552,7 @@ module.exports = class resumeModel {
                 WHERE 
                     RESUME_SEQ=?
                 ORDER BY
-                    WORKSTART ASC`, [resumeSeq]);
+                    WORKSTART DESC`, [resumeSeq]);
             
             if (rows.length > 0) 
                 return rows;

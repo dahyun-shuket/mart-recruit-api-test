@@ -380,6 +380,61 @@ module.exports = {
                 data: null
             });        
         }
+    },
+    async setRead(req, res, next) {
+        const recruitSeq = req.body.recruitSeq;
+        const resumeSeq = req.body.resumeSeq;
+
+        const result = await recruitService.setRead(recruitSeq, resumeSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
+    },
+    async setStep(req, res, next) {
+        const recruitSeq = req.body.recruitSeq;
+        const resumeSeq = req.body.resumeSeq;
+        const step = req.body.step;
+
+        const result = await recruitService.updateStep(recruitSeq, resumeSeq, step);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
+    },
+    async getApply(req, res, next) {
+        const recruitSeq = req.body.recruitSeq;
+        const resumeSeq = req.body.resumeSeq;
+
+        const result = await recruitService.getApply(recruitSeq, resumeSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
     }
 
 

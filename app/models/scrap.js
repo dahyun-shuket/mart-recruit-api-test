@@ -3,17 +3,21 @@ const pool = (process.env.NODE_ENV == "production") ? require("../config/databas
 
 module.exports = class scrapModel {
     static async create(userSeq, recruitSeq) {
+        const connection = await pool.getConnection(async conn => conn); 
         try 
         {
-            const [rows, fields] = await pool.query(`INSERT INTO RECRUIT_SCRAP (
-                    USER_SEQ, RECRUIT_SEQ, CREATED
-                ) VALUES 
-                ( ?, ?, CURRENT_TIMESTAMP())`, 
-                [
-                    userSeq, recruitSeq
-                ]);
-            return rows.insertId;
+            await connection.beginTransaction();    // transaction
+
+            await connection.query(`DELETE FROM RECRUIT_SCRAP WHERE USER_SEQ=? AND RECRUIT_SEQ=?`, [userSeq, recruitSeq]);
+            const [rows, fields] = await connection.query(`INSERT INTO RECRUIT_SCRAP (USER_SEQ, RECRUIT_SEQ, CREATED) VALUES ( ?, ?, CURRENT_TIMESTAMP())`, [userSeq, recruitSeq]);
+            await connection.commit(); // commit
+            connection.release();
+            logger.writeLog('info', `models/scrapModel.create: ${userSeq} 유저가 ${recruitSeq}번 공고를 스크랩했습니다.`);           
+                return rows.insertId;
         } catch (error) {
+            await connection.rollback();    // rollback
+            connection.release();
+
             logger.writeLog('error', `models/scrapModel.create: ${error}`);           
             return null;
         }

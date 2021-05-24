@@ -3,7 +3,7 @@ const { tokenVerify } = require("../app/services/auth");
 var router = express.Router();
 
 const { create, update, remove, active, close, get, copy, list, listForAdmin, updateJobKind, updateWorkingRegion, 
-    getUserStatus, getActiveCount, getResumeCount, apply, cancelApply } = require('../app/controllers/recruit.js');
+    getUserStatus, getActiveCount, getResumeCount, apply, cancelApply, setRead, setStep, getApply } = require('../app/controllers/recruit.js');
 
 router.post('/create', tokenVerify, create);
 
@@ -36,5 +36,11 @@ router.post('/cancelApply', tokenVerify, cancelApply);
 router.post('/getActiveCount', getActiveCount);
 
 router.post('/getResumeCount', getResumeCount);
+
+router.post('/setRead', tokenVerify, setRead);
+
+router.post('/setStep', tokenVerify, setStep);
+
+router.post('/getApply', tokenVerify, getApply);
 
 module.exports = router;
