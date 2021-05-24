@@ -567,7 +567,7 @@ module.exports = class recruitModel {
     static async setRead(recruitSeq, resumeSeq) {
         try 
         {
-            await pool.query(`UPDATE RECRUIT_RESUME SET READING='Y' WHERE RECRUIT_SEQ=? AND RESUME_SEQ=?`, [recruitSeq, resumeSeq]);
+            await pool.query(`UPDATE RECRUIT_RESUME SET READING='Y', READINGDATE=CURRENT_TIMESTAMP() WHERE RECRUIT_SEQ=? AND RESUME_SEQ=?`, [recruitSeq, resumeSeq]);
             logger.writeLog('info', `models/recruitModel.setRead: ${recruitSeq} 공고의 이력서 번호 [${resumeSeq}]가 읽음으로 변경되었습니다.`);           
             return recruitSeq;
         } catch (error) {
@@ -608,7 +608,7 @@ module.exports = class recruitModel {
                 LEFT JOIN 
                 (SELECT '${userSeq}' AS USER_SEQ, RECRUIT_SCRAP.SEQ AS ISSCRAP FROM RECRUIT_SCRAP WHERE USER_SEQ = ? AND RECRUIT_SEQ = ?) 
                 SCRAP ON SCRAP.USER_SEQ = USERS.USER_SEQ`;
-            const [rows, fields] = await pool.query(query, userSeq, recruitSeq, userSeq, recruitSeq);
+            const [rows, fields] = await pool.query(query, [userSeq, recruitSeq, userSeq, recruitSeq]);
 
             return rows[0];
         } catch (error) {
