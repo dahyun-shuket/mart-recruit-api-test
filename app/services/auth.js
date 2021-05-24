@@ -10,7 +10,6 @@ module.exports = {
         // const secretKey = require('../config/secretKey').secretKey;
         const secretKey = (req.body.key) ? req.body.key : req.query.key
 
-
         if (token) {
             jwt.verify(token, secretKey, (err, decoded) => {
                 if (err) {

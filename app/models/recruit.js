@@ -545,6 +545,49 @@ module.exports = class recruitModel {
             return null;
         }
     }
+
+    //공고에 이력서 지원
+    static async getApply(recruitSeq, resumeSeq) {
+        try 
+        {
+            const [rows, fields] = await pool.query(`SELECT SEQ, RECRUIT_SEQ, RESUME_SEQ, USER_SEQ, APPLYDATE, READING, STEP FROM RECRUIT_RESUME WHERE RECRUIT_SEQ=? AND RESUME_SEQ=?`, [recruitSeq, resumeSeq]);
+            if (rows.length > 0) 
+                return rows[0];
+            else {
+                logger.writeLog('error', `models/recruitModel.getApply: No data found`);           
+                return null;
+            }                
+        } catch (error) {
+            logger.writeLog('error', `models/recruitModel.getApply: ${error}`);           
+            return null;
+        }
+    }
+
+    //공고에 지원한 이력서의 상태 변경
+    static async setRead(recruitSeq, resumeSeq) {
+        try 
+        {
+            await pool.query(`UPDATE RECRUIT_RESUME SET READING='Y' WHERE RECRUIT_SEQ=? AND RESUME_SEQ=?`, [recruitSeq, resumeSeq]);
+            logger.writeLog('info', `models/recruitModel.setRead: ${recruitSeq} 공고의 이력서 번호 [${resumeSeq}]가 읽음으로 변경되었습니다.`);           
+            return recruitSeq;
+        } catch (error) {
+            logger.writeLog('error', `models/recruitModel.setRead: ${error}`);           
+            return null;
+        }
+    }
+    
+    //공고에 지원한 이력서의 상태 변경
+    static async updateStep(recruitSeq, resumeSeq, step) {
+        try 
+        {
+            await pool.query(`UPDATE RECRUIT_RESUME SET STEP=? WHERE RECRUIT_SEQ=? AND RESUME_SEQ=?`, [step, recruitSeq, resumeSeq]);
+            logger.writeLog('info', `models/recruitModel.updateStep: ${recruitSeq} 공고의 이력서 번호 [${resumeSeq}]의 상태가 [${step}]으로 변경되었습니다.`);           
+            return recruitSeq;
+        } catch (error) {
+            logger.writeLog('error', `models/recruitModel.updateStep: ${error}`);           
+            return null;
+        }
+    }
     
     // 공고 지원 여부와 스크랩 여부. 0은 미지원, 스크랩 안함 1은 지원, 스크랩함
     static async getUserStatus(recruitSeq, userSeq) {

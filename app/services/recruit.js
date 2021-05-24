@@ -198,4 +198,36 @@ module.exports = class recruitService {
             }
         })
     }
-}
+    static setRead(recruitSeq, resumeSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.setRead(recruitSeq, resumeSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/setRead: ${error}`);           
+            }
+        })
+    }
+    static updateStep(recruitSeq, resumeSeq, step) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.updateStep(recruitSeq, resumeSeq, step);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/updateStep: ${error}`);           
+            }
+        })
+    }
+    static getApply(recruitSeq, resumeSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = recruitModel.getApply(recruitSeq, resumeSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/recruitService/getApply: ${error}`);           
+            }
+        })
+    }}
