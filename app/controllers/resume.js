@@ -165,7 +165,7 @@ module.exports = {
     },
     async getByUserSeq(req, res, next) {
         const resumeSeq = req.body.seq;
-
+        console.log(resumeSeq);
         if (resumeSeq) {
             const resumeInfo = await resumeService.getByUserSeq(resumeSeq);
 

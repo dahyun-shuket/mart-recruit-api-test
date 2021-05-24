@@ -546,13 +546,13 @@ module.exports = class resumeModel {
         try 
         {
             const [rows, fields] = await pool.query(`SELECT 
-                    SEQ, RESUME_SEQ, COMPANY, WOKSTART, WORKEND, CAREER, POSITION, JOBTYPE, WORKREGION, CHARGE, SALARY, CREATED, MODIFIED
+                    SEQ, RESUME_SEQ, COMPANY, WORKSTART, WORKEND, CAREER, POSITION, JOBTYPE, WORKREGION, CHARGE, SALARY, CREATED, MODIFIED
                 FROM 
                     RESUME_CAREER
                 WHERE 
                     RESUME_SEQ=?
                 ORDER BY
-                    WOKSTART ASC`, [resumeSeq]);
+                    WORKSTART ASC`, [resumeSeq]);
             
             if (rows.length > 0) 
                 return rows;
