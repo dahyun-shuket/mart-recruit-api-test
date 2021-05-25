@@ -239,6 +239,28 @@ module.exports = {
         });    
     },
 
+    // 지정된 사용자가 지원한 공고를 리스팅, 구인 중인 리스트만 나온다
+    async listUserApply(req, res, next) {
+        const userSeq = req.body.userSeq;
+        const userOwn = 'Y';
+
+        const page = (req.body.page) ? req.body.page : 1;
+        const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
+
+        await recruitService.closeAfterDate();
+
+        const list = await recruitService.list(null, 'Y', null, null, userSeq, userOwn, null, null, null, null, page, rowCount);
+
+        res.status(200).json({
+            result: 'success',
+            data: {
+                totalCount: 0,
+                list: list
+            }
+        });    
+    },
+
+
     async listResume(req, res, next) {
         const recruitSeq = req.body.seq;
         const page = (req.body.page) ? req.body.page : 1;

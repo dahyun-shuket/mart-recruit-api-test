@@ -3,10 +3,10 @@ var userModel = require("../models/users");
 // const got = require("got");
 
 module.exports = class userService {
-    static create(userId, password, userType, active) {
+    static create(userId, password, userType, bizNo, active) {
         return new Promise(function (resolve, reject) {
             try {
-                let createUser = userModel.createTransaction(userId, password, userType, active);
+                let createUser = userModel.createTransaction(userId, password, userType, bizNo, active);
                 resolve(createUser);
             } catch (error) {
                 reject(error);
@@ -32,10 +32,15 @@ module.exports = class userService {
         })
     };
     
-
     static async get(seq){
-        let get = await userModel.get(seq);
-        return get;
+        return new Promise(function (resolve, reject) {
+            try {
+                let result = userModel.get(seq);
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        })
     };
 
     static async update(userId, password, userType, active, seq){
@@ -46,8 +51,20 @@ module.exports = class userService {
             } catch (error) {
                 reject(error);
             }
-    })
+        })
     };
+
+    static async updatePassword(seq, password){
+        return new Promise(function (resolve, reject) {
+            try {
+                let update = userModel.updatePassword(seq, password);
+                resolve(update);
+            } catch (error) {
+                reject(error);
+            }
+        })
+    };
+
     static async remove(seq){
         return new Promise(function (resolve, reject) {
             try {

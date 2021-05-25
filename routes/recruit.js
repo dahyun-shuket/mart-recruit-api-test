@@ -2,7 +2,7 @@ var express = require('express');
 const { tokenVerify } = require("../app/services/auth");
 var router = express.Router();
 
-const { create, update, remove, active, close, get, copy, list, listForAdmin, updateJobKind, updateWorkingRegion, 
+const { create, update, remove, active, close, get, copy, list, listUserApply, listForAdmin, updateJobKind, updateWorkingRegion, 
     getUserStatus, getActiveCount, getResumeCount, apply, cancelApply, setRead, setStep, getApply } = require('../app/controllers/recruit.js');
 
 router.post('/create', tokenVerify, create);
@@ -20,6 +20,8 @@ router.post('/get', get);
 router.post('/copy', tokenVerify, copy);
 
 router.post('/list', list);
+
+router.post('/listUserApply', listUserApply);
 
 router.post('/listForAdmin', tokenVerify, listForAdmin);
 

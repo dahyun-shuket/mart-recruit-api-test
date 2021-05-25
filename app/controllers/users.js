@@ -13,11 +13,12 @@ module.exports = {
             let userId = req.body.userId
             let password = req.body.password
             let userType = req.body.userType
+            let bizNo = req.body.bizNo
             let active = req.body.active
             
             let salt = genSaltSync(10);
             password = hashSync(password, salt);
-            let createUser = await userService.create(userId, password, userType, active);
+            let createUser = await userService.create(userId, password, userType, bizNo, active);
 
             res.json({
                 result: "success",
@@ -26,7 +27,7 @@ module.exports = {
         } catch (error) {
             return res.json({
                 result: "fail",
-                data: "Database connect error",
+                data: null,
             });
         }
     },
@@ -88,15 +89,25 @@ module.exports = {
         });
     },
     
-    // 유저 한명조회
-    async get(req, res) {
-        const seq = req.params.id;
-        const getUser = await userService.get(seq);
-        return res.json({
-            result: "success",
-            data: getUser,
-        });
+    // SEQ로 유저 한 명 조회
+    async get(req, res, next) {
+        const seq = req.body.seq;
+
+        const result = await userService.get(seq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
     },
+
     // 유저 수정
     async update(req, res) {
         let userId = req.body.userId
@@ -112,6 +123,29 @@ module.exports = {
             data: updateUser,
         });
     },
+
+    // 유저 수정
+    async updatePassword(req, res) {
+        let seq = req.body.seq
+        let password = req.body.password
+
+        const salt = genSaltSync(10);
+        password = hashSync(password, salt);
+        let result = await userService.updatePassword(seq, password);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+
     // 유저 삭제
     async remove(req, res) {
         let seq = req.body.seq

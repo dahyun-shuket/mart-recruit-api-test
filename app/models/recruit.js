@@ -287,7 +287,8 @@ module.exports = class recruitModel {
                     RECRUIT_WORKINGTYPE.WORKINGTYPE_NAME,
                     IF(RECRUIT_RESUME.USER_SEQ IS NULL, 'N', 'Y') AS APPLY ,
                     IFNULL(RECRUIT_RESUME_COUNT.COUNT, 0) AS APPLYCOUNT,
-                    IFNULL(RECRUIT_RESUME_COUNT.VIEWCOUNT, 0) AS VIEWCOUNT                    
+                    IFNULL(RECRUIT_RESUME_COUNT.VIEWCOUNT, 0) AS VIEWCOUNT,
+                    RECRUIT_RESUME.APPLYDATE               
                 FROM (
                     SELECT 
                         DISTINCT
@@ -352,7 +353,7 @@ module.exports = class recruitModel {
                         FROM RECRUIT_WORKINGTYPE GROUP BY RECRUIT_SEQ
                     ) RECRUIT_WORKINGTYPE ON RECRUIT_WORKINGTYPE.RECRUIT_SEQ = RECRUIT.SEQ  
                     ${(userSeq && userOwn == 'Y') ? 'INNER' : 'LEFT'} JOIN (
-                        SELECT RECRUIT_SEQ, GROUP_CONCAT(USER_SEQ SEPARATOR ',') AS USER_SEQ, COUNT(SEQ) AS COUNT
+                        SELECT RECRUIT_SEQ, GROUP_CONCAT(USER_SEQ SEPARATOR ',') AS USER_SEQ, COUNT(SEQ) AS COUNT, APPLYDATE
                         FROM RECRUIT_RESUME 
                         ${(userSeq) ? 'WHERE USER_SEQ = ' + userSeq : ''}
                         GROUP BY RECRUIT_SEQ

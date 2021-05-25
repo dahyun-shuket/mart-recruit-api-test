@@ -10,7 +10,7 @@ module.exports = class userModel {
             console.log("userCreate model Error ! : " + error);
         }
     }
-    static async createTransaction(userId, password, userType, active) {
+    static async createTransaction(userId, password, userType, bizNo, active) {
         const connection = await pool.getConnection(async conn => conn);
         try 
         {
@@ -20,11 +20,11 @@ module.exports = class userModel {
             if (userType =='M') {
                 // 마트일때 마트를 생성해준다.
                 const [rowsMart, fieldsMart] = await connection.query(`INSERT INTO MART (
-                    USER_SEQ, ACTIVE, CREATED, MODIFIED
+                    USER_SEQ, REGNO, ACTIVE, CREATED, MODIFIED
                 ) VALUES 
-                ( ?,  'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
+                ( ?,  ?, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
                 [
-                    rows.insertId
+                    rows.insertId, bizNo
                 ]);
 
             }else if(userType =='U'){
@@ -56,7 +56,7 @@ module.exports = class userModel {
     // 유저 로그인
     static async login(userId) {
         try {
-            const [rows, fields] = await pool.query(`select SEQ, LOGINID, PWD, USERTYPE from USERS where LOGINID = ?`, [userId]);
+            const [rows, fields] = await pool.query(`SELECT SEQ, LOGINID, PWD, USERTYPE FROM USERS WHERE LOGINID = ? AND ACTIVE='Y'`, [userId]);
             return rows[0];
         } catch (error) {
             console.log("login model Error ! : " + error);
@@ -71,9 +71,21 @@ module.exports = class userModel {
             console.log("userUpdate model Error ! : " + error);
         }
     }
+    // 유저 암호만 변경
+    static async updatePassword(seq, password) {
+        try {
+            await pool.query(`UPDATE USERS SET PWD=? WHERE SEQ=?`, [password, seq]);
+            logger.writeLog('info', `API - models/userModel.updatePassword: 사용자 ${seq}가 암호를 변경했습니다.`);           
+            return seq;
+        } catch (error) {
+            logger.writeLog('error', `API - models/userModel.updatePassword: ${error}`);           
+            return null;
+        }
+    }
     // 유저 삭제
     static async remove(seq) {
         try {
+            console.log(seq);
             const [rows, fields] = await pool.query(`UPDATE USERS set ACTIVE="N" where SEQ = ?`, [seq]);
             return rows;
         } catch (error) {
@@ -128,10 +140,17 @@ module.exports = class userModel {
     static async get(seq) {
         // console.log("유저한명조회 모델 들어옴" + seq);
         try {
-            const [rows, fields] = await pool.query(`select * from USERS WHERE SEQ=?`, [seq]);
-            return rows[0];
+            const [rows, fields] = await pool.query(`SELECT SEQ, LOGINID, PWD, USERTYPE, ACTIVE, CREATED, MODIFIED FROM USERS WHERE SEQ=?`, [seq]);
+
+            if(rows.length > 0){
+                return rows[0];
+            } else {
+                logger.writeLog('error', `API - models/userModel.get: No data found`);           
+                return null;
+            }
         } catch (error) {
-            console.log("login model Error ! : " + error);
+            logger.writeLog('error', `API - models/userModel.get: ${error}`);           
+            return null;
         }
     }
     
