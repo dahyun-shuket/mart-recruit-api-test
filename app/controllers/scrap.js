@@ -59,8 +59,8 @@ module.exports = {
 
     async list(req, res, next) {
         const userSeq = req.body.userSeq;
-
-        const list = await recruitService.list(null, null, null, null, 'N', null, null, userSeq, 1, 100);
+        
+        const list = await recruitService.list(null, 'Y', null, null, null, null, null, null, null, userSeq, 1, 100);
 
         res.status(200).json({
             result: 'success',
