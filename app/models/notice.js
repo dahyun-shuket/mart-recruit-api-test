@@ -75,14 +75,12 @@ module.exports = class notice {
     }
 
     // nitceboard 생성 데이터
-    static async create(body) {
+    static async create(userSeq, subject, content) {
         try {
             
-            const [rows, fileds] = await pool.query(`INSERT INTO NOTICEBOARD (USER_SEQ, SUBJECT, CONTENT, ACTIVE) VALUES (?,?,?,'Y')`, 
+            const [rows, fileds] = await pool.query(`INSERT INTO NOTICEBOARD (USER_SEQ, SUBJECT, CONTENT, ACTIVE, CREATED, MODIFIED) VALUES (?,?,?,'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
             [
-                body.USER_SEQ,
-                body.SUBJECT,
-                body.CONTENT
+                userSeq, subject, content
             ]); 
             return rows;
         } catch(error) {
@@ -116,7 +114,7 @@ module.exports = class notice {
         };
 
     }
-
+    // 공지사항 GET
     static async get(seq) {
         try 
         {

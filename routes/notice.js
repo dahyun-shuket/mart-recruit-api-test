@@ -19,6 +19,7 @@ router.post('/create', create);
 // 공지사항 수정 페이지
 router.post('/update', update);
 
+// 공지사항 GET
 router.post('/get', get);
 
 

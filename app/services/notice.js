@@ -52,12 +52,12 @@ module.exports = class noticeService {
     }
 
    // 공지사항 추가
-    static create(body) {
+    static create(userSeq, subject, content) {
         return new Promise(function(resolve, reject) {
             
             try {
                 
-                let addNoticeCreate = noticeModel.create(body);
+                let addNoticeCreate = noticeModel.create(userSeq, subject, content);
                 resolve(addNoticeCreate);
                 
             } catch (error) {
@@ -95,7 +95,7 @@ module.exports = class noticeService {
         });
     }
 
-
+    // 공지사항 GET
     static get(seq) {
         return new Promise(function(resolve, reject) {
             try {
