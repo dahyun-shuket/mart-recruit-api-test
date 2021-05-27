@@ -1,5 +1,5 @@
 const logger = require('../config/logger.js');
-const pool = require("../../app/config/database_dev");
+const pool = (process.env.NODE_ENV == "production") ? require("../config/database") : require("../config/database_dev");
 
 module.exports = class notice {
 
