@@ -2,8 +2,8 @@ const logger = require('../config/logger.js');
 const pool = (process.env.NODE_ENV == "production") ? require("../config/database") : require("../config/database_dev");
 const path = require('path');
 module.exports = class resumeModel {
-    static async create(userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrierSeq, 
-        technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary) {
+    static async create(userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+        technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary) {
         try 
         {
             const [rows, fields] = await pool.query(`INSERT INTO RESUME (
@@ -13,8 +13,8 @@ module.exports = class resumeModel {
                     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'N', NULL, 0, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
                 )`, 
                 [
-                    userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrierSeq, 
-                    technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary, certificate
+                    userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+                    technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary, certificate
                 ]);
             return rows.insertId;
         } catch (error) {
@@ -24,22 +24,22 @@ module.exports = class resumeModel {
     }
     // 업데이트하면 인증은 무조건 해제
     // 조건을 이력서 SEQ에서 USER_SEQ로 변경함, photo 제거 0517 김민규 
-    static async update(seq, subject, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrierSeq, 
-        technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary) {
+    static async update(seq, subject, name, contact, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+        technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary) {
         try 
         {
             const [rows, fields] = await pool.query(`UPDATE RESUME SET 
-                    SUBJECT=?, NAME=?, CONTACT=?, EMAIL=?, POSTCODE=?, ADDRESS=?, ADDRESSEXTRA=?, EDUCATION=?, EDUCATIONSCHOOL=?, CAREER_SEQ=?, 
+                    SUBJECT=?, NAME=?, CONTACT=?, EMAIL=?, gender=?, POSTCODE=?, ADDRESS=?, ADDRESSEXTRA=?, EDUCATION=?, EDUCATIONSCHOOL=?, CAREER_SEQ=?, 
                     TECHNICAL=?, LICENSE=?, ISWELFARE=?, ISMILITALY=?, CAREERCERTIFICATE=?, INTRODUCE=?, WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, SALARY=?, CERTIFICATE='N', CERTIFICATEDATE=NULL, MODIFIED=CURRENT_TIMESTAMP()
                 WHERE 
                     USER_SEQ=?`, 
                 [
-                    subject, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrierSeq, 
-                    technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary,  
+                    subject, name, contact, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+                    technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary,
                     seq
+                    
                 ]);
-            console.log(rows)
-            console.log(rows[0]);
+            
             return rows;
         } catch (error) {
             logger.writeLog('error', `models/resumeModel.update: ${error}`);           
@@ -95,7 +95,7 @@ module.exports = class resumeModel {
                     EDUCATION, 
                     EDUCATIONSCHOOL, 
                     CAREER_SEQ, 
-                    C.NAME AS CARRER_NAME,
+                    C.NAME AS CAREER_NAME,
                     TECHNICAL, 
                     LICENSE, 
                     ISWELFARE, 
@@ -159,7 +159,7 @@ module.exports = class resumeModel {
                     EDUCATION, 
                     EDUCATIONSCHOOL, 
                     CAREER_SEQ, 
-                    C.NAME AS CARRER_NAME,
+                    C.NAME AS CAREER_NAME,
                     TECHNICAL, 
                     LICENSE, 
                     ISWELFARE, 
@@ -477,16 +477,16 @@ module.exports = class resumeModel {
         }
     }
 
-    static async addCareer(resumeSeq, workStart, workEnd, career, position, jobType, workRegion, charge, salaly) {
+    static async addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly) {
         try 
         {
             const [rows, fields] = await pool.query(`INSERT INTO RESUME_CAREER (
-                    RESUME_SEQ, WOKSTART, WORKEND, CAREER, POSITION, JOBTYPE, WORKREGION, CHARGE, SALARY, CREATED, MODIFIED
+                    RESUME_SEQ, COMPANY, WORKSTART, WORKEND, CAREER, POSITION, JOBTYPE, WORKREGION, CHARGE, SALARY, CREATED, MODIFIED
                 ) VALUES ( 
-                    ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
+                    ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
                 )`, 
                 [
-                    resumeSeq, workStart, workEnd, career, position, jobType, workRegion, charge, salaly
+                    resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly
                 ]);
             return rows.insertId;
         } catch (error) {
@@ -495,17 +495,19 @@ module.exports = class resumeModel {
         }
     }
 
-    static async updateCareer(seq, workStart, workEnd, career, position, jobType, workRegion, charge, salaly) {
+    static async updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly, seq) {
         try 
         {
-            await pool.query(`UPDATE RESUME_CAREER SET
-                    WOKSTART=?, WORKEND=?, CAREER=?, POSITION=?, JOBTYPE=?, WORKREGION=?, CHARGE=?, SALARY=?, MODIFIED=CURRENT_TIMESTAMP()
+            console.log(seq);
+            const [rows, fields] = await pool.query(`UPDATE RESUME_CAREER SET
+                    COMPANY=?, WORKSTART=?, WORKEND=?, CAREER=?, POSITION=?, JOBTYPE=?, WORKREGION=?, CHARGE=?, SALARY=?, MODIFIED=CURRENT_TIMESTAMP()
                 WHERE SEQ=?
                 `, 
                 [
-                    workStart, workEnd, career, position, jobType, workRegion, charge, salaly, seq
+                    company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly, seq
                 ]);
-            return seq;
+            console.log(rows);
+            return rows;
         } catch (error) {
             logger.writeLog('error', `models/resumeModel.updateCareer: ${error}`);           
             return null;
@@ -525,12 +527,11 @@ module.exports = class resumeModel {
         try 
         {
             const [rows, fields] = await pool.query(`SELECT 
-                    SEQ, RESUME_SEQ, WOKSTART, WORKEND, CAREER, POSITION, JOBTYPE, WORKREGION, CHARGE, SALARY, CREATED, MODIFIED
+                    SEQ, RESUME_SEQ, COMPANY, WORKSTART, WORKEND, CAREER, POSITION, JOBTYPE, WORKREGION, CHARGE, SALARY, CREATED, MODIFIED
                 FROM 
                     RESUME_CAREER
                 WHERE 
                     SEQ=?`, [seq]);
-            
             if (rows.length > 0) 
                 return rows[0];
             else {
@@ -574,7 +575,6 @@ module.exports = class resumeModel {
 
             // 기존 파일을 찾아서 삭제
             const [rowsFind, fieldsFind] = await connection.query(`SELECT SEQ, LOCATION, FILENAME, RELATED_SEQ FROM FILESTORAGE WHERE RELATED_TABLE=? AND RELATED_SEQ=? AND LOCATION ='RESUME'`, ['RESUME', seq]);
-            console.log(rowsFind);
             if (rowsFind.length > 0) {
                 // 기존 파일 정보가 있으면 삭제
                 try {
@@ -590,7 +590,7 @@ module.exports = class resumeModel {
                 (LOCATION, FILENAME, RELATED_TABLE, RELATED_SEQ) VALUES (?, ?, ?, ?)`, [path.dirname(resumeFile), path.basename(resumeFile), 'RESUME', seq]);
             // 해당 정보로 로고 파일 정보 갱신
 
-            await pconnectionool.query(`UPDATE RESUME SET PHOTO=?, MODIFIED=CURRENT_TIMESTAMP() WHERE SEQ=?`, [rows.insertId, seq]);
+            await connection.query(`UPDATE RESUME SET PHOTO=?, MODIFIED=CURRENT_TIMESTAMP() WHERE SEQ=?`, [rows.insertId, seq]);
 
             await connection.commit(); // commit
             connection.release();
@@ -614,13 +614,13 @@ module.exports = class resumeModel {
             // 기존 파일을 찾아서 삭제
             // 증명서 위치 추가.  AND LOCATION ='certificate'
             const [rowsFind, fieldsFind] = await connection.query(`SELECT SEQ, LOCATION, FILENAME, RELATED_SEQ FROM FILESTORAGE WHERE RELATED_TABLE=? AND RELATED_SEQ=? AND LOCATION ='CERTIFICATE'`, ['RESUME', seq]);
-            console.log(rowsFind);
+
             if (rowsFind.length > 0) {
                 // 기존 파일 정보가 있으면 삭제
                 try {
                     fs.unlinkSync(mediaPath + "uploads/" + rowsFind[0].LOCATION + "/" + rowsFind[0].FILENAME);
                 } catch {
-                    console.log("파일 삭제 오류");    
+                    logger.writeLog('error', `models/resumeModel.updatecertificate: ${error}`);            
                 }
                 // 레코드도 삭제
                 // 레코드 삭제할때 로케이션까지같게 조건 추가. 
@@ -648,5 +648,6 @@ module.exports = class resumeModel {
             return null;
         }
     }
+    
 };
 

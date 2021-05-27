@@ -15,19 +15,19 @@ module.exports = {
         const addressExtra = req.body.addressExtra;
         const education = req.body.education;
         const educcationSchool = req.body.educcationSchool;
-        const carrerSeq = req.body.carrerSeq;
+        const careerSeq = req.body.careerSeq;
         const technical = req.body.technical;
         const license = req.body.license;
         const isWelfare = req.body.isWelfare;
         const isMilitaly = req.body.isMilitaly;
-        const carrerCertificate = req.body.carrerCertificate;
+        const careerCertificate = req.body.careerCertificate;
         const introduce = req.body.introduce;
         const workingTypeSeqs = req.body.workingTypeSeqs;
         const workingTypeNames = req.body.workingTypeNames;
         const salary = req.body.salary;
 
-        const result = await resumeService.create(userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrerSeq, 
-            technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary);
+        const result = await resumeService.create(userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+            technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary);
 
         if (result) {
             res.status(200).json({
@@ -45,28 +45,29 @@ module.exports = {
     async update(req, res, next) {
         const seq = req.body.seq;
         const subject = req.body.subject;
-        const photo = req.body.photo;
+        // const photo = req.body.photo;
         const name = req.body.name;
         const contact = req.body.contact;
         const email = req.body.email;
+        const gender = req.body.gender;
         const postCode = req.body.postCode;
         const address = req.body.address;
         const addressExtra = req.body.addressExtra;
         const education = req.body.education;
         const educcationSchool = req.body.educcationSchool;
-        const carrerSeq = req.body.carrerSeq;
+        const careerSeq = req.body.careerSeq;
         const technical = req.body.technical;
         const license = req.body.license;
         const isWelfare = req.body.isWelfare;
         const isMilitaly = req.body.isMilitaly;
-        const carrerCertificate = req.body.carrerCertificate;
+        const careerCertificate = req.body.careerCertificate;
         const introduce = req.body.introduce;
         const workingTypeSeqs = req.body.workingTypeSeqs;
         const workingTypeNames = req.body.workingTypeNames;
         const salary = req.body.salary;
 
-        const result = await resumeService.update(seq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrerSeq, 
-            technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary);
+        const result = await resumeService.update(seq, subject, name, contact, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+            technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary);
             
         if (result) {
             res.status(200).json({
@@ -165,7 +166,7 @@ module.exports = {
     },
     async getByUserSeq(req, res, next) {
         const resumeSeq = req.body.seq;
-        console.log(resumeSeq);
+        // console.log(resumeSeq);
         if (resumeSeq) {
             const resumeInfo = await resumeService.getByUserSeq(resumeSeq);
 
@@ -267,6 +268,7 @@ module.exports = {
 
     async addCareer(req, res, next) {
         const resumeSeq = req.body.resumeSeq;
+        const company = req.body.company;
         const workStart = req.body.workStart;
         const workEnd = req.body.workEnd;
         const career = req.body.career;
@@ -276,7 +278,7 @@ module.exports = {
         const charge = req.body.charge;
         const salaly = req.body.salaly;
 
-        const result = await resumeService.addCareer(resumeSeq, workStart, workEnd, career, position, jobType, workRegion, charge, salaly);
+        const result = await resumeService.addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly);
 
         if (result) {
             res.status(200).json({
@@ -293,7 +295,7 @@ module.exports = {
 
     async updateCareer(req, res, next) {
         const seq = req.body.seq;
-        const resumeSeq = req.body.resumeSeq;
+        const company = req.body.company;
         const workStart = req.body.workStart;
         const workEnd = req.body.workEnd;
         const career = req.body.career;
@@ -302,9 +304,12 @@ module.exports = {
         const workRegion = req.body.workRegion;
         const charge = req.body.charge;
         const salaly = req.body.salaly;
-
-        const result = await resumeService.updateCareer(seq, workStart, workEnd, career, position, jobType, workRegion, charge, salaly);
-
+        console.log(seq);
+        console.log(company);
+        console.log(position);
+        console.log(salaly);
+        
+        const result = await resumeService.updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly, seq);
         if (result) {
             res.status(200).json({
                 result: 'success',
@@ -338,14 +343,12 @@ module.exports = {
 
     async getCareer(req, res, next) {
         const seq = req.body.seq;
-
-        if (resumeSeq) {
+        if (seq) {
             const resumeCareerInfo = await resumeService.getCareer(seq);
-
             res.status(200).json({
                 result: 'success',
                 data: resumeCareerInfo
-            });    
+            }); 
         } else {
             res.status(200).json({
                 result: 'fail',
@@ -358,11 +361,17 @@ module.exports = {
         const resumeSeq = req.body.resumeSeq;
 
         const list = await resumeService.listCareer(resumeSeq);
-
-        res.status(200).json({
-            result: 'success',
-            data: list
-        });    
+        if (list) {
+            res.status(200).json({
+                result: 'success',
+                data: list
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
     },
     async updateImage(req, res, next) {
         const seq = req.body.SEQ;

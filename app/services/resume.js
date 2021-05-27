@@ -2,12 +2,12 @@ const logger = require('../config/logger.js');
 var resumeModel = require("../models/resume");
 
 module.exports = class resumeService {
-    static create(userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrerSeq, 
-        technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary) {
+    static create(userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+        technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary) {
         return new Promise(function(resolve, reject) {
             try {
-                let newId = resumeModel.create(userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrerSeq, 
-                    technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary);
+                let newId = resumeModel.create(userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+                    technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary);
     
                 resolve(newId);
             } catch (error) {
@@ -15,12 +15,12 @@ module.exports = class resumeService {
             }
         })
     }
-    static update(seq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrerSeq, 
-        technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary) {
+    static update(seq, subject, name, contact, email,gender,  postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+        technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = resumeModel.update(seq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, carrerSeq, 
-                    technical, license, isWelfare, isMilitaly, carrerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary);
+                let result = resumeModel.update(seq, subject, name, contact, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+                    technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary);
     
                 resolve(result);
             } catch (error) {
@@ -152,47 +152,46 @@ module.exports = class resumeService {
         })
     }
 
-    static addCarrier(resumeSeq, workStart, workEnd, carrier, position, jobType, workRegion, charge, salaly) {
+    static addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly) {
         return new Promise(function(resolve, reject) {
             try {
-                let newId = resumeModel.addCarrier(resumeSeq, workStart, workEnd, carrier, position, jobType, workRegion, charge, salaly);
+                let newId = resumeModel.addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly);
     
                 resolve(newId);
             } catch (error) {
-                logger.writeLog('error', `services/resumeService/addCarrier: ${error}`);           
+                logger.writeLog('error', `services/resumeService/addCareer: ${error}`);           
             }
         })
     }
-    static updateCarrier(seq, workStart, workEnd, carrier, position, jobType, workRegion, charge, salaly) {
+    static updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly, seq) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = resumeModel.updateCarrier(seq, workStart, workEnd, carrier, position, jobType, workRegion, charge, salaly);
+                let result = resumeModel.updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly, seq);
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/resumeService/updateCarrier: ${error}`);           
+                logger.writeLog('error', `services/resumeService/updateCareer: ${error}`);           
             }
         })
     }
-    static removeCarrier(seq) {
+        static removeCareer(seq) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = resumeModel.removeCarrier(seq);
+                let result = resumeModel.removeCareer(seq);
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/resumeService/removeCarrier: ${error}`);           
+                logger.writeLog('error', `services/resumeService/removeCareer: ${error}`);           
             }
         })
     }    
-    static getCarrier(seq) {
+    static getCareer(seq) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = resumeModel.getCarrier(seq);
-    
+                let result = resumeModel.getCareer(seq);
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/resumeService/getCarrier: ${error}`);           
+                logger.writeLog('error', `API - services/resumeService/getCareer: ${error}`);           
             }
         })
     }
@@ -229,5 +228,6 @@ module.exports = class resumeService {
             }
         })
     }
+
     
 }
