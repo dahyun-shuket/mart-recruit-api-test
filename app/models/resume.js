@@ -222,7 +222,7 @@ module.exports = class resumeModel {
                             LEFT JOIN RESUME_REGION RR ON RR.RESUME_SEQ = R.SEQ
                             LEFT JOIN RESUME_JOBKIND RK ON RK.RESUME_SEQ = R.SEQ
                         WHERE
-                            RESUME.ACTIVE = 'Y'
+                            R.ACTIVE = 'Y'
                             ${(certificate) ? `AND R.CERTIFICATE = '${certificate}'`:''}
                             ${(name) ? `AND R.NAME LIKE '%${name}%'`:''}
                             ${(regions) ? 'AND RR.WORKREGION_SEQ IN (' + regions + ')':''}
@@ -289,8 +289,8 @@ module.exports = class resumeModel {
                     FROM 
                         RESUME
                         INNER JOIN CAREER ON CAREER.SEQ = RESUME.CAREER_SEQ
-                        INNER JOIN RESUME_REGION ON RESUME_REGION.RESUME_SEQ = RESUME.SEQ
-                        INNER JOIN RESUME_JOBKIND ON RESUME_JOBKIND.RESUME_SEQ = RESUME.SEQ
+                        LEFT JOIN RESUME_REGION ON RESUME_REGION.RESUME_SEQ = RESUME.SEQ
+                        LEFT JOIN RESUME_JOBKIND ON RESUME_JOBKIND.RESUME_SEQ = RESUME.SEQ
                         ${(recruitSeq) ? 'INNER JOIN RECRUIT_RESUME ON RECRUIT_RESUME.RECRUIT_SEQ = ' + recruitSeq + ' AND RECRUIT_RESUME.RESUME_SEQ = RESUME.SEQ' : '' }
                     WHERE
                         RESUME.ACTIVE = 'Y'
@@ -649,5 +649,171 @@ module.exports = class resumeModel {
         }
     }
     
+    static async createScrap(martSeq, resumeSeq) {
+        const connection = await pool.getConnection(async conn => conn);
+        try 
+        {
+            await connection.beginTransaction();    // transaction
+            //먼저 지운다. 있어도 지워지고 없으면 무시. 중복 등록을 막는다
+            await connection.query(`DELETE FROM RESUME_SCRAP WHERE MART_SEQ=? AND RESUME_SEQ=?`, [martSeq, resumeSeq]);
+            //새 레코드를 추가한다
+            await connection.query(`INSERT INTO RESUME_SCRAP (MART_SEQ, RESUME_SEQ, CREATED) VALUES (?, ?, CURRENT_TIMESTAMP())`, [martSeq, resumeSeq]);
+
+            await connection.commit(); // commit
+            connection.release();
+            logger.writeLog('info', `models/resumeModel.createScrap: 이력서 ${resumeSeq}를 마트 ${martSeq}가 스크랩했습니다.`);           
+
+            return martSeq;
+        } catch (error) {
+            await connection.rollback();    // rollback
+            connection.release();
+
+            logger.writeLog('error', `models/resumeModel.createScrap: ${error}`);           
+            return null;
+        }
+    }
+    static async removeScrap(martSeq, resumeSeq) {
+        try 
+        {
+            await pool.query(`DELETE FROM RESUME_SCRAP WHERE MART_SEQ=? AND RESUME_SEQ=?`, [martSeq, resumeSeq]);
+            logger.writeLog('info', `models/resumeModel.deleteScrap: 이력서${resumeSeq}를 마트 ${martSeq}에서 스크랩 제거했습니다.`);           
+
+            return martSeq;
+        } catch (error) {
+            logger.writeLog('error', `models/resumeModel.deleteScrap: ${error}`);           
+            return null;
+        }
+    }
+    static async listScrap(martSeq) {
+        try 
+        {
+            const [rows, fields] = await pool.query(`SELECT                        
+                    RESUME.SEQ,
+                    RESUME.USER_SEQ, 
+                    SUBJECT, 
+                    PHOTO, 
+                    RESUME.NAME,
+                    BIRTHYEAR,
+                    GENDER, 
+                    CONTACT, 
+                    EMAIL, 
+                    POSTCODE, 
+                    ADDRESS, 
+                    ADDRESSEXTRA, 
+                    EDUCATION, 
+                    EDUCATIONSCHOOL, 
+                    CAREER_SEQ, 
+                    CAREER.NAME AS CAREER_NAME,
+                    TECHNICAL, 
+                    LICENSE, 
+                    ISWELFARE, 
+                    ISMILITALY, 
+                    CAREERCERTIFICATE, 
+                    INTRODUCE, 
+                    WORKINGTYPE_SEQS, 
+                    WORKINGTYPE_NAMES, 
+                    SALARY, 
+                    CERTIFICATE, 
+                    CERTIFICATEDATE,
+                    VIEW,
+                    ACTIVE, 
+                    RESUME.CREATED, 
+                    MODIFIED,
+                    JOBKIND_SEQ,
+                    JOBKIND_NAME,
+                    WORKREGION_SEQ,
+                    WORKREGION_NAME
+                FROM 
+                    RESUME
+                    INNER JOIN CAREER ON CAREER.SEQ = RESUME.CAREER_SEQ
+                    INNER JOIN RESUME_SCRAP ON RESUME_SCRAP.RESUME_SEQ = RESUME.SEQ
+                    LEFT JOIN (
+                        SELECT RESUME_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
+                        FROM RESUME_JOBKIND GROUP BY RESUME_SEQ
+                    ) JOBKIND ON JOBKIND.RESUME_SEQ = RESUME.SEQ   
+                    LEFT JOIN (
+                        SELECT RESUME_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
+                        FROM RESUME_REGION GROUP BY RESUME_SEQ
+                    ) REGION ON REGION.RESUME_SEQ = RESUME.SEQ 
+                WHERE
+                    MART_SEQ = ?
+                ORDER BY RESUME.NAME, RESUME.MODIFIED DESC`, [martSeq]);            
+            if (rows.length > 0) 
+                return rows;
+            else {
+                logger.writeLog('error', `models/resumeModel.listScrap: No data found`);           
+                return null;
+            }                
+        } catch (error) {
+            logger.writeLog('error', `models/resumeModel.listScrap: ${error}`);           
+            return null;
+        }
+    }
+
+    static async listJobRequest(martSeq) {
+        try 
+        {
+            const [rows, fields] = await pool.query(`SELECT                        
+                    RESUME.SEQ,
+                    RESUME.USER_SEQ, 
+                    SUBJECT, 
+                    PHOTO, 
+                    RESUME.NAME,
+                    BIRTHYEAR,
+                    GENDER, 
+                    CONTACT, 
+                    EMAIL, 
+                    POSTCODE, 
+                    ADDRESS, 
+                    ADDRESSEXTRA, 
+                    EDUCATION, 
+                    EDUCATIONSCHOOL, 
+                    CAREER_SEQ, 
+                    CAREER.NAME AS CAREER_NAME,
+                    TECHNICAL, 
+                    LICENSE, 
+                    ISWELFARE, 
+                    ISMILITALY, 
+                    CAREERCERTIFICATE, 
+                    INTRODUCE, 
+                    WORKINGTYPE_SEQS, 
+                    WORKINGTYPE_NAMES, 
+                    SALARY, 
+                    CERTIFICATE, 
+                    CERTIFICATEDATE,
+                    VIEW,
+                    ACTIVE, 
+                    RESUME.CREATED, 
+                    MODIFIED,
+                    JOBKIND_SEQ,
+                    JOBKIND_NAME,
+                    WORKREGION_SEQ,
+                    WORKREGION_NAME
+                FROM 
+                    RESUME
+                    INNER JOIN CAREER ON CAREER.SEQ = RESUME.CAREER_SEQ
+                    INNER JOIN MART_JOBREQUEST ON MART_JOBREQUEST.USER_SEQ = RESUME.USER_SEQ
+                    LEFT JOIN (
+                        SELECT RESUME_SEQ, GROUP_CONCAT(JOBKIND_SEQ SEPARATOR ',') AS JOBKIND_SEQ,  GROUP_CONCAT(JOBKIND_NAME SEPARATOR ',') AS JOBKIND_NAME
+                        FROM RESUME_JOBKIND GROUP BY RESUME_SEQ
+                    ) JOBKIND ON JOBKIND.RESUME_SEQ = RESUME.SEQ   
+                    LEFT JOIN (
+                        SELECT RESUME_SEQ, GROUP_CONCAT(WORKREGION_SEQ SEPARATOR ',') AS WORKREGION_SEQ,  GROUP_CONCAT(WORKREGION_NAME SEPARATOR ',') AS WORKREGION_NAME
+                        FROM RESUME_REGION GROUP BY RESUME_SEQ
+                    ) REGION ON REGION.RESUME_SEQ = RESUME.SEQ 
+                WHERE
+                    MART_SEQ =?                    
+                ORDER BY RESUME.NAME, RESUME.MODIFIED DESC`, [martSeq]);            
+            if (rows.length > 0) 
+                return rows;
+            else {
+                logger.writeLog('error', `models/resumeModel.listJobRequest: No data found`);           
+                return null;
+            }                
+        } catch (error) {
+            logger.writeLog('error', `models/resumeModel.listJobRequest: ${error}`);           
+            return null;
+        }
+    }
 };
 

@@ -13,7 +13,7 @@ module.exports = {
         if (token) {
             jwt.verify(token, secretKey, (err, decoded) => {
                 if (err) {
-                    logger.writeLog('info', `services/auth: 비정상 토큰`);
+                    logger.writeLog('info', `services/auth: 비정상 토큰 ${err}`);
                     return res.json({
                         result: "fail",
                         resultdata: "Invalid Token..."

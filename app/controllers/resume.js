@@ -410,6 +410,74 @@ module.exports = {
             });    
         }
     },
-    
+    async createScrap(req, res, next) {
+        const martSeq = req.body.martSeq;
+        const resumeSeq = req.body.resumeSeq;
+
+        const result = await resumeService.createScrap(martSeq, resumeSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+    async removeScrap(req, res, next) {
+        const martSeq = req.body.martSeq;
+        const resumeSeq = req.body.resumeSeq;
+
+        const result = await resumeService.removeScrap(martSeq, resumeSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+
+    async listScrap(req, res, next) {
+        const martSeq = req.body.martSeq;
+
+        const list = await resumeService.listScrap(martSeq);
+        if (list) {
+            res.status(200).json({
+                result: 'success',
+                data: list
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },    
+
+    async listJobRequest(req, res, next) {
+        const martSeq = req.body.martSeq;
+        const list = await resumeService.listJobRequest(martSeq);
+        if (list) {
+            res.status(200).json({
+                result: 'success',
+                data: list
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },  
 }
 

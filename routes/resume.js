@@ -5,7 +5,8 @@ var router = express.Router();
 const { create, update, remove, get, getByUserSeq, list, listForRecruit, 
     certificate, clearCertificate, updateJobKind, updateWorkingRegion, 
     addCareer, updateCareer, removeCareer, getCareer, listCareer, 
-    updateImage, updatecertificate, increaseView } = require('../app/controllers/resume.js');
+    updateImage, updatecertificate, increaseView,
+    createScrap, removeScrap, listScrap, listJobRequest } = require('../app/controllers/resume.js');
 
 router.post('/create', create);
 
@@ -45,5 +46,12 @@ router.post('/updatecertificate', updatecertificate);
 
 router.post('/increaseView', increaseView);
 
+router.post('/createScrap', tokenVerify, createScrap);
+
+router.post('/removeScrap', tokenVerify, removeScrap);
+
+router.post('/listScrap', tokenVerify, listScrap);
+
+router.post('/listJobRequest', tokenVerify, listJobRequest);
 
 module.exports = router;

@@ -2,7 +2,7 @@ var express = require('express');
 const { tokenVerify } = require("../app/services/auth");
 var router = express.Router();
 
-const { create, update, updateLogo, remove, get, getByUser, list } = require('../app/controllers/mart.js');
+const { create, update, updateLogo, remove, get, getByUser, list, createJobRequest, removeJobRequest, listJobRequest } = require('../app/controllers/mart.js');
 
 router.post('/create', create);
 
@@ -17,5 +17,11 @@ router.post('/get', get);
 router.post('/getByUser', getByUser);
 
 router.post('/list', list);
+
+router.post('/createJobRequest', tokenVerify, createJobRequest);
+
+router.post('/removeJobRequest', tokenVerify, removeJobRequest);
+
+router.post('/listJobRequest', tokenVerify, listJobRequest);
 
 module.exports = router;
