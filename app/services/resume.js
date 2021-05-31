@@ -240,6 +240,17 @@ module.exports = class resumeService {
             }
         })
     }
+    static getScrap(martSeq, resumeSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = resumeModel.getScrap(martSeq, resumeSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/getcrap: ${error}`);           
+            }
+        })
+    }
     static removeScrap(martSeq, resumeSeq) {
         return new Promise(function(resolve, reject) {
             try {

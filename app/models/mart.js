@@ -199,6 +199,22 @@ module.exports = class martModel {
             return null;
         }
     }
+    static async getJobRequest(martSeq, userSeq) {
+        try 
+        {
+            const [rows, fields] = await pool.query(`SELECT SEQ, USER_SEQ, MART_SEQ, CREATED FROM MART_JOBREQUEST WHERE MART_SEQ=? AND USER_SEQ=?`, [martSeq, userSeq]);
+
+            if (rows.length > 0) 
+                return rows;
+            else {
+                logger.writeLog('error', `models/martModel.getJobRequest: No data found`);           
+                return null;
+            }                
+        } catch (error) {
+            logger.writeLog('error', `models/martModel.getJobRequest: ${error}`);           
+            return null;
+        }
+    }
     static async deleteJobRequest(martSeq, userSeq) {
         try 
         {

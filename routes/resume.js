@@ -6,7 +6,7 @@ const { create, update, remove, get, getByUserSeq, list, listForRecruit,
     certificate, clearCertificate, updateJobKind, updateWorkingRegion, 
     addCareer, updateCareer, removeCareer, getCareer, listCareer, 
     updateImage, updatecertificate, increaseView,
-    createScrap, removeScrap, listScrap, listJobRequest } = require('../app/controllers/resume.js');
+    createScrap, getScrap, removeScrap, listScrap, listJobRequest } = require('../app/controllers/resume.js');
 
 router.post('/create', create);
 
@@ -47,6 +47,8 @@ router.post('/updatecertificate', updatecertificate);
 router.post('/increaseView', increaseView);
 
 router.post('/createScrap', tokenVerify, createScrap);
+
+router.post('/getScrap', tokenVerify, getScrap);
 
 router.post('/removeScrap', tokenVerify, removeScrap);
 

@@ -100,6 +100,16 @@ module.exports = class martService {
             }
         })
     }
+    static getJobRequest(martSeq, userSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = martModel.getJobRequest(martSeq, userSeq);
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/martService.getJobRequest: ${error}`);           
+            }
+        })
+    }
     static removeJobRequest(martSeq, userSeq) {
         return new Promise(function(resolve, reject) {
             try {

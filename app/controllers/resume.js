@@ -428,6 +428,24 @@ module.exports = {
             });    
         }
     },
+    async getScrap(req, res, next) {
+        const martSeq = req.body.martSeq;
+        const resumeSeq = req.body.resumeSeq;
+
+        const result = await resumeService.getScrap(martSeq, resumeSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
     async removeScrap(req, res, next) {
         const martSeq = req.body.martSeq;
         const resumeSeq = req.body.resumeSeq;

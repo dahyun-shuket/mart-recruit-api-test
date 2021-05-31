@@ -672,6 +672,21 @@ module.exports = class resumeModel {
             return null;
         }
     }
+    static async getScrap(martSeq, resumeSeq) {
+        try 
+        {
+            const [rows, fields] = await pool.query(`SELECT SEQ, MART_SEQ, RESUME_SEQ, CREATED FROM RESUME_SCRAP WHERE MART_SEQ=? AND RESUME_SEQ=?`, [martSeq, resumeSeq]);
+            if (rows.length > 0) 
+                return rows[0];
+            else {
+                logger.writeLog('error', `models/resumeModel.getScrap: No data found`);           
+                return null;
+            }                            
+        } catch (error) {
+            logger.writeLog('error', `models/resumeModel.getScrap: ${error}`);           
+            return null;
+        }
+    }
     static async removeScrap(martSeq, resumeSeq) {
         try 
         {
@@ -749,7 +764,6 @@ module.exports = class resumeModel {
             return null;
         }
     }
-
     static async listJobRequest(martSeq) {
         try 
         {

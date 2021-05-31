@@ -168,6 +168,25 @@ module.exports = {
         }
     },
 
+    async getJobRequest(req, res, next) {
+        const martSeq = req.body.martSeq;
+        const userSeq = req.body.userSeq;
+
+        const result = await martService.getJobRequest(martSeq, userSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+
     async removeJobRequest(req, res, next) {
         const martSeq = req.body.martSeq;
         const userSeq = req.body.userSeq;
