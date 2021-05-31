@@ -154,15 +154,6 @@ module.exports = class userModel {
         }
     }
     
-    // 페이징
-    static async paging(beginRow, rowPerPage) {
-        try {
-            const [rows, fields] = await pool.query(`select * from USERS ORDER BY SEQ DESC LIMIT ?,?`,[beginRow,rowPerPage]);
-            return rows;
-        } catch (error) {
-            console.log("API getAdminList model Error ! : " + error);
-        }
-    }
         
     // 전체 페이지 갯수
     static async count(searchId, usertype) {
@@ -180,34 +171,6 @@ module.exports = class userModel {
             return rows[0].cnt;
         } catch (error) {
             console.log("userCount model Error ! : " + error);
-        }
-    }
-        
-    // 마트업체 조회
-    static async getMartList(data) {
-        try {
-            const [rows, fields] = await pool.query(`select SEQ, LOGINID, PWD, USERTYPE, ACTIVE, CREATED, MODIFIED from USERS where USER_TYPE = M`, []);
-            return rows;
-        } catch (error) {
-            console.log("getMartList model Error ! : " + error);
-        }
-    }
-    // 구직자 조회
-    static async getUserList(data) {
-        try {
-            const [rows, fields] = await pool.query(`select * from USERS where USER_TYPE = U`, []);
-            return rows;
-        } catch (error) {
-            console.log("getUserList model Error ! : " + error);
-        }
-    }
-    // 관리자 조회
-    static async getAdminList(data) {
-        try {
-            const [rows, fields] = await pool.query(`select * from USERS where USER_TYPE = A`, []);
-            return rows;
-        } catch (error) {
-            console.log("getAdminList model Error ! : " + error);
         }
     }
 };

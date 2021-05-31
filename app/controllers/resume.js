@@ -60,15 +60,15 @@ module.exports = {
         const license = req.body.license;
         const isWelfare = req.body.isWelfare;
         const isMilitaly = req.body.isMilitaly;
-        const careerCertificate = req.body.careerCertificate;
+        // const careerCertificate = req.body.careerCertificate;
         const introduce = req.body.introduce;
         const workingTypeSeqs = req.body.workingTypeSeqs;
         const workingTypeNames = req.body.workingTypeNames;
         const salary = req.body.salary;
 
         const result = await resumeService.update(seq, subject, name, contact, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
-            technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary);
-            
+            technical, license, isWelfare, isMilitaly, introduce, workingTypeSeqs, workingTypeNames, salary);
+            console.log(result);
         if (result) {
             res.status(200).json({
                 result: 'success',

@@ -85,10 +85,6 @@ module.exports = class userService {
             }
     })
     };
-    static async paging(rowPerPage, beginRow){
-        let paging = await userModel.paging(rowPerPage, beginRow);
-        return paging;
-    };
     
     static async count(searchId, usertype){
         return new Promise(function (resolve, reject) {
