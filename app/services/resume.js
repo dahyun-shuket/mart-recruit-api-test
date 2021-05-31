@@ -229,5 +229,59 @@ module.exports = class resumeService {
         })
     }
 
+    static createScrap(martSeq, resumeSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = resumeModel.createScrap(martSeq, resumeSeq);
     
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/createScrap: ${error}`);           
+            }
+        })
+    }
+    static getScrap(martSeq, resumeSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = resumeModel.getScrap(martSeq, resumeSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/getcrap: ${error}`);           
+            }
+        })
+    }
+    static removeScrap(martSeq, resumeSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = resumeModel.removeScrap(martSeq, resumeSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/deleteScrap: ${error}`);           
+            }
+        })
+    }
+    static listScrap(martSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = resumeModel.listScrap(martSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/listScrap: ${error}`);           
+            }
+        })
+    }
+    static listJobRequest(martSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = resumeModel.listJobRequest(martSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/listJobRequest: ${error}`);           
+            }
+        })
+    }
 }

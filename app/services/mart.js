@@ -9,7 +9,7 @@ module.exports = class martService {
     
                 resolve(newId);
             } catch (error) {
-                logger.writeLog('error', `services/martService/create: ${error}`);           
+                logger.writeLog('error', `services/martService.create: ${error}`);           
             }
         })
     }
@@ -20,7 +20,7 @@ module.exports = class martService {
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/martService/update: ${error}`);           
+                logger.writeLog('error', `services/martService.update: ${error}`);           
             }
         })
     }
@@ -31,7 +31,7 @@ module.exports = class martService {
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/martService/updateLogo: ${error}`);           
+                logger.writeLog('error', `services/martService.updateLogo: ${error}`);           
             }
         })
     }
@@ -42,7 +42,7 @@ module.exports = class martService {
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/martService/remove: ${error}`);           
+                logger.writeLog('error', `services/martService.remove: ${error}`);           
             }
         })
     }
@@ -53,7 +53,7 @@ module.exports = class martService {
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/martService/remove: ${error}`);           
+                logger.writeLog('error', `services/martService.remove: ${error}`);           
             }
         })
     }
@@ -64,7 +64,7 @@ module.exports = class martService {
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/martService/remove: ${error}`);           
+                logger.writeLog('error', `services/martService.remove: ${error}`);           
             }
         })
     }
@@ -75,7 +75,7 @@ module.exports = class martService {
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/martService/totalCount: ${error}`);           
+                logger.writeLog('error', `services/martService.totalCount: ${error}`);           
             }
         })
     }
@@ -86,10 +86,48 @@ module.exports = class martService {
                 let result = martModel.list(searchName, rowCount, offset);
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/martService/list: ${error}`);           
+                logger.writeLog('error', `services/martService.list: ${error}`);           
             }
         })
     }
-    
-
+    static createJobRequest(martSeq, userSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = martModel.createJobRequest(martSeq, userSeq);
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/martService.createJobRequest: ${error}`);           
+            }
+        })
+    }
+    static getJobRequest(martSeq, userSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = martModel.getJobRequest(martSeq, userSeq);
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/martService.getJobRequest: ${error}`);           
+            }
+        })
+    }
+    static removeJobRequest(martSeq, userSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = martModel.removeJobRequest(martSeq, userSeq);
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/martService.removeJobRequest: ${error}`);           
+            }
+        })
+    }
+    static listJobRequest(userSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = martModel.listJobRequest(userSeq);
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/martService.listJobRequest: ${error}`);           
+            }
+        })
+    }
 }

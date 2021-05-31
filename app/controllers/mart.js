@@ -147,8 +147,81 @@ module.exports = {
                 list: list
             }
         });    
+    },
+
+    async createJobRequest(req, res, next) {
+        const martSeq = req.body.martSeq;
+        const userSeq = req.body.userSeq;
+
+        const result = await martService.createJobRequest(martSeq, userSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+
+    async getJobRequest(req, res, next) {
+        const martSeq = req.body.martSeq;
+        const userSeq = req.body.userSeq;
+
+        const result = await martService.getJobRequest(martSeq, userSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+
+    async removeJobRequest(req, res, next) {
+        const martSeq = req.body.martSeq;
+        const userSeq = req.body.userSeq;
+
+        const result = await martService.removeJobRequest(martSeq, userSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
+
+    async listJobRequest(req, res, next) {
+        const martSeq = req.body.martSeq;
+
+        const list = await martService.listJobRequest(martSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: list
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }  
     }
-
-
 }
 

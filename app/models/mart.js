@@ -176,4 +176,81 @@ module.exports = class martModel {
             return null;
         }
     }
+    static async createJobRequest(martSeq, userSeq) {
+        const connection = await pool.getConnection(async conn => conn);
+        try 
+        {
+            await connection.beginTransaction();    // transaction
+            //먼저 지운다. 있어도 지워지고 없으면 무시. 중복 등록을 막는다
+            await connection.query(`DELETE FROM MART_JOBREQUEST WHERE MART_SEQ=? AND USER_SEQ=?`, [martSeq, userSeq]);
+            //새 레코드를 추가한다
+            await connection.query(`INSERT INTO MART_JOBREQUEST (MART_SEQ, USER_SEQ, CREATED) VALUES (?, ?, CURRENT_TIMESTAMP())`, [martSeq, userSeq]);
+
+            await connection.commit(); // commit
+            connection.release();
+            logger.writeLog('info', `models/martModel.createJobRequest: 구직자 ${userSeq}를 마트 ${martSeq}가 입사 지원 요청했습니다.`);           
+
+            return martSeq;
+        } catch (error) {
+            await connection.rollback();    // rollback
+            connection.release();
+
+            logger.writeLog('error', `models/martModel.createJobRequest: ${error}`);           
+            return null;
+        }
+    }
+    static async getJobRequest(martSeq, userSeq) {
+        try 
+        {
+            const [rows, fields] = await pool.query(`SELECT SEQ, USER_SEQ, MART_SEQ, CREATED FROM MART_JOBREQUEST WHERE MART_SEQ=? AND USER_SEQ=?`, [martSeq, userSeq]);
+
+            if (rows.length > 0) 
+                return rows;
+            else {
+                logger.writeLog('error', `models/martModel.getJobRequest: No data found`);           
+                return null;
+            }                
+        } catch (error) {
+            logger.writeLog('error', `models/martModel.getJobRequest: ${error}`);           
+            return null;
+        }
+    }
+    static async deleteJobRequest(martSeq, userSeq) {
+        try 
+        {
+            await pool.query(`DELETE FROM MART_JOBREQUEST WHERE MART_SEQ=? AND USER_SEQ=?`, [martSeq, userSeq]);
+            logger.writeLog('info', `models/martModel.deleteJobRequest: 구직자 ${userSeq}를 마트 ${martSeq}에서 입사 지원을 제거했습니다.`);           
+
+            return martSeq;
+        } catch (error) {
+            logger.writeLog('error', `models/martModel.deleteJobRequest: ${error}`);           
+            return null;
+        }
+    }
+    static async listJobRequest(userSeq) {
+        try 
+        {
+            //순번에 따라서 리스팅
+            const query = `SELECT 
+                    SEQ, USER_SEQ, NAME, LOGOFILE, REGNO, POSTCODE, ADDRESS, ADDRESSEXTRA, CONTACT, HRONAME, HROCONTACT, HRORANK, ACTIVE, CREATED, MODIFIED
+                FROM 
+                    MART 
+                    INNER JOIN MART_JOBREQUEST ON MART_JOBREQUEST.MART_SEQ = MART_SEQ
+                WHERE 
+                    ACTIVE='Y'
+                    AND MART_JOBREQUEST.USER_SEQ = ?
+                ORDER BY 
+                    NAME`;
+            const [rows, fields] = await pool.query(query, [userSeq]);
+            if (rows.length > 0) 
+                return rows;
+            else {
+                logger.writeLog('error', `models/martModel.listJobRequest: No data found`);           
+                return null;
+            }                
+        } catch (error) {
+            logger.writeLog('error', `models/martModel.listJobRequest: ${error}`);           
+            return null;
+        }
+    }
 };
