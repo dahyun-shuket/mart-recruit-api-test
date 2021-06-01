@@ -24,17 +24,17 @@ module.exports = class resumeModel {
     }
     // 업데이트하면 인증은 무조건 해제
     // 조건을 이력서 SEQ에서 USER_SEQ로 변경함, photo 제거 0517 김민규 
-    static async update(seq, subject, name, contact, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+    static async update(seq, subject, name, contact, birthyear, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
         technical, license, isWelfare, isMilitaly, introduce, workingTypeSeqs, workingTypeNames, salary) {
         try 
         {
             const [rows, fields] = await pool.query(`UPDATE RESUME SET 
-                    SUBJECT=?, NAME=?, CONTACT=?, EMAIL=?, gender=?, POSTCODE=?, ADDRESS=?, ADDRESSEXTRA=?, EDUCATION=?, EDUCATIONSCHOOL=?, CAREER_SEQ=?, 
+                    SUBJECT=?, NAME=?, CONTACT=?, BIRTHYEAR=?, EMAIL=?, GENDER=?, POSTCODE=?, ADDRESS=?, ADDRESSEXTRA=?, EDUCATION=?, EDUCATIONSCHOOL=?, CAREER_SEQ=?, 
                     TECHNICAL=?, LICENSE=?, ISWELFARE=?, ISMILITALY=?, INTRODUCE=?, WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, SALARY=?, CERTIFICATE='N', CERTIFICATEDATE=NULL, MODIFIED=CURRENT_TIMESTAMP()
                 WHERE 
                     USER_SEQ=?`, 
                 [
-                    subject, name, contact, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+                    subject, name, contact, birthyear, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
                     technical, license, isWelfare, isMilitaly, introduce, workingTypeSeqs, workingTypeNames, salary,
                     seq
                 ]);
@@ -71,7 +71,7 @@ module.exports = class resumeModel {
             await pool.query(`UPDATE RESUME SET CERTIFICATE=?, CERTIFICATEDATE=CURRENT_TIMESTAMP() WHERE SEQ=?`, [toggleValue, seq]);
             return seq;
         } catch (error) {
-            logger.writeLog('error', `models/resumeModel.certificate: ${error}`);           
+            logger.writeLog('error', `models/resumeModel.certificate: ${error}`);
             return null;
         }
     }

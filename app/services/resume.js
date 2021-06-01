@@ -15,11 +15,11 @@ module.exports = class resumeService {
             }
         })
     }
-    static update(seq, subject, name, contact, email,gender,  postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+    static update(seq, subject, name, contact, birthyear, email, gender,  postCode, address, addressExtra, education, educcationSchool, careerSeq, 
         technical, license, isWelfare, isMilitaly, introduce, workingTypeSeqs, workingTypeNames, salary) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = resumeModel.update(seq, subject, name, contact, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+                let result = resumeModel.update(seq, subject, name, contact, birthyear, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
                     technical, license, isWelfare, isMilitaly, introduce, workingTypeSeqs, workingTypeNames, salary);
     
                 resolve(result);

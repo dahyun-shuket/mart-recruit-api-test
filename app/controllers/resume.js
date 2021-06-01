@@ -48,6 +48,7 @@ module.exports = {
         // const photo = req.body.photo;
         const name = req.body.name;
         const contact = req.body.contact;
+        const birthyear = req.body.birthyear;
         const email = req.body.email;
         const gender = req.body.gender;
         const postCode = req.body.postCode;
@@ -66,7 +67,7 @@ module.exports = {
         const workingTypeNames = req.body.workingTypeNames;
         const salary = req.body.salary;
 
-        const result = await resumeService.update(seq, subject, name, contact, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
+        const result = await resumeService.update(seq, subject, name, contact, birthyear, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
             technical, license, isWelfare, isMilitaly, introduce, workingTypeSeqs, workingTypeNames, salary);
             console.log(result);
         if (result) {
