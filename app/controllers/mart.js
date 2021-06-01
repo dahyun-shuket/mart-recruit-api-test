@@ -207,14 +207,14 @@ module.exports = {
     },
 
     async listJobRequest(req, res, next) {
-        const martSeq = req.body.martSeq;
+        const userSeq = req.body.userSeq;
 
-        const list = await martService.listJobRequest(martSeq);
+        const result = await martService.listJobRequest(userSeq);
 
         if (result) {
             res.status(200).json({
                 result: 'success',
-                data: list
+                data: result
             });    
         } else {
             res.status(200).json({
