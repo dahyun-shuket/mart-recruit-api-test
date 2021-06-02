@@ -230,42 +230,6 @@ module.exports = {
         });    
     },
 
-    async listJobKind(req, res, next) {
-        const resumeSeq = req.body.resumeSeq;
-
-        const result = await resumeService.listJobKind(resumeSeq);
-
-        if (result) {
-            res.status(200).json({
-                result: 'success',
-                data: result
-            });    
-        } else {
-            res.status(200).json({
-                result: 'fail',
-                data: null
-            });        
-        }
-    },
-
-    async listRegion(req, res, next) {
-        const resumeSeq = req.body.resumeSeq;
-
-        const result = await resumeService.listRegion(resumeSeq);
-
-        if (result) {
-            res.status(200).json({
-                result: 'success',
-                data: result
-            });    
-        } else {
-            res.status(200).json({
-                result: 'fail',
-                data: null
-            });        
-        }
-    },
-
     async updateJobKind(req, res, next) {
         const resumeSeq = req.body.seq;
         const jobKinds = req.body.jobKinds;

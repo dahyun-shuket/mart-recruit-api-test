@@ -422,28 +422,6 @@ module.exports = class resumeModel {
         }
     }
 
-    static async listJobKind(resumeSeq) {
-        try 
-        {
-            const [rows, fields] = await pool.query(`SELECT SEQ, RESUME_SEQ, JOBKIND_SEQ, JOBKIND_NAME FROM RESUME_JOBKIND WHERE RESUME_SEQ=?`, [resumeSeq]);
-            return rows;
-        } catch (error) {
-            logger.writeLog('error', `models/resumeModel.listJobKind: ${error}`);           
-            return null;
-        }
-    }
-    
-    static async listRegion(resumeSeq) {
-        try 
-        {
-            const [rows, fields] = await pool.query(`SELECT SEQ, RESUME_SEQ, WORKREGION_SEQ, WORKREGION_NAME FROM RESUME_REGION WHERE RESUME_SEQ=?`, [resumeSeq]);
-            return rows;
-        } catch (error) {
-            logger.writeLog('error', `models/resumeModel.listRegion: ${error}`);           
-            return null;
-        }
-    }
-
     // //jobkinds 값이 문자열로 1,2 형태라고 정의
     static async updateJobKind(resumeSeq, jobKinds) {
         const connection = await pool.getConnection(async conn => conn);

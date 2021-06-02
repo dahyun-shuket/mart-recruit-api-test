@@ -129,29 +129,6 @@ module.exports = class resumeService {
             }
         })
     }
-    static listJobKind(resumeSeq) {
-        return new Promise(function(resolve, reject) {
-            try {
-                let result = resumeModel.listJobKind(resumeSeq);
-    
-                resolve(result);
-            } catch (error) {
-                logger.writeLog('error', `services/resumeService/listJobKind: ${error}`);           
-            }
-        })
-    }
-
-    static listRegion(resumeSeq) {
-        return new Promise(function(resolve, reject) {
-            try {
-                let result = resumeModel.listRegion(resumeSeq);
-    
-                resolve(result);
-            } catch (error) {
-                logger.writeLog('error', `services/resumeService/listRegion: ${error}`);           
-            }
-        })
-    }
 
     static updateJobKind(resumeSeq, jobKinds) {
         return new Promise(function(resolve, reject) {
