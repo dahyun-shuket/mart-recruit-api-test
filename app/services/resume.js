@@ -129,6 +129,30 @@ module.exports = class resumeService {
             }
         })
     }
+    static listJobKind(resumeSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = resumeModel.listJobKind(resumeSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/listJobKind: ${error}`);           
+            }
+        })
+    }
+
+    static listRegion(resumeSeq) {
+        return new Promise(function(resolve, reject) {
+            try {
+                let result = resumeModel.listRegion(resumeSeq);
+    
+                resolve(result);
+            } catch (error) {
+                logger.writeLog('error', `services/resumeService/listRegion: ${error}`);           
+            }
+        })
+    }
+
     static updateJobKind(resumeSeq, jobKinds) {
         return new Promise(function(resolve, reject) {
             try {
@@ -136,7 +160,7 @@ module.exports = class resumeService {
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/resumeService/addJobKind: ${error}`);           
+                logger.writeLog('error', `services/resumeService/updateJobKind: ${error}`);           
             }
         })
     }
@@ -147,7 +171,7 @@ module.exports = class resumeService {
     
                 resolve(result);
             } catch (error) {
-                logger.writeLog('error', `services/resumeService/addWorkingRegion: ${error}`);           
+                logger.writeLog('error', `services/resumeService/updateWorkingRegion: ${error}`);           
             }
         })
     }

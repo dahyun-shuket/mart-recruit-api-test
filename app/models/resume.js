@@ -422,11 +422,34 @@ module.exports = class resumeModel {
         }
     }
 
-    //jobkinds 값이 문자열로 1,2 형태라고 정의
+    static async listJobKind(resumeSeq) {
+        try 
+        {
+            const [rows, fields] = await pool.query(`SELECT SEQ, RESUME_SEQ, JOBKIND_SEQ, JOBKIND_NAME FROM RESUME_JOBKIND WHERE RESUME_SEQ=?`, [resumeSeq]);
+            return rows;
+        } catch (error) {
+            logger.writeLog('error', `models/resumeModel.listJobKind: ${error}`);           
+            return null;
+        }
+    }
+    
+    static async listRegion(resumeSeq) {
+        try 
+        {
+            const [rows, fields] = await pool.query(`SELECT SEQ, RESUME_SEQ, WORKREGION_SEQ, WORKREGION_NAME FROM RESUME_REGION WHERE RESUME_SEQ=?`, [resumeSeq]);
+            return rows;
+        } catch (error) {
+            logger.writeLog('error', `models/resumeModel.listRegion: ${error}`);           
+            return null;
+        }
+    }
+
+    // //jobkinds 값이 문자열로 1,2 형태라고 정의
     static async updateJobKind(resumeSeq, jobKinds) {
         const connection = await pool.getConnection(async conn => conn);
         try 
         {
+            console.log("jobKinds ? ? ? ? " + jobKinds);
             await connection.beginTransaction();    // transaction
             //먼저 싹 지운다
             await connection.query(`DELETE FROM RESUME_JOBKIND WHERE RESUME_SEQ=?`, [resumeSeq]);
@@ -437,9 +460,9 @@ module.exports = class resumeModel {
 
             await connection.commit(); // commit
             connection.release();
-            logger.writeLog('info', `models/resumeModel.updateJobKind: ${resumeSeq} 이력서에 ${jobKinds} 직종이 연결되었습니다.`);           
+            logger.writeLog('info', `models/resumeModel.updateJobKind: ${resumeSeq} 이력서에 ${jobKinds} 직종이 연결되었습니다.`);
 
-            return jobOpeningSeq;
+            return resumeSeq;
         } catch (error) {
             await connection.rollback();    // rollback
             connection.release();
@@ -456,22 +479,22 @@ module.exports = class resumeModel {
         {
             await connection.beginTransaction();    // transaction
             //먼저 싹 지운다
-            await connection.query(`DELETE FROM RESUME_REGION WHERE JOBOPENING_SEQ=?`, [resumeSeq]);
+            await connection.query(`DELETE FROM RESUME_REGION WHERE RESUME_SEQ=?`, [resumeSeq]);
             //새 레코드를 추가한다
             await connection.query(`
-                INSERT INTO RESUME_REGION (JOBOPENING_SEQ, WORKREGION_SEQ, WORKREGION_NAME)
+                INSERT INTO RESUME_REGION (RESUME_SEQ, WORKREGION_SEQ, WORKREGION_NAME)
                 SELECT ${resumeSeq}, SEQ, NAME FROM WORKREGION WHERE SEQ IN (${workingRegions})`);
 
             await connection.commit(); // commit
             connection.release();
-            logger.writeLog('info', `models/resumeModel.updateWorkingRegion: ${resumeSeq} 이력서에 ${jobKinds} 지역이 연결되었습니다.`);           
+            logger.writeLog('info', `models/resumeModel.updateWorkingRegion: ${resumeSeq} 이력서에 ${workingRegions} 지역이 연결되었습니다.`);           
 
-            return jobOpeningSeq;
+            return resumeSeq;
         } catch (error) {
             await connection.rollback();    // rollback
             connection.release();
 
-            logger.writeLog('error', `models/resumeModel.updateWorkingRegion: ${error}`);           
+            logger.writeLog('error', `models/resumeModel.updateWorkingRegion : ${error}`);           
             return null;
         }
     }

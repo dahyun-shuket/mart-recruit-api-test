@@ -165,6 +165,7 @@ module.exports = {
             });    
         }
     },
+
     async getByUserSeq(req, res, next) {
         const resumeSeq = req.body.seq;
         // console.log(resumeSeq);
@@ -229,16 +230,53 @@ module.exports = {
         });    
     },
 
+    async listJobKind(req, res, next) {
+        const resumeSeq = req.body.resumeSeq;
+
+        const result = await resumeService.listJobKind(resumeSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
+    },
+
+    async listRegion(req, res, next) {
+        const resumeSeq = req.body.resumeSeq;
+
+        const result = await resumeService.listRegion(resumeSeq);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });        
+        }
+    },
+
     async updateJobKind(req, res, next) {
         const resumeSeq = req.body.seq;
         const jobKinds = req.body.jobKinds;
+        console.log("API controller jobKinds ? ? ? ? ? ? " + jobKinds)
 
         const result = await resumeService.updateJobKind(resumeSeq, jobKinds);
 
         if (result) {
             res.status(200).json({
                 result: 'success',
-                data: list
+                data: result
             });    
         } else {
             res.status(200).json({
@@ -257,7 +295,7 @@ module.exports = {
         if (result) {
             res.status(200).json({
                 result: 'success',
-                data: list
+                data: result
             });    
         } else {
             res.status(200).json({
@@ -374,6 +412,7 @@ module.exports = {
             });    
         }
     },
+
     async updateImage(req, res, next) {
         const seq = req.body.SEQ;
         const resumeFile = req.body.RESUMEFILE;
@@ -391,6 +430,7 @@ module.exports = {
             });    
         }
     },
+
     async updatecertificate(req, res, next) {
         const seq = req.body.SEQ;
         const resumeFile = req.body.RESUMEFILE;
@@ -411,6 +451,7 @@ module.exports = {
             });    
         }
     },
+
     async createScrap(req, res, next) {
         const martSeq = req.body.martSeq;
         const resumeSeq = req.body.resumeSeq;
@@ -429,6 +470,7 @@ module.exports = {
             });    
         }
     },
+
     async getScrap(req, res, next) {
         const martSeq = req.body.martSeq;
         const resumeSeq = req.body.resumeSeq;
@@ -447,6 +489,7 @@ module.exports = {
             });    
         }
     },
+
     async removeScrap(req, res, next) {
         const martSeq = req.body.martSeq;
         const resumeSeq = req.body.resumeSeq;
@@ -498,5 +541,6 @@ module.exports = {
             });    
         }
     },  
+
 }
 
