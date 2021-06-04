@@ -279,9 +279,9 @@ module.exports = {
         const jobType = req.body.jobType;
         const workRegion = req.body.workRegion;
         const charge = req.body.charge;
-        const salaly = req.body.salaly;
+        const salary = req.body.salary;
 
-        const result = await resumeService.addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly);
+        const result = await resumeService.addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salary);
 
         if (result) {
             res.status(200).json({
@@ -306,13 +306,9 @@ module.exports = {
         const jobType = req.body.jobType;
         const workRegion = req.body.workRegion;
         const charge = req.body.charge;
-        const salaly = req.body.salaly;
-        console.log(seq);
-        console.log(company);
-        console.log(position);
-        console.log(salaly);
+        const salary = req.body.salary;
         
-        const result = await resumeService.updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly, seq);
+        const result = await resumeService.updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salary, seq);
         if (result) {
             res.status(200).json({
                 result: 'success',

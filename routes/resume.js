@@ -10,39 +10,39 @@ const { create, update, remove, get, getByUserSeq, list, listForRecruit,
 
 router.post('/create', create);
 
-router.post('/update', update);
+router.post('/update', tokenVerify, update);
 
 router.post('/remove', remove);
 
-router.post('/get', get);
+router.post('/get', tokenVerify, get);
 
-router.post('/getByUserSeq', getByUserSeq);
+router.post('/getByUserSeq', tokenVerify, getByUserSeq);
 
-router.post('/list', list);
+router.post('/list', tokenVerify, list);
 
-router.post('/listForRecruit', listForRecruit);
+router.post('/listForRecruit', tokenVerify, listForRecruit);
 
 router.post('/certificate', certificate);
 
 router.post('/clearCertificate', clearCertificate);
 
-router.post('/updateJobKind', updateJobKind);
+router.post('/updateJobKind', tokenVerify, updateJobKind);
 
-router.post('/updateRegion', updateWorkingRegion);
+router.post('/updateRegion', tokenVerify, updateWorkingRegion);
 
-router.post('/addCareer', addCareer);
+router.post('/addCareer', tokenVerify, addCareer);
 
-router.post('/updateCareer', updateCareer);
+router.post('/updateCareer', tokenVerify, updateCareer);
 
-router.post('/removeCareer', removeCareer);
+router.post('/removeCareer', tokenVerify, removeCareer);
 
-router.post('/getCareer', getCareer);
+router.post('/getCareer', tokenVerify, getCareer);
 
-router.post('/listCareer', listCareer);
+router.post('/listCareer', tokenVerify, listCareer);
 
-router.post('/updateImage', updateImage);
+router.post('/updateImage', tokenVerify, updateImage);
 
-router.post('/updatecertificate', updatecertificate);
+router.post('/updatecertificate', tokenVerify, updatecertificate);
 
 router.post('/increaseView', increaseView);
 

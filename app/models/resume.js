@@ -311,7 +311,7 @@ module.exports = class resumeModel {
                     ) RR ON RR.RESUME_SEQ = R.SEQ 
                 ORDER BY R.NAME, R.MODIFIED DESC
                 LIMIT ? OFFSET ?`;
-            // console.log(sql);
+
             const [rows, fields] = await pool.query(sql, [limit, offset]);
             if (rows.length > 0) 
                 return rows;
@@ -427,7 +427,6 @@ module.exports = class resumeModel {
         const connection = await pool.getConnection(async conn => conn);
         try 
         {
-            console.log("jobKinds ? ? ? ? " + jobKinds);
             await connection.beginTransaction();    // transaction
             //먼저 싹 지운다
             await connection.query(`DELETE FROM RESUME_JOBKIND WHERE RESUME_SEQ=?`, [resumeSeq]);
@@ -445,7 +444,7 @@ module.exports = class resumeModel {
             await connection.rollback();    // rollback
             connection.release();
 
-            logger.writeLog('error', `models/resumeModel.updateJobKind: ${error}`);           
+            logger.writeLog('error', `models/resumeModel.updateJobKind: ${error}`);
             return null;
         }
     }
@@ -472,12 +471,12 @@ module.exports = class resumeModel {
             await connection.rollback();    // rollback
             connection.release();
 
-            logger.writeLog('error', `models/resumeModel.updateWorkingRegion : ${error}`);           
+            logger.writeLog('error', `models/resumeModel.updateWorkingRegion : ${error}`);
             return null;
         }
     }
 
-    static async addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly) {
+    static async addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salary) {
         try 
         {
             const [rows, fields] = await pool.query(`INSERT INTO RESUME_CAREER (
@@ -486,9 +485,8 @@ module.exports = class resumeModel {
                     ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
                 )`, 
                 [
-                    resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly
+                    resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salary
                 ]);
-                console.log(rows.insertId);
             return rows.insertId;
         } catch (error) {
             logger.writeLog('error', `models/resumeModel.addCareer: ${error}`);           
@@ -496,18 +494,17 @@ module.exports = class resumeModel {
         }
     }
 
-    static async updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly, seq) {
+    static async updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salary, seq) {
         try 
         {
-            console.log(seq);
             const [rows, fields] = await pool.query(`UPDATE RESUME_CAREER SET
                     COMPANY=?, WORKSTART=?, WORKEND=?, CAREER=?, POSITION=?, JOBTYPE=?, WORKREGION=?, CHARGE=?, SALARY=?, MODIFIED=CURRENT_TIMESTAMP()
                 WHERE SEQ=?
                 `, 
                 [
-                    company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly, seq
+                    company, workStart, workEnd, career, position, jobType, workRegion, charge, salary, seq
                 ]);
-            console.log(rows);
+
             return rows;
         } catch (error) {
             logger.writeLog('error', `models/resumeModel.updateCareer: ${error}`);           
@@ -581,7 +578,7 @@ module.exports = class resumeModel {
                 try {
                     fs.unlinkSync(mediaPath + "uploads/" + rowsFind[0].LOCATION + "/" + rowsFind[0].FILENAME);
                 } catch {
-                    console.log("파일 삭제 오류");    
+                    logger.writeLog('error', `models/resumeModel.updateImage: ${error}`);    
                 }
                 // 레코드도 삭제
                 await connection.query(`DELETE FROM FILESTORAGE WHERE SEQ=? AND LOCATION='RESUME'`, [rowsFind[0].SEQ]);

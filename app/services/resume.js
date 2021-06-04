@@ -153,10 +153,10 @@ module.exports = class resumeService {
         })
     }
 
-    static addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly) {
+    static addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salary) {
         return new Promise(function(resolve, reject) {
             try {
-                let newId = resumeModel.addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly);
+                let newId = resumeModel.addCareer(resumeSeq, company, workStart, workEnd, career, position, jobType, workRegion, charge, salary);
     
                 resolve(newId);
             } catch (error) {
@@ -164,10 +164,10 @@ module.exports = class resumeService {
             }
         })
     }
-    static updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly, seq) {
+    static updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salary, seq) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = resumeModel.updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salaly, seq);
+                let result = resumeModel.updateCareer(company, workStart, workEnd, career, position, jobType, workRegion, charge, salary, seq);
     
                 resolve(result);
             } catch (error) {
