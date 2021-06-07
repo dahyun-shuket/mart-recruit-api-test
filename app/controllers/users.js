@@ -126,6 +126,23 @@ module.exports = {
             });    
         }
     },
+    async getUser(req, res, next) {
+        const userId = req.body.userId;
+
+        const result = await userService.getUser(userId);
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
+    },
 
     // 유저 수정
     async update(req, res) {

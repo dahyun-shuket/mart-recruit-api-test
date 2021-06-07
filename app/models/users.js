@@ -153,7 +153,23 @@ module.exports = class userModel {
         }
     }
     
-        
+    // 유저 아이디로 한명 조회
+    static async getUser(userId) {
+        // console.log("유저한명조회 모델 들어옴" + seq);
+        try {
+            const [rows, fields] = await pool.query(`SELECT SEQ, LOGINID, USERTYPE FROM USERS WHERE LOGINID=?`, [userId]);
+
+            if(rows.length > 0){
+                return rows[0];
+            } else {
+                logger.writeLog('error', `API - models/userModel.getUser: No data found`);
+                return null;
+            }
+        } catch (error) {
+            logger.writeLog('error', `API - models/userModel.getUser: ${error}`);           
+            return null;
+        }
+    }
     // 전체 페이지 갯수
     static async count(searchId, usertype) {
         try {

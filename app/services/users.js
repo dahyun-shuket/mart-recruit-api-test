@@ -43,6 +43,16 @@ module.exports = class userService {
         })
     };
 
+    static async getUser(userId){
+        return new Promise(function (resolve, reject) {
+            try {
+                let result = userModel.getUser(userId);
+                resolve(result);
+            } catch (error) {
+                reject(error);
+            }
+        })
+    };
     static async update(userId, password, userType, active, seq){
         return new Promise(function (resolve, reject) {
             try {
