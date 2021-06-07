@@ -16,7 +16,7 @@ module.exports = class userModel {
         {
             await connection.beginTransaction();    // transaction
             const [rows, fields] = await connection.query(`insert into USERS(LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [userId, password, userType, active]);
-            console.log(rows);
+            // console.log(rows);
             if (userType =='M') {
                 // 마트일때 마트를 생성해준다.
                 const [rowsMart, fieldsMart] = await connection.query(`INSERT INTO MART (
@@ -39,7 +39,6 @@ module.exports = class userModel {
                 ]);
 
             }else{
-                // 어드민일땐 그냥 넘김.
             }
             await connection.commit(); // commit
             connection.release();

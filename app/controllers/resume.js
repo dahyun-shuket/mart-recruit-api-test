@@ -45,7 +45,6 @@ module.exports = {
     async update(req, res, next) {
         const seq = req.body.seq;
         const subject = req.body.subject;
-        // const photo = req.body.photo;
         const name = req.body.name;
         const contact = req.body.contact;
         const birthyear = req.body.birthyear;
@@ -61,11 +60,12 @@ module.exports = {
         const license = req.body.license;
         const isWelfare = req.body.isWelfare;
         const isMilitaly = req.body.isMilitaly;
-        // const careerCertificate = req.body.careerCertificate;
         const introduce = req.body.introduce;
         const workingTypeSeqs = req.body.workingTypeSeqs;
         const workingTypeNames = req.body.workingTypeNames;
         const salary = req.body.salary;
+
+        
 
         const result = await resumeService.update(seq, subject, name, contact, birthyear, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
             technical, license, isWelfare, isMilitaly, introduce, workingTypeSeqs, workingTypeNames, salary);

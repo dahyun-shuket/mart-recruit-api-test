@@ -5,21 +5,40 @@ const { sign } = require("jsonwebtoken");
 const secretKey = require("../config/secretKey").secretKey;
 const options = require("../config/secretKey").options;
 const defaultRowCount = 20;
+const { check, validationResult } = require('express-validator');
 
 module.exports = {
     // 유저 생성
     async create(req, res, next) {
         try {
+            await check('userId')
+            .isLength({  max: 15 })
+            .trim()
+            .notEmpty()
+            .run(req);
+            await check('password')
+            .isLength({  max: 10 })
+            .trim()
+            .notEmpty()
+            .run(req);
+            const result = validationResult(req);
+            if (!result.isEmpty()) {
+                res.json({
+                    errors: result.array()
+                });
+                return;
+            }
             let userId = req.body.userId
             let password = req.body.password
             let userType = req.body.userType
             let bizNo = req.body.bizNo
             let active = req.body.active
-            
+
             let salt = genSaltSync(10);
             password = hashSync(password, salt);
-            let createUser = await userService.create(userId, password, userType, bizNo, active);
 
+            
+            let createUser = await userService.create(userId, password, userType, bizNo, active);
             res.json({
                 result: "success",
                 data: createUser,
