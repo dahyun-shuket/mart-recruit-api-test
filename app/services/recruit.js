@@ -87,10 +87,10 @@ module.exports = class recruitService {
             }
         })
     }
-    static totalCount(martSeq, name, subject, regions, jobKinds, workingTypes) {
+    static totalCount(martSeq, active, name, subject, regions, jobKinds, workingTypes) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = recruitModel.totalCount(martSeq, name, subject, regions, jobKinds, workingTypes);
+                let result = recruitModel.totalCount(martSeq, active, name, subject, regions, jobKinds, workingTypes);
     
                 resolve(result);
             } catch (error) {

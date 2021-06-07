@@ -113,7 +113,7 @@ module.exports = {
         const seq = req.body.seq;
 
         const result = await userService.get(seq);
-
+        
         if (result) {
             res.status(200).json({
                 result: 'success',
