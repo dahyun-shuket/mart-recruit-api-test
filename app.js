@@ -37,6 +37,7 @@ app.use('/api/recruit', require('./routes/recruit'));
 app.use('/api/scrap', require('./routes/scrap'));
 app.use('/api/resume', require('./routes/resume'));
 app.use('/api/files', require('./routes/files'));
+app.use('/api/analytics', require('./routes/analytics'));
 
 app.set('mediaPath', require('./app/config/env').mediaPath);
 
