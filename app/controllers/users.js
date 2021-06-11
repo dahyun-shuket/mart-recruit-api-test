@@ -28,17 +28,17 @@ module.exports = {
                 });
                 return;
             }
-            let userId = req.body.userId
-            let password = req.body.password
-            let userType = req.body.userType
-            let bizNo = req.body.bizNo
-            let active = req.body.active
+            let userId = req.body.userId;
+            let password = req.body.password;
+            let userType = req.body.userType;
+            let bizNo = req.body.bizNo;
+            let martName = req.body.martName;
+            let active = req.body.active;
 
             let salt = genSaltSync(10);
             password = hashSync(password, salt);
-
             
-            let createUser = await userService.create(userId, password, userType, bizNo, active);
+            let createUser = await userService.create(userId, password, userType, bizNo, martName, active);
             res.json({
                 result: "success",
                 data: createUser,

@@ -10,25 +10,25 @@ module.exports = class userModel {
             console.log("userCreate model Error ! : " + error);
         }
     }
-    static async createTransaction(userId, password, userType, bizNo, active) {
+    static async createTransaction(userId, password, userType, bizNo, martName, active) {
         const connection = await pool.getConnection(async conn => conn);
         try 
         {
             console.log(bizNo);
             await connection.beginTransaction();    // transaction
-            const [rows, fields] = await connection.query(`insert into USERS(LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [userId, password, userType, active]);
+            const [rows, fields] = await connection.query(`insert into USERS (LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [userId, password, userType, active]);
             // console.log(rows);
             if (userType =='M') {
                 // 마트일때 마트를 생성해준다.
                 const [rowsMart, fieldsMart] = await connection.query(`INSERT INTO MART (
-                    USER_SEQ, REGNO, ACTIVE, CREATED, MODIFIED
+                    USER_SEQ, NAME, REGNO, ACTIVE, CREATED, MODIFIED
                 ) VALUES 
-                ( ?,  ?, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
+                ( ?, ?, ?, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
                 [
-                    rows.insertId, bizNo
+                    rows.insertId, martName, bizNo
                 ]);
 
-            }else if(userType =='U'){
+            } else if(userType =='U'){
                 // 유저일때 비어있는 이력서를 만들어준다.
                 const [rowsResume, fieldsResume] = await connection.query(`INSERT INTO RESUME (
                     USER_SEQ, CERTIFICATE, CERTIFICATEDATE, ACTIVE, CREATED, MODIFIED

@@ -3,10 +3,10 @@ var userModel = require("../models/users");
 // const got = require("got");
 
 module.exports = class userService {
-    static create(userId, password, userType, bizNo, active) {
+    static create(userId, password, userType, bizNo, martName, active) {
         return new Promise(function (resolve, reject) {
             try {
-                let createUser = userModel.createTransaction(userId, password, userType, bizNo, active);
+                let createUser = userModel.createTransaction(userId, password, userType, bizNo, martName, active);
                 resolve(createUser);
             } catch (error) {
                 reject(error);
