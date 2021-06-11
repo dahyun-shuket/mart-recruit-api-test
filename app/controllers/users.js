@@ -111,9 +111,12 @@ module.exports = {
     // SEQ로 유저 한 명 조회
     async get(req, res, next) {
         const seq = req.body.seq;
-
+        // console.log(seq);
         const result = await userService.get(seq);
-        
+        let userId = result.LOGINID;
+        let userInfo = await userService.login(userId);
+        console.log(userInfo);
+
         if (result) {
             res.status(200).json({
                 result: 'success',

@@ -14,6 +14,7 @@ module.exports = class userModel {
         const connection = await pool.getConnection(async conn => conn);
         try 
         {
+            console.log(bizNo);
             await connection.beginTransaction();    // transaction
             const [rows, fields] = await connection.query(`insert into USERS(LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [userId, password, userType, active]);
             // console.log(rows);
@@ -121,7 +122,7 @@ module.exports = class userModel {
                                 ACTIVE='Y'  AND
                                 USERTYPE='${usertype}'
                                 ${(userLoginId && userLoginId != '') ? 'AND LOGINID LIKE \'%' + userLoginId + '%\'' : ''}  
-                            LIMIT ? OFFSET ? `
+                            ORDER BY SEQ DESC LIMIT ? OFFSET ? `
                 const [rows, fields] = await pool.query(sql, [limit, offset]);
                 if(rows.length > 0){
                     return rows;

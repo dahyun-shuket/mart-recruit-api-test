@@ -13,11 +13,11 @@ router.post("/getUser", getUser);
 
 router.post("/create", create);
 
-router.patch("/update", tokenVerify, update);
+router.post("/update", tokenVerify, update);
 
 router.post("/updatePassword", tokenVerify, updatePassword);
 
-router.patch("/remove", tokenVerify, remove);
+router.post("/remove", tokenVerify, remove);
 
 router.post("/checkid", checkid);
 // router.post("/bizNoCheck", bizNoCheck);
