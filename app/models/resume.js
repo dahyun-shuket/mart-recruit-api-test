@@ -578,7 +578,7 @@ module.exports = class resumeModel {
                 try {
                     fs.unlinkSync(mediaPath + "uploads/" + rowsFind[0].LOCATION + "/" + rowsFind[0].FILENAME);
                 } catch {
-                    logger.writeLog('error', `models/resumeModel.updateImage: ${error}`);    
+                    logger.writeLog('error', `models/resumeModel.updateImage: 기존 이미지가 없음`);    
                 }
                 // 레코드도 삭제
                 await connection.query(`DELETE FROM FILESTORAGE WHERE SEQ=? AND LOCATION='RESUME'`, [rowsFind[0].SEQ]);
