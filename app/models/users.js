@@ -30,10 +30,11 @@ module.exports = class userModel {
 
             } else if(userType =='U'){
                 // 유저일때 비어있는 이력서를 만들어준다.
+                // 생성시에는 이력서의 활성화 N 으로 생성된다. 수정시에 Y 로 바뀌어서 이력서 사용 가능.
                 const [rowsResume, fieldsResume] = await connection.query(`INSERT INTO RESUME (
                     USER_SEQ, CERTIFICATE, CERTIFICATEDATE, ACTIVE, CREATED, MODIFIED
                 ) VALUES ( 
-                    ?, 'N', NULL, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
+                    ?, 'N', NULL, 'N', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP()
                 )`, 
                 [
                     rows.insertId

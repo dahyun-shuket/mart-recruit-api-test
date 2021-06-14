@@ -24,13 +24,15 @@ module.exports = class resumeModel {
     }
     // 업데이트하면 인증은 무조건 해제
     // 조건을 이력서 SEQ에서 USER_SEQ로 변경함, photo 제거 0517 김민규 
+    // 이력서는 초기 생성떄 ACTIVE 가 N 상태이며 (데이터가 없는 상태에서 공고에 지원할 수있기떄문.)
+    // 업데이트 과정을 거치게되면 ACTIVE가 Y로 변경된다.
     static async update(seq, subject, name, contact, birthyear, email, gender, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
         technical, license, isWelfare, isMilitaly, introduce, workingTypeSeqs, workingTypeNames, salary) {
         try 
         {
             const [rows, fields] = await pool.query(`UPDATE RESUME SET 
                     SUBJECT=?, NAME=?, CONTACT=?, BIRTHYEAR=?, EMAIL=?, GENDER=?, POSTCODE=?, ADDRESS=?, ADDRESSEXTRA=?, EDUCATION=?, EDUCATIONSCHOOL=?, CAREER_SEQ=?, 
-                    TECHNICAL=?, LICENSE=?, ISWELFARE=?, ISMILITALY=?, INTRODUCE=?, WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, SALARY=?, CERTIFICATE='N', CERTIFICATEDATE=NULL, MODIFIED=CURRENT_TIMESTAMP()
+                    TECHNICAL=?, LICENSE=?, ISWELFARE=?, ISMILITALY=?, INTRODUCE=?, WORKINGTYPE_SEQS=?, WORKINGTYPE_NAMES=?, SALARY=?, CERTIFICATE='N', CERTIFICATEDATE=NULL, ACTIVE='Y', MODIFIED=CURRENT_TIMESTAMP()
                 WHERE 
                     USER_SEQ=?`, 
                 [
