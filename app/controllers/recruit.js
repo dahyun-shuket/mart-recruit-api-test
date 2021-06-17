@@ -3,6 +3,7 @@ const resumeService = require('../services/resume.js');
 const defaultRowCount = 20;
 
 module.exports = {
+    // 공고 생성
     async create(req, res, next) {
         const MART_SEQ = req.body.MART_SEQ;
         const HRONAME = req.body.HRONAME;
@@ -47,6 +48,7 @@ module.exports = {
         }
     },
 
+    // 공고 업데이트
     async update(req, res, next) {
         const SEQ = req.body.SEQ;
         const HRONAME = req.body.HRONAME;
@@ -92,6 +94,7 @@ module.exports = {
         }
     },
 
+    // 공고 삭제
     async remove(req, res, next) {
         const seq = req.body.seq;
 
@@ -109,6 +112,8 @@ module.exports = {
             });    
         }
     },
+
+    // 공고 활성화
     async active(req, res, next) {
         const seq = req.body.seq;
 
@@ -126,6 +131,8 @@ module.exports = {
             });    
         }
     },
+
+    // 공고 마감
     async close(req, res, next) {
         const seq = req.body.seq;
 
@@ -143,6 +150,8 @@ module.exports = {
             });    
         }
     },
+
+    // 한개의 공고 가져오기
     // ?martseq=&page=&criteria=
     async get(req, res, next) {
         const recruitSeq = req.body.seq;
@@ -162,6 +171,7 @@ module.exports = {
         }
     },
 
+    // 공고 복사
     async copy(req, res, next) {
         const seq = req.body.seq;
 
@@ -185,6 +195,7 @@ module.exports = {
     // http://localhost:3000/api/jobOpening/list?martSeq=1&jobkinds=1,5
     // http://localhost:3000/api/jobOpening/list?regions=1,2&jobkinds=1,5
     // 지역, 직종으로만 나열
+    // 공고 리스트
     async list(req, res, next) {
         const martSeq = req.body.martSeq;
         const name = req.body.name;

@@ -35,9 +35,11 @@ module.exports = {
             let martName = req.body.martName;
             let active = req.body.active;
 
+            // bcript 암호화
             let salt = genSaltSync(10);
             password = hashSync(password, salt);
             
+            // 유저 생성
             let createUser = await userService.create(userId, password, userType, bizNo, martName, active);
             res.json({
                 result: "success",
@@ -95,8 +97,12 @@ module.exports = {
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount : defaultRowCount;
         const userType = req.body.userType
+
+        // 유저 전체조회 카운트
         const totalCount = await userService.count(req.body.userLoginId, userType);
+        // 유저 로그인 아이디
         const userLoginId = (req.body.userLoginId) ? req.body.userLoginId : '';
+        // 유저 리스트
         const list = await userService.list(userType, userLoginId, page, rowCount);
         
         return res.json({
@@ -111,11 +117,12 @@ module.exports = {
     // SEQ로 유저 한 명 조회
     async get(req, res, next) {
         const seq = req.body.seq;
-        // console.log(seq);
+
+        // 한명 유저 조회 결과
         const result = await userService.get(seq);
+
         let userId = result.LOGINID;
         let userInfo = await userService.login(userId);
-        console.log(userInfo);
 
         if (result) {
             res.status(200).json({
@@ -129,6 +136,7 @@ module.exports = {
             });    
         }
     },
+
     async getUser(req, res, next) {
         const userId = req.body.userId;
 
@@ -154,6 +162,7 @@ module.exports = {
         let userType = req.body.userType
         let active = req.body.active
         let seq = req.body.seq
+
         const salt = genSaltSync(10);
         password = hashSync(password, salt);
         let updateUser = await userService.update(userId, password, userType, active, seq);
@@ -163,7 +172,7 @@ module.exports = {
         });
     },
 
-    // 유저 수정
+    // 유저 페스워드 수정
     async updatePassword(req, res) {
         let seq = req.body.seq
         let password = req.body.password
@@ -189,20 +198,36 @@ module.exports = {
     async remove(req, res) {
         let seq = req.body.seq
         let removeUser = await userService.remove(seq);
-        return res.json({
-            result: "success",
-            data: removeUser,
-        });
+
+        if (removeUser) {
+            res.status(200).json({
+                result: 'success',
+                data: removeUser
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
     },
 
     // 아이디 중복 체크
     async checkid(req, res) {
         const userId = req.body.userId
         let checkIdUser = await userService.checkId(userId);
-        return res.json({
-            result: "success",
-            data: checkIdUser,
-        });
+        
+        if (checkIdUser) {
+            res.status(200).json({
+                result: 'success',
+                data: checkIdUser
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
     },
     
     // 사업자등록번호 체크 api

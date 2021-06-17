@@ -1,6 +1,7 @@
 const workingTypeService = require('../services/workingType.js');
 
 module.exports = {
+    // 직종 생성
     async create(req, res, next) {
         const workingTypeName = req.body.workingType;
 
@@ -11,6 +12,7 @@ module.exports = {
         });
     },
 
+    // 직종 업데이트
     async update(req, res, next) {
         const workingTypeSeq = req.body.seq;
         const workingTypeName = req.body.workingType;
@@ -22,6 +24,7 @@ module.exports = {
         });
     },
 
+    // 직종 삭제
     async remove(req, res, next) {
         const workingTypeSeq = req.body.seq;
 
@@ -33,6 +36,7 @@ module.exports = {
         });
     },
 
+    // 직종 리스트
     async list(req, res, next) {
         const list = await workingTypeService.list();
 

@@ -2,6 +2,7 @@ const logger = require('../config/logger.js');
 var resumeModel = require("../models/resume");
 
 module.exports = class resumeService {
+    // 이력서를 생성한다.
     static create(userSeq, subject, photo, name, contact, email, postCode, address, addressExtra, education, educcationSchool, careerSeq, 
         technical, license, isWelfare, isMilitaly, careerCertificate, introduce, workingTypeSeqs, workingTypeNames, salary) {
         return new Promise(function(resolve, reject) {

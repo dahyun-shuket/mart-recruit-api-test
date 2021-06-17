@@ -22,6 +22,4 @@ router.post('/update', update);
 // 공지사항 GET
 router.post('/get', get);
 
-
-
 module.exports = router;

@@ -33,7 +33,6 @@ module.exports = {
     async update(req, res, next) {        
         const seq = req.body.SEQ;
         const name = req.body.NAME;
-        // const logoFile = req.body.logoFile;
         const regNo = req.body.REGNO;
         const postCode = req.body.POSTCODE;
         const address = req.body.ADDRESS;
@@ -43,7 +42,7 @@ module.exports = {
         const HROContact = req.body.HROCONTACT;
         const HRORank = req.body.HRORANK;
 
-        // const result = await martService.update(seq, name, logoFile, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank);
+        
         const result = await martService.update(seq, name, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank);
 
         if (result) {

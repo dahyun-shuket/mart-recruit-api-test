@@ -3,6 +3,7 @@ const defaultRowCount = 20;
 const maxRowCount = 100;
 
 module.exports = {
+    // 이력서 생성
     async create(req, res, next) {
         const userSeq = req.body.userSeq;
         const subject = req.body.subject;
@@ -42,6 +43,7 @@ module.exports = {
         }
     },
 
+    // 이력서 업데이트
     async update(req, res, next) {
         const seq = req.body.seq;
         const subject = req.body.subject;
@@ -83,6 +85,7 @@ module.exports = {
         }
     },
    
+    // 이력서 삭제
     async remove(req, res, next) {
         const seq = req.body.seq;
 
@@ -101,6 +104,7 @@ module.exports = {
         }
     },
 
+    // 이력서 조회수
     increaseView(req, res, next) {
         const seq = req.body.seq;
 
@@ -112,6 +116,7 @@ module.exports = {
         });    
     },
 
+    // 4대보험 인증
     async certificate(req, res, next) {
         const seq = req.body.seq;
 
@@ -130,6 +135,7 @@ module.exports = {
         }
     },
 
+    // 4대보험 인증 초기화
     async clearCertificate(req, res, next) {
         const seq = req.body.seq;
 
@@ -148,6 +154,7 @@ module.exports = {
         }
     },
     
+    // 이력서 한개 가져오기
     async get(req, res, next) {
         const resumeSeq = req.body.seq;
 
@@ -166,9 +173,10 @@ module.exports = {
         }
     },
 
+    // 유저seq로 이력서 한개 가져오기
     async getByUserSeq(req, res, next) {
         const resumeSeq = req.body.seq;
-        // console.log(resumeSeq);
+
         if (resumeSeq) {
             const resumeInfo = await resumeService.getByUserSeq(resumeSeq);
 
@@ -184,6 +192,7 @@ module.exports = {
         }
     },
 
+    // 이력서 리스트
     // http://localhost:3000/api/resume/list?userSeq=1&regions=1,2&jobkinds=1,5
     // http://localhost:3000/api/resume/list?userSeq=1&regions=1,2
     // http://localhost:3000/api/resume/list?userSeq=1&jobkinds=1,5
@@ -212,6 +221,7 @@ module.exports = {
         });    
     },
 
+    // 공고에 지원한 이력서 리스트
     async listForRecruit(req, res, next) {
         const recruitSeq = req.body.recruitSeq;
         const currentPage = (req.body.page) ? req.body.page : 1;
@@ -230,6 +240,7 @@ module.exports = {
         });    
     },
 
+    // 직종 업데이트
     async updateJobKind(req, res, next) {
         const resumeSeq = req.body.seq;
         const jobKinds = req.body.jobKinds;
@@ -250,6 +261,7 @@ module.exports = {
         }
     },
 
+    // 근무지역 업데이트
     async updateWorkingRegion(req, res, next) {
         const resumeSeq = req.body.seq;
         const workingRegions = req.body.regions;
@@ -269,6 +281,7 @@ module.exports = {
         }
     },
 
+    // 경력 추가
     async addCareer(req, res, next) {
         const resumeSeq = req.body.resumeSeq;
         const company = req.body.company;
@@ -296,6 +309,7 @@ module.exports = {
         }
     },
 
+    // 경력 업데이트
     async updateCareer(req, res, next) {
         const seq = req.body.seq;
         const company = req.body.company;
@@ -322,6 +336,7 @@ module.exports = {
         }
     },
    
+    // 경력 삭제
     async removeCareer(req, res, next) {
         const seq = req.body.seq;
 
@@ -340,6 +355,7 @@ module.exports = {
         }
     },
 
+    // 경력 한개 가져오기
     async getCareer(req, res, next) {
         const seq = req.body.seq;
         if (seq) {
@@ -356,6 +372,7 @@ module.exports = {
         }
     },
 
+    // 경력 리스트
     async listCareer(req, res, next) {
         const resumeSeq = req.body.resumeSeq;
 
@@ -373,6 +390,7 @@ module.exports = {
         }
     },
 
+    // 이력서 이미지 업데이트
     async updateImage(req, res, next) {
         const seq = req.body.SEQ;
         const resumeFile = req.body.RESUMEFILE;
@@ -391,6 +409,7 @@ module.exports = {
         }
     },
 
+    // 이력서 4대보험 인증파일 업데이트
     async updatecertificate(req, res, next) {
         const seq = req.body.SEQ;
         const resumeFile = req.body.RESUMEFILE;
@@ -412,6 +431,7 @@ module.exports = {
         }
     },
 
+    // 공고 스크랩
     async createScrap(req, res, next) {
         const martSeq = req.body.martSeq;
         const resumeSeq = req.body.resumeSeq;
@@ -431,6 +451,7 @@ module.exports = {
         }
     },
 
+    // 이력서로 스크랩한 공고 가져오기
     async getScrap(req, res, next) {
         const martSeq = req.body.martSeq;
         const resumeSeq = req.body.resumeSeq;
@@ -450,6 +471,7 @@ module.exports = {
         }
     },
 
+    // 이력서로 스크랩한 공고 삭제
     async removeScrap(req, res, next) {
         const martSeq = req.body.martSeq;
         const resumeSeq = req.body.resumeSeq;
@@ -469,6 +491,7 @@ module.exports = {
         }
     },
 
+    // 이력서로 스크랩한 리스트
     async listScrap(req, res, next) {
         const martSeq = req.body.martSeq;
 
@@ -486,6 +509,7 @@ module.exports = {
         }
     },    
 
+    // 지원한 공고 리스트
     async listJobRequest(req, res, next) {
         const martSeq = req.body.martSeq;
         const list = await resumeService.listJobRequest(martSeq);
