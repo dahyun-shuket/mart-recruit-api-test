@@ -6,7 +6,7 @@ module.exports = class fileStorageModel {
         try 
         {
             const [rows, fields] = await pool.query(`INSERT INTO FILESTORAGE 
-                (LOCATION, FILENAME, RELATED_TABLE, RELATED_SEQ) VALUES (?, ?, ?, ?)`, [location, fileName, related_Table, related_Seq]);
+                (LOCATION, FILENAME, RELATED_TABLE, RELATED_SEQ, CREATED) VALUES (?, ?, ?, ?, CURRENT_TIMESTAMP())`, [location, fileName, related_Table, related_Seq]);
             logger.writeLog('INFO', `models/fileStorageModel.create: 파일 ${fileName}, ${related_Table} 테이블의 ${related_Seq}에 연결됨`);           
             return rows.insertId;
         } catch (error) {

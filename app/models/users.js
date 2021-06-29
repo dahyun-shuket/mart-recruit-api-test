@@ -4,7 +4,7 @@ module.exports = class userModel {
     // 유저 생성
     static async create(userId, password, userType, active) {
         try {
-            const [rows, fileds] = await pool.query(`insert into USERS(LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [userId, password, userType, active]);
+            const [rows, fileds] = await pool.query(`insert into USERS(LOGINID, PWD, USERTYPE, ACTIVE, CREATED, MODIFIED) values(?,?,?,?, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, [userId, password, userType, active]);
             return rows;
         } catch (error) {
             console.log("userCreate model Error ! : " + error);
@@ -16,7 +16,7 @@ module.exports = class userModel {
         {
             console.log(bizNo);
             await connection.beginTransaction();    // transaction
-            const [rows, fields] = await connection.query(`insert into USERS (LOGINID, PWD, USERTYPE, ACTIVE) values(?,?,?,?)`, [userId, password, userType, active]);
+            const [rows, fields] = await connection.query(`insert into USERS (LOGINID, PWD, USERTYPE, ACTIVE, CREATED, MODIFIED) values(?,?,?,?, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, [userId, password, userType, active]);
             // console.log(rows);
             if (userType =='M') {
                 // 마트일때 마트를 생성해준다.
@@ -66,7 +66,7 @@ module.exports = class userModel {
     // 유저 업데이트
     static async update(userId, password, userType, active, seq) {
         try {
-            const [rows, fields] = await pool.query(`update USERS set LOGINID=?, PWD=?, USERTYPE=?, ACTIVE=? where SEQ = ?`, [userId, password, userType, active, seq]);
+            const [rows, fields] = await pool.query(`update USERS set LOGINID=?, PWD=?, USERTYPE=?, ACTIVE=?, MODIFIED=CURRENT_TIMESTAMP() where SEQ = ?`, [userId, password, userType, active, seq]);
             return rows;
         } catch (error) {
             console.log("userUpdate model Error ! : " + error);
@@ -75,7 +75,7 @@ module.exports = class userModel {
     // 유저 암호만 변경
     static async updatePassword(seq, password) {
         try {
-            await pool.query(`UPDATE USERS SET PWD=? WHERE SEQ=?`, [password, seq]);
+            await pool.query(`UPDATE USERS SET PWD=?, MODIFIED=CURRENT_TIMESTAMP() WHERE SEQ=?`, [password, seq]);
             logger.writeLog('info', `API - models/userModel.updatePassword: 사용자 ${seq}가 암호를 변경했습니다.`);           
             return seq;
         } catch (error) {
@@ -87,7 +87,7 @@ module.exports = class userModel {
     static async remove(seq) {
         try {
             console.log(seq);
-            const [rows, fields] = await pool.query(`UPDATE USERS set ACTIVE="N" where SEQ = ?`, [seq]);
+            const [rows, fields] = await pool.query(`UPDATE USERS set ACTIVE="N", MODIFIED=CURRENT_TIMESTAMP() where SEQ = ?`, [seq]);
             return rows;
         } catch (error) {
             console.log("userRemove model Error ! : " + error);
