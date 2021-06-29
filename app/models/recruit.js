@@ -4,7 +4,7 @@ const pool = (process.env.NODE_ENV == "production") ? require("../config/databas
 module.exports = class recruitModel {
     static async create(MART_SEQ, HRONAME, HROCONTACT, HROEMAIL, SUBJECT, CAREER_SEQ, CHARGE, 
         PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY, PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, 
-        GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, JOBKIND, JOBRANK, WORKINGTYPE, WORKREGION) {
+        GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, JOBKIND, JOBRANK, WORKINGTYPE, WORKREGION, ACTIVE) {
         const connection = await pool.getConnection(async conn => conn);
         try 
         {
@@ -15,10 +15,10 @@ module.exports = class recruitModel {
                 MART_SEQ, SUBJECT, HRONAME, HROCONTACT, HROEMAIL, CAREER_SEQ, EXPYEAR, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
                 PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, ACTIVE, CREATED, MODIFIED
                 ) VALUES 
-                ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, 'Y', CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
+                ( ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP(), CURRENT_TIMESTAMP())`, 
                 [
                     MART_SEQ, SUBJECT, HRONAME, HROCONTACT, HROEMAIL, CAREER_SEQ, 0, CHARGE, JOBRANK, PREFERENTIAL, EDUCATION, SALARYTYPE, SALARY,
-                    PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT
+                    PROBATIONTERM, WORKSHIFT, WORKSHIFTTIME, GENDER, AGE, STARTDATE, ENDDATE, HIRINGSTEP, REQUIREDOCS, CONTENT, ACTIVE
                 ]);
             let recruitSeq = rows.insertId;
 
