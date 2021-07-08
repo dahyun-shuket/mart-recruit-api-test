@@ -193,9 +193,10 @@ module.exports = class resumeModel {
                     ) RR ON RR.RESUME_SEQ = R.SEQ
                 WHERE
                     R.USER_SEQ=?`, [seq]);
-            if (rows.length > 0) 
+                
+            if (rows.length > 0) {
                 return rows[0];
-            else {
+            }else {
                 logger.writeLog('error', `models/resumeModel.getByUserSeq: No data found`);           
                 return null;
             }                

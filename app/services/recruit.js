@@ -1,6 +1,6 @@
 const logger = require('../config/logger.js');
 var recruitModel = require("../models/recruit");
-var resumeModel = require("../models/resume");
+
 
 module.exports = class recruitService {
     static create(MART_SEQ, HRONAME, HROCONTACT, HROEMAIL, SUBJECT, CAREER_SEQ, CHARGE, 
@@ -158,14 +158,8 @@ module.exports = class recruitService {
     static apply(recruitSeq, userSeq) {
         return new Promise(function(resolve, reject) {
             try {
-                let resumeInfo = resumeModel.getByUserSeq(userSeq);
-                if (resumeInfo && resumeInfo.ACTIVE == 'Y') {
-                    result = recruitModel.apply(recruitSeq, userSeq);
-                    resolve(result);
-                } else {
-                    logger.writeLog('error', `services/recruitService/apply: 이력서가 완성되지 않은 상태로 입사를 지원했습니다`);    
-                    resolve(null);
-                }
+                let result = recruitModel.apply(recruitSeq, userSeq);
+                resolve(result);
             } catch (error) {
                 logger.writeLog('error', `services/recruitService/apply: ${error}`);           
             }

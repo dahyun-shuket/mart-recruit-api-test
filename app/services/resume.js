@@ -77,7 +77,6 @@ module.exports = class resumeService {
         return new Promise(function(resolve, reject) {
             try {
                 let result = resumeModel.getByUserSeq(seq);
-    
                 resolve(result);
             } catch (error) {
                 logger.writeLog('error', `services/resumeService/getByUserSeq: ${error}`);           

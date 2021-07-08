@@ -346,14 +346,16 @@ module.exports = {
         const recruitSeq = req.body.recruitSeq;
         const userSeq = req.body.userSeq;
 
-        const result = await recruitService.apply(recruitSeq, userSeq);
-
-        if (result) {
-            res.status(200).json({
-                result: 'success',
-                data: result
-            });    
-        } else {
+        const resumeInfo = await resumeService.getByUserSeq(userSeq);
+        if (resumeInfo && resumeInfo.ACTIVE == 'Y'){
+            const result = await recruitService.apply(recruitSeq, userSeq);
+            if (result) {
+                res.status(200).json({
+                    result: 'success',
+                    data: result
+                });
+            }
+        }else {
             res.status(200).json({
                 result: 'fail',
                 data: null
