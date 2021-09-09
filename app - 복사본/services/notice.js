@@ -41,6 +41,7 @@ module.exports = class noticeService {
         return new Promise(function(resolve, reject) {
             
             try {
+               
                 let noticeView = noticeModel.views(seq);
                 resolve(noticeView);
                 

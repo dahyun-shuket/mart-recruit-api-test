@@ -16,25 +16,18 @@ module.exports = {
         const HRORank = req.body.HRORank;
 
         const result = await martService.create(userSeq, name, logoFile, regNo, postCode, address, addressExtra, contact, HROName, HROContact, HRORank);
-        console.log(result);
-        // if (result) {
-        //     res.status(200).json({
-        //         result: 'success',
-        //         data: result
-        //     });    
-        // } else {
-        //     res.status(200).json({
-        //         result: 'fail',
-        //         data: null
-        //     });    
-        // }
-        return res.json({
-            result: "success",
-            data: {
-                list: result,
-                // totalCount: totalCount
-            }
-        });
+
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
     },
 
     async update(req, res, next) {        
@@ -67,84 +60,57 @@ module.exports = {
 
     async updateLogo(req, res, next) {        
         const seq = req.body.SEQ;
-        // const location = req.body.location;
-        const logoFile = req.body.LOGOFILE
-        // const logoFile = location+"/"+testLogoFile;
-        // console.log("location ? ? ? ? ? ? ?" + location)
-        // martlogo
-        // console.log("location ? ? ? ? ? ? ?" + req.app.get('mediaPath'))
-        // C:/Users/yydh5/OneDrive/문서/mart-recruit-api/PDSData/
-        
-        console.log("logoFilelogoFilelogoFile ? ? ? ? ? " + logoFile)
+        const logoFile = req.body.LOGOFILE;
         const result = await martService.updateLogo(req.app.get('mediaPath'), seq, logoFile);
 
-        // if (result) {
-        //     res.status(200).json({
-        //         result: 'success',
-        //         data: result
-        //     });    
-        // } else {
-        //     res.status(200).json({
-        //         result: 'fail',
-        //         data: null
-        //     });    
-        // }
-
-        return res.json({
-            result: "success",
-            data: {
-                list: result,
-            }
-        });
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
     },
 
     async remove(req, res, next) {
-        const seq = req.body.SEQ;
+        const seq = req.body.seq;
 
         const result = await martService.remove(seq);
 
-        res.json({
-            result: (result === null) ? 'fail' : 'success',
-            data: result
-        })
-
-        // if (result) {
-        //     res.status(200).json({
-        //         result: 'success',
-        //         data: result
-        //     });    
-        // } else {
-        //     res.status(200).json({
-        //         result: 'fail',
-        //         data: null
-        //     });    
-        // }
+        if (result) {
+            res.status(200).json({
+                result: 'success',
+                data: result
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
     },
 
     async get(req, res, next) {
-        const martSeq = req.body.SEQ;
+        const martSeq = req.body.seq;
 
-        const result = await martService.get(martSeq);
+        console.log(martSeq)
+        if (martSeq) {
+            const martInfo = await martService.get(martSeq);
 
-        res.json({
-            result: (result === null) ? 'fail' : 'success',
-            data: result
-        })
-
-        // if (martSeq) {
-
-        //     const martInfo = await martService.get(martSeq);
-
-        //     res.status(200).json({
-        //         result: 'success',
-        //         data: martInfo
-        //     });    
-        // } else {
-        //     res.status(200).json({
-        //         result: 'fail',
-        //         data: null
-        //     });    
-        // }
+            res.status(200).json({
+                result: 'success',
+                data: martInfo
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
     },
 
     async getByUser(req, res, next) {
@@ -169,10 +135,9 @@ module.exports = {
     async list(req, res, next) {
         const page = (req.body.page) ? req.body.page : 1;
         const rowCount = (req.body.rowCount) ? req.body.rowCount * 1 : defaultRowCount;
-        let name = req.body.NAME;
-        let regno = req.body.REGNO;
+        
         const totalCount = await martService.totalCount(req.query.name);
-        const list = await martService.list(name, regno, page, rowCount);
+        const list = await martService.list(req.body.name, page, rowCount);
 
         res.status(200).json({
             result: 'success',
@@ -181,23 +146,6 @@ module.exports = {
                 list: list
             }
         });    
-    },
-
-    async reactlist(req, res, next) {
-        let seq = req.body.SEQ;
-        let name = req.body.NAME;
-        let regno = req.body.REGNO;
-
-        const totalCount = (seq) ? 0 : await martService.totalCount(name);
-        const list = await martService.reactlist(seq, name, regno);
-
-        res.status(200).json({
-            result:'success',
-            data: {
-                totalCount: totalCount,
-                list: list
-            }
-        })
     },
 
     async createJobRequest(req, res, next) {

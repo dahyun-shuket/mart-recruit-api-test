@@ -37,7 +37,6 @@ module.exports = class martModel {
         }
     }
     static async updateLogo(mediaPath, seq, logoFile) {
-        console.log("logoFile ? ? ? ? " + logoFile);
         const connection = await pool.getConnection(async conn => conn);
         try 
         {
@@ -57,9 +56,6 @@ module.exports = class martModel {
                 await pool.query(`DELETE FROM FILESTORAGE WHERE SEQ=?`, [rowsFind[0].SEQ]);
             }
             // 새로운 파일 저장 정보를 추가
-            console.log("dirname ? ? ? ? ? ? " + path.dirname(logoFile))
-            console.log("basename ? ? ? ? ? ? " + path.basename(logoFile)) 
-            // console.log(seq)
             const [rows, fields] = await pool.query(`INSERT INTO FILESTORAGE 
                 (LOCATION, FILENAME, RELATED_TABLE, RELATED_SEQ) VALUES (?, ?, ?, ?)`, [path.dirname(logoFile), path.basename(logoFile), 'MART', seq]);
             // 해당 정보로 로고 파일 정보 갱신
@@ -154,31 +150,7 @@ module.exports = class martModel {
             return 0;
         }
     }
-    static async reactlist(seq, name, regno) {
-        try {
-            const query = `SELECT 
-                                SEQ, USER_SEQ, NAME, LOGOFILE, REGNO, POSTCODE, ADDRESS, ADDRESSEXTRA, CONTACT, HRONAME, HROCONTACT, HRORANK, ACTIVE, CREATED, MODIFIED
-                            FROM 
-                                MART 
-                            WHERE 
-                                ACTIVE='Y'
-                                ${(name) ? `AND NAME LIKE '%${name}%'`:''}
-                                ${(regno) ? `AND REGNO LIKE '%${regno}%'`:''}  
-                            ORDER BY 
-                                NAME`;
-            const [rows, fields] = await pool.query(query, []);
-            if (rows.length > 0) 
-                return rows;
-            else {
-                logger.writeLog('error', `models/martModel.reactlist: No data found`);           
-                return null;
-            }   
-        } catch (error) {
-            logger.writeLog('error', `modals/martModal.reactlist: ${error}`)
-            return null;
-        }
-    }
-    static async list(name, regno, limit, offset) {
+    static async list(name, limit, offset) {
         try 
         {
             //순번에 따라서 리스팅
@@ -188,8 +160,7 @@ module.exports = class martModel {
                     MART 
                 WHERE 
                     ACTIVE='Y'
-                    ${(name) ? `AND NAME LIKE '%${name}%'`:''}
-                    ${(regno) ? `AND REGNO LIKE '%${regno}%'`:''}  
+                    ${(name && name != '') ? 'AND NAME LIKE \'%' + name + '%\'' : ''}  
                 ORDER BY 
                     NAME
                 LIMIT ? OFFSET ?`;

@@ -95,8 +95,8 @@ module.exports = {
     // 유저 전체조회
     async list(req,res, next){
         const page = (req.body.page) ? req.body.page : 1;
-        const rowCount = (req.body.rowCount) ? req.body.rowCount  : defaultRowCount;
-        const userType = req.body.userType;
+        const rowCount = (req.body.rowCount) ? req.body.rowCount : defaultRowCount;
+        const userType = req.body.userType
 
         // 유저 전체조회 카운트
         const totalCount = await userService.count(req.body.userLoginId, userType);
@@ -108,29 +108,10 @@ module.exports = {
         return res.json({
             result: "success",
             data: {
-                totalCount: totalCount,
                 list: list,
+                totalCount: totalCount
             }
         });
-    },
-
-    async reactlist(req, res, next) {
-        
-        let seq = req.body.SEQ;
-        let loginId = req.body.LOGINID;
-        let userType = req.body.USERTYPE;
-
-        const totalCount = (seq) ? 0 : await userService.totalCount(loginId, userType);
-        console.log('totalCount ??',totalCount)
-        const list = await userService.reactlist(seq, loginId, userType);
-
-        res.status(200).json({
-            result:'success',
-            data: {
-                totalCount: totalCount,
-                list: list,
-            }
-        })  
     },
     
     // SEQ로 유저 한 명 조회

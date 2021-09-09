@@ -112,7 +112,7 @@ module.exports = class userModel {
             console.log("checkId model Error ! : " + error);
         }
     }
-    //USERTYPE='${usertype}'
+
     static async list(usertype, userLoginId, limit, offset) {
         try {
                 var sql = ` SELECT
@@ -120,8 +120,8 @@ module.exports = class userModel {
                             FROM
                                 USERS 
                             WHERE
-                                ACTIVE='Y' 
-                                ${(usertype) ? `AND USERTYPE LIKE '${usertype}'`:''}
+                                ACTIVE='Y'  AND
+                                USERTYPE='${usertype}'
                                 ${(userLoginId && userLoginId != '') ? 'AND LOGINID LIKE \'%' + userLoginId + '%\'' : ''}  
                             ORDER BY SEQ DESC LIMIT ? OFFSET ? `
                 const [rows, fields] = await pool.query(sql, [limit, offset]);
@@ -188,52 +188,6 @@ module.exports = class userModel {
             return rows[0].cnt;
         } catch (error) {
             console.log("userCount model Error ! : " + error);
-        }
-    }
-    // react 리스트
-    static async reactlist(seq, loginId, userType) {
-        try {
-                var sql = ` SELECT
-                                SEQ, LOGINID, PWD, USERTYPE, ACTIVE, CREATED, MODIFIED 
-                            FROM
-                                USERS 
-                            WHERE
-                                ACTIVE='Y' 
-                                ${(userType) ? `AND USERTYPE LIKE '${userType}'`:''}
-                                ${(loginId) ? `AND LOGINID LIKE '%${loginId}%'`:''} 
-                            ORDER BY SEQ DESC `
-                const [rows, fields] = await pool.query(sql, [seq]);
-                if(rows.length > 0){
-                    return rows;
-                }else{
-                    logger.writeLog('error', `API - models/userModel.list: No data found`);           
-                return null;
-                }
-                // return rows;
-        } catch (error) {
-            logger.writeLog('error', `API - models/userModel.list: ${error}`);           
-            return null;
-        }
-    }
-    static async totalCount(loginId, userType) {
-        try 
-        {
-            var query = `SELECT 
-                            COUNT(SEQ) AS TOTALCOUNT 
-                        FROM 
-                            USERS 
-                        WHERE 
-                            ACTIVE='Y' 
-                            ${(loginId && loginId != '') ? 'AND LOGINID LIKE \'%' + loginId + '%\'' : ''} 
-                            ${(userType && userType != '') ? 'AND USERTYPE LIKE \'%' + userType + '%\'' : ''}
-                            `;
-            const [rows, fields] = await pool.query(query);
-            // logger.writeLog('error', `models/noticeModel.totalCount 요기: ${rows}`);   
-            return rows[0].TOTALCOUNT;
-
-        } catch (error) {
-            logger.writeLog('error', `models/userModel.totalCount : ${error}`);           
-            return 0;
         }
     }
 };

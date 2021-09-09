@@ -11,7 +11,7 @@ router.post('/create', create);
 router.post('/update', tokenVerify, update);
 
 // 마트로고 업데이트
-router.post('/updateLogo', tokenVerify, updateLogo);
+router.post('/updateLogo', updateLogo);
 
 // 마트 삭제
 router.post('/remove', tokenVerify, remove);

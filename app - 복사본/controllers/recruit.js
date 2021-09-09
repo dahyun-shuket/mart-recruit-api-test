@@ -430,10 +430,9 @@ module.exports = {
 
     async getResumeCount(req, res, next) {
         const recruitSeq = req.body.seq;
-        // console.log("API 넘어오는거 체크 1" + recruitSeq); ---- 통과 198 넘어옴
+
         const result = await recruitService.getResumeCount(recruitSeq);
 
-        console.log(result);
         if (result) {
             res.status(200).json({
                 result: 'success',

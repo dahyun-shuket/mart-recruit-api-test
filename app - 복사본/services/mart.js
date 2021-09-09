@@ -68,21 +68,10 @@ module.exports = class martService {
             }
         })
     }
-    // static totalCount(searchName) {
-    //     return new Promise(function(resolve, reject) {
-    //         try {
-    //             let result = martModel.totalCount(searchName);
-    
-    //             resolve(result);
-    //         } catch (error) {
-    //             logger.writeLog('error', `services/martService.totalCount: ${error}`);           
-    //         }
-    //     })
-    // }
-    static totalCount(name) {
+    static totalCount(searchName) {
         return new Promise(function(resolve, reject) {
             try {
-                let result = martModel.totalCount(name);
+                let result = martModel.totalCount(searchName);
     
                 resolve(result);
             } catch (error) {
@@ -90,22 +79,11 @@ module.exports = class martService {
             }
         })
     }
-    static reactlist(seq, name, regno) {
-        return new Promise(function(resolve, reject) {
-            try {
-                let result = martModel.reactlist(seq, name, regno);
-    
-                resolve(result);
-            } catch (error) {
-                logger.writeLog('error', `services/martService/reactlist: ${error}`);           
-            }
-        })
-    }
-    static list(name,regno, page, rowCount) {
+    static list(searchName, page, rowCount) {
         return new Promise(function(resolve, reject) {
             try {
                 var offset = (page - 1) * rowCount;
-                let result = martModel.list(name, regno, rowCount, offset);
+                let result = martModel.list(searchName, rowCount, offset);
                 resolve(result);
             } catch (error) {
                 logger.writeLog('error', `services/martService.list: ${error}`);           

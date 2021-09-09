@@ -96,40 +96,16 @@ module.exports = class userService {
     })
     };
     
-    // static async count(searchId, usertype){
-    //     return new Promise(function (resolve, reject) {
-    //         try {
-    //             let count = userModel.count(searchId, usertype);
-    //             resolve(count);
-    //         } catch (error) {
-    //             logger.writeLog('error', `services/userService/count: ${error}`);           
-    //         }
-    // })
-    // };
-    static totalCount(loginId, userType) {
-        return new Promise(function(resolve, reject) {
-        
+    static async count(searchId, usertype){
+        return new Promise(function (resolve, reject) {
             try {
-                let result = userModel.totalCount(loginId, userType);
-                // logger.writeLog('error', `services/noticeService/totalCount : ${result}`); 
-                resolve(result);
+                let count = userModel.count(searchId, usertype);
+                resolve(count);
             } catch (error) {
-                logger.writeLog('error', `services/userService/totalCount : ${error}`);           
+                logger.writeLog('error', `services/userService/count: ${error}`);           
             }
-        })
-    }
-
-    static reactlist(seq, loginId, userType) {
-        return new Promise(function(resolve, reject) {
-            try {
-                let result = userModel.reactlist(seq, loginId, userType);
-    
-                resolve(result);
-            } catch (error) {
-                logger.writeLog('error', `services/userService/reactlist: ${error}`);           
-            }
-        })
-    }
+    })
+    };
     
     // static async bizNoCheck(bizno){
     //     try {

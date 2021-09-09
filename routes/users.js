@@ -1,13 +1,15 @@
 //user_router.js
 const router = require("express").Router();
 const { tokenVerify } = require("../app/services/auth");
-const { create, login, list, get, getUser, update, updatePassword, remove, checkid} = require("../app/controllers/users");
+const { create, login, list, reactlist, get, getUser, update, updatePassword, remove, checkid} = require("../app/controllers/users");
 
 // 로그인
 router.post("/login", login);
 
 // 유저 리스트
 router.post("/list", tokenVerify,  list);
+
+router.post("/reactlist",  reactlist);
 
 // 유저 가져오기
 router.post("/get", tokenVerify, get);

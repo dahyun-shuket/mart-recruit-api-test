@@ -2,7 +2,7 @@ var express = require('express');
 const { tokenVerify } = require("../app/services/auth");
 var router = express.Router();
 
-const { create, update, remove, get, getByUserSeq, list, listForRecruit, 
+const { create, update, remove, get, getByUserSeq, list, reactlist,  listForRecruit, 
     certificate, clearCertificate, updateJobKind, updateWorkingRegion, 
     addCareer, updateCareer, removeCareer, getCareer, listCareer, 
     updateImage, updatecertificate, increaseView, 
@@ -15,7 +15,7 @@ router.post('/create', create);
 router.post('/update', tokenVerify, update);
 
 // 이력서 삭제
-router.post('/remove', remove);
+router.post('/remove', tokenVerify, remove);
 
 // 이력서 한개 가져오기
 router.post('/get', tokenVerify, get);
@@ -26,11 +26,15 @@ router.post('/getByUserSeq', tokenVerify, getByUserSeq);
 // 이력서 리스트
 router.post('/list', tokenVerify, list);
 
+// 리엑트 리스트 전용
+router.post('/reactlist', tokenVerify, reactlist);
+
+
 // 공고에 지원한 이력서 리스트
-router.post('/listForRecruit', tokenVerify, listForRecruit);
+router.post('/listForRecruit', listForRecruit);
 
 // 인증여부
-router.post('/certificate', certificate);
+router.post('/certificate', tokenVerify, certificate);
 
 // 인증 초기화
 router.post('/clearCertificate', clearCertificate);
@@ -54,7 +58,7 @@ router.post('/removeCareer', tokenVerify, removeCareer);
 router.post('/getCareer', tokenVerify, getCareer);
 
 // 경력 리스트
-router.post('/listCareer', tokenVerify, listCareer);
+router.post('/listCareer', listCareer);
 
 // 이력서 이미지 업데이트
 router.post('/updateImage', tokenVerify, updateImage);
