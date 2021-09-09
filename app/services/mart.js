@@ -130,4 +130,14 @@ module.exports = class martService {
             }
         })
     }
+    static async checkregno(bizNo) {
+        return new Promise(function (resolve, reject) {
+            try {
+                let checkregno = martModel.checkregno(bizNo);
+                resolve(checkregno);
+            } catch (error) {   
+                reject(error);
+            }
+        })
+    }
 }

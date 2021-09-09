@@ -221,6 +221,24 @@ module.exports = {
                 data: null
             });    
         }  
+    },
+
+    // 사업자 번호 중복 체크
+    async checkregno(req, res) {
+        let bizNo = req.body.bizNo;
+        let checkregno = await martService.checkregno(bizNo)
+
+        if (checkregno) {
+            res.status(200).json({
+                result: 'success',
+                data: checkregno
+            });    
+        } else {
+            res.status(200).json({
+                result: 'fail',
+                data: null
+            });    
+        }
     }
 }
 
