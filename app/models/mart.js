@@ -282,4 +282,26 @@ module.exports = class martModel {
             return null;
         }
     }
+    // 사업자 등록 번호 중복 체크
+    static async checkregno(bizNo) {
+        // const connection = await pool.getConnection(async conn => conn);
+        try {
+            console.log('bizNo',bizNo);
+            const query = `SELECT REGNO FROM MART WHERE REGNO = ?`;
+            // await connection.beginTransaction();
+            const [rows, fields] = await pool.query(query, [bizNo]);
+            let checkRegno = new Object();
+            checkRegno.tf = false;
+            if(rows[0] === undefined) {
+                checkRegno.tf = true; // 사용가능
+                return checkRegno;
+            } else {
+                checkRegno.tf = false; // 사용불가능
+                return checkRegno;
+            }
+        } catch (error) {
+            logger.writeLog('error', `models/martModel.checkregno: ${error}`);           
+            return null;
+        }
+    }
 };
