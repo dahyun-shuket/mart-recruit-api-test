@@ -96,16 +96,16 @@ module.exports = class userService {
     })
     };
     
-    // static async count(searchId, usertype){
-    //     return new Promise(function (resolve, reject) {
-    //         try {
-    //             let count = userModel.count(searchId, usertype);
-    //             resolve(count);
-    //         } catch (error) {
-    //             logger.writeLog('error', `services/userService/count: ${error}`);           
-    //         }
-    // })
-    // };
+    static async count(searchId, usertype){
+        return new Promise(function (resolve, reject) {
+            try {
+                let count = userModel.count(searchId, usertype);
+                resolve(count);
+            } catch (error) {
+                logger.writeLog('error', `services/userService/count: ${error}`);           
+            }
+    })
+    };
     static totalCount(loginId, userType) {
         return new Promise(function(resolve, reject) {
         

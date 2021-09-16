@@ -98,10 +98,10 @@ module.exports = {
         const rowCount = (req.body.rowCount) ? req.body.rowCount  : defaultRowCount;
         const userType = req.body.userType;
 
-        // 유저 전체조회 카운트
-        const totalCount = await userService.count(req.body.userLoginId, userType);
         // 유저 로그인 아이디
         const userLoginId = (req.body.userLoginId) ? req.body.userLoginId : '';
+        // 유저 전체조회 카운트
+        const totalCount = await userService.count(req.body.userLoginId, userType);
         // 유저 리스트
         const list = await userService.list(userType, userLoginId, page, rowCount);
         

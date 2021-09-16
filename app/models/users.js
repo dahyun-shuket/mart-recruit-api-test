@@ -228,7 +228,7 @@ module.exports = class userModel {
                             ${(userType && userType != '') ? 'AND USERTYPE LIKE \'%' + userType + '%\'' : ''}
                             `;
             const [rows, fields] = await pool.query(query);
-            // logger.writeLog('error', `models/noticeModel.totalCount 요기: ${rows}`);   
+            // logger.writeLog('error', `models/noticeModel.totalCount 요기: ${rows}`);
             return rows[0].TOTALCOUNT;
 
         } catch (error) {

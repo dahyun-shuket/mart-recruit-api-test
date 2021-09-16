@@ -5,9 +5,8 @@ const jwt = require("jsonwebtoken");
 
 module.exports = {
     async isAuthorized(req, res, next) {
-        const token = req.headers['authorization'] || req.query.token;
+        const token = req.headers['authorization'] || req.query.token || req.body.xToken;
         const secretKey = req.body.key || req.query.key;
-
         if (token) {
             jwt.verify(token, secretKey, (err, decoded) => {
                 if (err) {
