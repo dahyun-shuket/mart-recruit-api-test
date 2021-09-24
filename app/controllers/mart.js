@@ -122,7 +122,7 @@ module.exports = {
     },
 
     async get(req, res, next) {
-        const martSeq = req.body.seq;
+        const martSeq = req.body.SEQ;
 
         const result = await martService.get(martSeq);
 
