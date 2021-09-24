@@ -428,7 +428,6 @@ module.exports = class resumeModel {
                 RECRUIT_SEQ = ?
                 ${(step) ? `AND STEP='${step}'` : '' }`;
             const [rows, fields] = await pool.query(query, [recruitSeq]);
-
             return rows[0].TOTALCOUNT;
         } catch (error) {
             logger.writeLog('error', `models/resumeModel.totalCountForRecruit: ${error}`);           
