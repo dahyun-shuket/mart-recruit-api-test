@@ -47,5 +47,9 @@ PDSData/
 
 # app/config/env.js
 app/config/env.js
+app/config/database.js
+app/config/database_dev.js
+app/config/logger.js
+app/config/secretkey.js
 Usersyydh5OneDrive문서mart-recruit-apiPDSDatauploads/
 PDSDatauploads/
