@@ -2,12 +2,10 @@ var express = require('express');
 var app = express();
 var router = express.Router();
 
-const {  remove, create,  update, reactlist, view, list, get } = require('../app/controllers/notice.js');
+const {  remove, create,  update, view, list, get } = require('../app/controllers/notice.js');
 
 // 공지사항 리스트 페이지
 router.post('/list', list);
-
-router.post('/reactlist', reactlist);
 
 // 공지사항 보기 페이지
 router.post('/view', view);
