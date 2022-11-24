@@ -3,7 +3,7 @@
     "version": "0.0.0",
     "private": true,
     "scripts": {
-        "start": "npm run start"
+        "start": "pm2 start bin/www --watch"
     },
     "dependencies": {
         "app-root-path": "^3.0.0",
